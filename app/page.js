@@ -121,10 +121,10 @@ export default function Home() {
         <div className="text-center">
           <p className="text-lg text-gray-600 mb-4">browse by country or sport</p>
           <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto">
-            <Link href="/countries" className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md">
+            <Link href="/countries" className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md text-center">
               Browse Countries
             </Link>
-            <Link href="/sports" className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md">
+            <Link href="/sports" className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md text-center">
               Browse Sports
             </Link>
           </div>
