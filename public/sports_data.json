@@ -1,0 +1,2023 @@
+{
+  "sports": [
+    {
+      "name": "Basketball",
+      "participating_countries": 66,
+      "total_medals": 1080,
+      "total_events": 2,
+      "total_athletes": 3412,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 341
+        },
+        {
+          "NOC": "URS",
+          "medal_count": 146
+        },
+        {
+          "NOC": "YUG",
+          "medal_count": 84
+        }
+      ],
+      "first_appearance": 1936,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Basketball Men's Basketball",
+        "Basketball Women's Basketball"
+      ],
+      "gender_breakdown": {
+        "male": 72.3,
+        "female": 27.7
+      }
+    },
+    {
+      "name": "Judo",
+      "participating_countries": 180,
+      "total_medals": 547,
+      "total_events": 15,
+      "total_athletes": 2721,
+      "top_countries": [
+        {
+          "NOC": "JPN",
+          "medal_count": 84
+        },
+        {
+          "NOC": "FRA",
+          "medal_count": 49
+        },
+        {
+          "NOC": "KOR",
+          "medal_count": 43
+        }
+      ],
+      "first_appearance": 1964,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Judo Men's Lightweight",
+        "Judo Men's Middleweight",
+        "Judo Men's Half-Middleweight"
+      ],
+      "gender_breakdown": {
+        "male": 71.2,
+        "female": 28.8
+      }
+    },
+    {
+      "name": "Football",
+      "participating_countries": 92,
+      "total_medals": 1571,
+      "total_events": 2,
+      "total_athletes": 6161,
+      "top_countries": [
+        {
+          "NOC": "BRA",
+          "medal_count": 136
+        },
+        {
+          "NOC": "GER",
+          "medal_count": 104
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 102
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Football Men's Football",
+        "Football Women's Football"
+      ],
+      "gender_breakdown": {
+        "male": 85.0,
+        "female": 15.0
+      }
+    },
+    {
+      "name": "Tug-Of-War",
+      "participating_countries": 13,
+      "total_medals": 115,
+      "total_events": 1,
+      "total_athletes": 160,
+      "top_countries": [
+        {
+          "NOC": "GBR",
+          "medal_count": 40
+        },
+        {
+          "NOC": "SWE",
+          "medal_count": 19
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 14
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 1920,
+      "popular_events": [
+        "Tug-Of-War Men's Tug-Of-War"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Speed Skating",
+      "participating_countries": 41,
+      "total_medals": 580,
+      "total_events": 13,
+      "total_athletes": 1582,
+      "top_countries": [
+        {
+          "NOC": "NED",
+          "medal_count": 117
+        },
+        {
+          "NOC": "NOR",
+          "medal_count": 80
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 70
+        }
+      ],
+      "first_appearance": 1924,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Speed Skating Men's 1,500 metres",
+        "Speed Skating Men's 500 metres",
+        "Speed Skating Men's 5,000 metres"
+      ],
+      "gender_breakdown": {
+        "male": 62.9,
+        "female": 37.1
+      }
+    },
+    {
+      "name": "Cross Country Skiing",
+      "participating_countries": 81,
+      "total_medals": 776,
+      "total_events": 23,
+      "total_athletes": 2400,
+      "top_countries": [
+        {
+          "NOC": "NOR",
+          "medal_count": 164
+        },
+        {
+          "NOC": "FIN",
+          "medal_count": 141
+        },
+        {
+          "NOC": "SWE",
+          "medal_count": 123
+        }
+      ],
+      "first_appearance": 1924,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Cross Country Skiing Men's 4 x 10 kilometres Relay",
+        "Cross Country Skiing Men's 50 kilometres",
+        "Cross Country Skiing Men's 15 kilometres"
+      ],
+      "gender_breakdown": {
+        "male": 62.9,
+        "female": 37.1
+      }
+    },
+    {
+      "name": "Athletics",
+      "participating_countries": 227,
+      "total_medals": 3969,
+      "total_events": 83,
+      "total_athletes": 22053,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 1080
+        },
+        {
+          "NOC": "GBR",
+          "medal_count": 338
+        },
+        {
+          "NOC": "URS",
+          "medal_count": 242
+        }
+      ],
+      "first_appearance": 1896,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Athletics Men's Marathon",
+        "Athletics Men's 100 metres",
+        "Athletics Men's 4 x 100 metres Relay"
+      ],
+      "gender_breakdown": {
+        "male": 69.8,
+        "female": 30.2
+      }
+    },
+    {
+      "name": "Ice Hockey",
+      "participating_countries": 34,
+      "total_medals": 1530,
+      "total_events": 2,
+      "total_athletes": 3882,
+      "top_countries": [
+        {
+          "NOC": "CAN",
+          "medal_count": 348
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 276
+        },
+        {
+          "NOC": "SWE",
+          "medal_count": 217
+        }
+      ],
+      "first_appearance": 1920,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Ice Hockey Men's Ice Hockey",
+        "Ice Hockey Women's Ice Hockey"
+      ],
+      "gender_breakdown": {
+        "male": 86.3,
+        "female": 13.7
+      }
+    },
+    {
+      "name": "Swimming",
+      "participating_countries": 200,
+      "total_medals": 3048,
+      "total_events": 55,
+      "total_athletes": 8761,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 1078
+        },
+        {
+          "NOC": "AUS",
+          "medal_count": 401
+        },
+        {
+          "NOC": "GER",
+          "medal_count": 156
+        }
+      ],
+      "first_appearance": 1896,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Swimming Men's 4 x 200 metres Freestyle Relay",
+        "Swimming Men's 100 metres Freestyle",
+        "Swimming Men's 4 x 100 metres Medley Relay"
+      ],
+      "gender_breakdown": {
+        "male": 57.5,
+        "female": 42.5
+      }
+    },
+    {
+      "name": "Badminton",
+      "participating_countries": 69,
+      "total_medals": 168,
+      "total_events": 5,
+      "total_athletes": 811,
+      "top_countries": [
+        {
+          "NOC": "CHN",
+          "medal_count": 64
+        },
+        {
+          "NOC": "KOR",
+          "medal_count": 35
+        },
+        {
+          "NOC": "INA",
+          "medal_count": 28
+        }
+      ],
+      "first_appearance": 1992,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Badminton Women's Doubles",
+        "Badminton Women's Singles",
+        "Badminton Men's Doubles"
+      ],
+      "gender_breakdown": {
+        "male": 49.2,
+        "female": 50.8
+      }
+    },
+    {
+      "name": "Sailing",
+      "participating_countries": 120,
+      "total_medals": 1232,
+      "total_events": 38,
+      "total_athletes": 4480,
+      "top_countries": [
+        {
+          "NOC": "GBR",
+          "medal_count": 143
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 140
+        },
+        {
+          "NOC": "NOR",
+          "medal_count": 125
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Sailing Mixed Three Person Keelboat",
+        "Sailing Mixed Two Person Keelboat",
+        "Sailing Mixed One Person Dinghy"
+      ],
+      "gender_breakdown": {
+        "male": 85.9,
+        "female": 14.1
+      }
+    },
+    {
+      "name": "Biathlon",
+      "participating_countries": 54,
+      "total_medals": 408,
+      "total_events": 13,
+      "total_athletes": 1135,
+      "top_countries": [
+        {
+          "NOC": "GER",
+          "medal_count": 80
+        },
+        {
+          "NOC": "NOR",
+          "medal_count": 62
+        },
+        {
+          "NOC": "RUS",
+          "medal_count": 57
+        }
+      ],
+      "first_appearance": 1960,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Biathlon Men's 20 kilometres",
+        "Biathlon Men's 4 x 7.5 kilometres Relay",
+        "Biathlon Men's 10 kilometres Sprint"
+      ],
+      "gender_breakdown": {
+        "male": 61.9,
+        "female": 38.1
+      }
+    },
+    {
+      "name": "Gymnastics",
+      "participating_countries": 93,
+      "total_medals": 2256,
+      "total_events": 27,
+      "total_athletes": 4132,
+      "top_countries": [
+        {
+          "NOC": "URS",
+          "medal_count": 288
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 194
+        },
+        {
+          "NOC": "JPN",
+          "medal_count": 166
+        }
+      ],
+      "first_appearance": 1896,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Gymnastics Men's Individual All-Around",
+        "Gymnastics Men's Team All-Around",
+        "Gymnastics Men's Parallel Bars"
+      ],
+      "gender_breakdown": {
+        "male": 65.8,
+        "female": 34.2
+      }
+    },
+    {
+      "name": "Art Competitions",
+      "participating_countries": 51,
+      "total_medals": 156,
+      "total_events": 29,
+      "total_athletes": 1814,
+      "top_countries": [
+        {
+          "NOC": "GER",
+          "medal_count": 26
+        },
+        {
+          "NOC": "FRA",
+          "medal_count": 15
+        },
+        {
+          "NOC": "ITA",
+          "medal_count": 14
+        }
+      ],
+      "first_appearance": 1912,
+      "latest_appearance": 1948,
+      "popular_events": [
+        "Art Competitions Mixed Painting, Unknown Event",
+        "Art Competitions Mixed Sculpturing, Unknown Event",
+        "Art Competitions Mixed Painting, Paintings"
+      ],
+      "gender_breakdown": {
+        "male": 89.5,
+        "female": 10.5
+      }
+    },
+    {
+      "name": "Alpine Skiing",
+      "participating_countries": 101,
+      "total_medals": 428,
+      "total_events": 10,
+      "total_athletes": 2734,
+      "top_countries": [
+        {
+          "NOC": "AUT",
+          "medal_count": 114
+        },
+        {
+          "NOC": "SUI",
+          "medal_count": 59
+        },
+        {
+          "NOC": "FRA",
+          "medal_count": 45
+        }
+      ],
+      "first_appearance": 1936,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Alpine Skiing Men's Slalom",
+        "Alpine Skiing Men's Giant Slalom",
+        "Alpine Skiing Men's Downhill"
+      ],
+      "gender_breakdown": {
+        "male": 61.5,
+        "female": 38.5
+      }
+    },
+    {
+      "name": "Handball",
+      "participating_countries": 47,
+      "total_medals": 1060,
+      "total_events": 2,
+      "total_athletes": 2699,
+      "top_countries": [
+        {
+          "NOC": "KOR",
+          "medal_count": 96
+        },
+        {
+          "NOC": "NOR",
+          "medal_count": 85
+        },
+        {
+          "NOC": "URS",
+          "medal_count": 84
+        }
+      ],
+      "first_appearance": 1936,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Handball Men's Handball",
+        "Handball Women's Handball"
+      ],
+      "gender_breakdown": {
+        "male": 61.8,
+        "female": 38.2
+      }
+    },
+    {
+      "name": "Weightlifting",
+      "participating_countries": 150,
+      "total_medals": 646,
+      "total_events": 21,
+      "total_athletes": 2880,
+      "top_countries": [
+        {
+          "NOC": "URS",
+          "medal_count": 62
+        },
+        {
+          "NOC": "CHN",
+          "medal_count": 57
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 42
+        }
+      ],
+      "first_appearance": 1896,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Weightlifting Men's Lightweight",
+        "Weightlifting Men's Featherweight",
+        "Weightlifting Men's Middleweight"
+      ],
+      "gender_breakdown": {
+        "male": 88.2,
+        "female": 11.8
+      }
+    },
+    {
+      "name": "Wrestling",
+      "participating_countries": 131,
+      "total_medals": 1296,
+      "total_events": 30,
+      "total_athletes": 4987,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 128
+        },
+        {
+          "NOC": "URS",
+          "medal_count": 116
+        },
+        {
+          "NOC": "SWE",
+          "medal_count": 86
+        }
+      ],
+      "first_appearance": 1896,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Wrestling Men's Lightweight, Greco-Roman",
+        "Wrestling Men's Featherweight, Greco-Roman",
+        "Wrestling Men's Lightweight, Freestyle"
+      ],
+      "gender_breakdown": {
+        "male": 95.8,
+        "female": 4.2
+      }
+    },
+    {
+      "name": "Luge",
+      "participating_countries": 49,
+      "total_medals": 180,
+      "total_events": 4,
+      "total_athletes": 771,
+      "top_countries": [
+        {
+          "NOC": "GER",
+          "medal_count": 47
+        },
+        {
+          "NOC": "GDR",
+          "medal_count": 37
+        },
+        {
+          "NOC": "AUT",
+          "medal_count": 27
+        }
+      ],
+      "first_appearance": 1964,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Luge Men's Singles",
+        "Luge Mixed (Men)'s Doubles",
+        "Luge Women's Singles"
+      ],
+      "gender_breakdown": {
+        "male": 74.5,
+        "female": 25.5
+      }
+    },
+    {
+      "name": "Water Polo",
+      "participating_countries": 52,
+      "total_medals": 1057,
+      "total_events": 2,
+      "total_athletes": 2599,
+      "top_countries": [
+        {
+          "NOC": "HUN",
+          "medal_count": 172
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 150
+        },
+        {
+          "NOC": "ITA",
+          "medal_count": 120
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Water Polo Men's Water Polo",
+        "Water Polo Women's Water Polo"
+      ],
+      "gender_breakdown": {
+        "male": 87.3,
+        "female": 12.7
+      }
+    },
+    {
+      "name": "Hockey",
+      "participating_countries": 43,
+      "total_medals": 1528,
+      "total_events": 2,
+      "total_athletes": 3813,
+      "top_countries": [
+        {
+          "NOC": "NED",
+          "medal_count": 255
+        },
+        {
+          "NOC": "AUS",
+          "medal_count": 188
+        },
+        {
+          "NOC": "GER",
+          "medal_count": 182
+        }
+      ],
+      "first_appearance": 1908,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Hockey Men's Hockey",
+        "Hockey Women's Hockey"
+      ],
+      "gender_breakdown": {
+        "male": 73.1,
+        "female": 26.9
+      }
+    },
+    {
+      "name": "Rowing",
+      "participating_countries": 101,
+      "total_medals": 2945,
+      "total_events": 25,
+      "total_athletes": 7684,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 375
+        },
+        {
+          "NOC": "GBR",
+          "medal_count": 270
+        },
+        {
+          "NOC": "GER",
+          "medal_count": 236
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Rowing Men's Coxed Eights",
+        "Rowing Men's Coxed Fours",
+        "Rowing Men's Coxless Fours"
+      ],
+      "gender_breakdown": {
+        "male": 79.3,
+        "female": 20.7
+      }
+    },
+    {
+      "name": "Bobsleigh",
+      "participating_countries": 54,
+      "total_medals": 398,
+      "total_events": 4,
+      "total_athletes": 1694,
+      "top_countries": [
+        {
+          "NOC": "SUI",
+          "medal_count": 92
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 74
+        },
+        {
+          "NOC": "GER",
+          "medal_count": 63
+        }
+      ],
+      "first_appearance": 1924,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Bobsleigh Men's Four",
+        "Bobsleigh Men's Two",
+        "Bobsleigh Men's Four/Five"
+      ],
+      "gender_breakdown": {
+        "male": 95.3,
+        "female": 4.7
+      }
+    },
+    {
+      "name": "Fencing",
+      "participating_countries": 101,
+      "total_medals": 1743,
+      "total_events": 18,
+      "total_athletes": 4118,
+      "top_countries": [
+        {
+          "NOC": "ITA",
+          "medal_count": 359
+        },
+        {
+          "NOC": "FRA",
+          "medal_count": 310
+        },
+        {
+          "NOC": "HUN",
+          "medal_count": 236
+        }
+      ],
+      "first_appearance": 1896,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Fencing Men's epee, Team",
+        "Fencing Men's epee, Individual",
+        "Fencing Men's Foil, Individual"
+      ],
+      "gender_breakdown": {
+        "male": 81.4,
+        "female": 18.6
+      }
+    },
+    {
+      "name": "Equestrianism",
+      "participating_countries": 76,
+      "total_medals": 965,
+      "total_events": 18,
+      "total_athletes": 2345,
+      "top_countries": [
+        {
+          "NOC": "GER",
+          "medal_count": 143
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 132
+        },
+        {
+          "NOC": "SWE",
+          "medal_count": 85
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Equestrianism Mixed Jumping, Individual",
+        "Equestrianism Mixed Jumping, Team",
+        "Equestrianism Mixed Three-Day Event, Individual"
+      ],
+      "gender_breakdown": {
+        "male": 80.4,
+        "female": 19.6
+      }
+    },
+    {
+      "name": "Shooting",
+      "participating_countries": 150,
+      "total_medals": 1228,
+      "total_events": 83,
+      "total_athletes": 4879,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 193
+        },
+        {
+          "NOC": "SWE",
+          "medal_count": 126
+        },
+        {
+          "NOC": "GBR",
+          "medal_count": 99
+        }
+      ],
+      "first_appearance": 1896,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Shooting Men's Small-Bore Rifle, Prone, 50 metres",
+        "Shooting Men's Free Pistol, 50 metres",
+        "Shooting Men's Rapid-Fire Pistol, 25 metres"
+      ],
+      "gender_breakdown": {
+        "male": 84.9,
+        "female": 15.1
+      }
+    },
+    {
+      "name": "Boxing",
+      "participating_countries": 175,
+      "total_medals": 944,
+      "total_events": 15,
+      "total_athletes": 5254,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 113
+        },
+        {
+          "NOC": "CUB",
+          "medal_count": 73
+        },
+        {
+          "NOC": "GBR",
+          "medal_count": 56
+        }
+      ],
+      "first_appearance": 1904,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Boxing Men's Lightweight",
+        "Boxing Men's Welterweight",
+        "Boxing Men's Bantamweight"
+      ],
+      "gender_breakdown": {
+        "male": 98.8,
+        "female": 1.2
+      }
+    },
+    {
+      "name": "Taekwondo",
+      "participating_countries": 105,
+      "total_medals": 144,
+      "total_events": 8,
+      "total_athletes": 470,
+      "top_countries": [
+        {
+          "NOC": "KOR",
+          "medal_count": 19
+        },
+        {
+          "NOC": "CHN",
+          "medal_count": 10
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 9
+        }
+      ],
+      "first_appearance": 2000,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Taekwondo Men's Welterweight",
+        "Taekwondo Men's Featherweight",
+        "Taekwondo Men's Flyweight"
+      ],
+      "gender_breakdown": {
+        "male": 50.7,
+        "female": 49.3
+      }
+    },
+    {
+      "name": "Cycling",
+      "participating_countries": 145,
+      "total_medals": 1263,
+      "total_events": 44,
+      "total_athletes": 5819,
+      "top_countries": [
+        {
+          "NOC": "GBR",
+          "medal_count": 182
+        },
+        {
+          "NOC": "FRA",
+          "medal_count": 151
+        },
+        {
+          "NOC": "ITA",
+          "medal_count": 124
+        }
+      ],
+      "first_appearance": 1896,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Cycling Men's Road Race, Individual",
+        "Cycling Men's Team Pursuit, 4,000 metres",
+        "Cycling Men's 100 kilometres Team Time Trial"
+      ],
+      "gender_breakdown": {
+        "male": 87.2,
+        "female": 12.8
+      }
+    },
+    {
+      "name": "Diving",
+      "participating_countries": 82,
+      "total_medals": 427,
+      "total_events": 10,
+      "total_athletes": 1466,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 140
+        },
+        {
+          "NOC": "CHN",
+          "medal_count": 88
+        },
+        {
+          "NOC": "GER",
+          "medal_count": 30
+        }
+      ],
+      "first_appearance": 1904,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Diving Men's Springboard",
+        "Diving Men's Platform",
+        "Diving Women's Springboard"
+      ],
+      "gender_breakdown": {
+        "male": 57.4,
+        "female": 42.6
+      }
+    },
+    {
+      "name": "Canoeing",
+      "participating_countries": 99,
+      "total_medals": 1165,
+      "total_events": 27,
+      "total_athletes": 3204,
+      "top_countries": [
+        {
+          "NOC": "GER",
+          "medal_count": 163
+        },
+        {
+          "NOC": "HUN",
+          "medal_count": 158
+        },
+        {
+          "NOC": "URS",
+          "medal_count": 87
+        }
+      ],
+      "first_appearance": 1936,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Canoeing Men's Kayak Fours, 1,000 metres",
+        "Canoeing Men's Kayak Doubles, 1,000 metres",
+        "Canoeing Men's Canadian Doubles, 1,000 metres"
+      ],
+      "gender_breakdown": {
+        "male": 77.6,
+        "female": 22.4
+      }
+    },
+    {
+      "name": "Tennis",
+      "participating_countries": 93,
+      "total_medals": 340,
+      "total_events": 9,
+      "total_athletes": 1246,
+      "top_countries": [
+        {
+          "NOC": "GBR",
+          "medal_count": 67
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 62
+        },
+        {
+          "NOC": "FRA",
+          "medal_count": 38
+        }
+      ],
+      "first_appearance": 1896,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Tennis Men's Singles",
+        "Tennis Men's Doubles",
+        "Tennis Women's Singles"
+      ],
+      "gender_breakdown": {
+        "male": 58.8,
+        "female": 41.2
+      }
+    },
+    {
+      "name": "Modern Pentathlon",
+      "participating_countries": 57,
+      "total_medals": 186,
+      "total_events": 3,
+      "total_athletes": 864,
+      "top_countries": [
+        {
+          "NOC": "HUN",
+          "medal_count": 38
+        },
+        {
+          "NOC": "URS",
+          "medal_count": 27
+        },
+        {
+          "NOC": "SWE",
+          "medal_count": 25
+        }
+      ],
+      "first_appearance": 1912,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Modern Pentathlon Men's Individual",
+        "Modern Pentathlon Men's Team",
+        "Modern Pentathlon Women's Individual"
+      ],
+      "gender_breakdown": {
+        "male": 90.2,
+        "female": 9.8
+      }
+    },
+    {
+      "name": "Figure Skating",
+      "participating_countries": 55,
+      "total_medals": 386,
+      "total_events": 6,
+      "total_athletes": 1572,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 66
+        },
+        {
+          "NOC": "RUS",
+          "medal_count": 52
+        },
+        {
+          "NOC": "URS",
+          "medal_count": 44
+        }
+      ],
+      "first_appearance": 1908,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Figure Skating Mixed Pairs",
+        "Figure Skating Women's Singles",
+        "Figure Skating Men's Singles"
+      ],
+      "gender_breakdown": {
+        "male": 49.0,
+        "female": 51.0
+      }
+    },
+    {
+      "name": "Golf",
+      "participating_countries": 42,
+      "total_medals": 46,
+      "total_events": 3,
+      "total_athletes": 218,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 38
+        },
+        {
+          "NOC": "GBR",
+          "medal_count": 3
+        },
+        {
+          "NOC": "CAN",
+          "medal_count": 1
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Golf Men's Individual",
+        "Golf Women's Individual",
+        "Golf Men's Team"
+      ],
+      "gender_breakdown": {
+        "male": 71.7,
+        "female": 28.3
+      }
+    },
+    {
+      "name": "Softball",
+      "participating_countries": 13,
+      "total_medals": 179,
+      "total_events": 1,
+      "total_athletes": 367,
+      "top_countries": [
+        {
+          "NOC": "AUS",
+          "medal_count": 60
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 60
+        },
+        {
+          "NOC": "JPN",
+          "medal_count": 44
+        }
+      ],
+      "first_appearance": 1996,
+      "latest_appearance": 2008,
+      "popular_events": [
+        "Softball Women's Softball"
+      ],
+      "gender_breakdown": {
+        "male": 0.0,
+        "female": 100.0
+      }
+    },
+    {
+      "name": "Archery",
+      "participating_countries": 98,
+      "total_medals": 353,
+      "total_events": 29,
+      "total_athletes": 1113,
+      "top_countries": [
+        {
+          "NOC": "KOR",
+          "medal_count": 69
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 57
+        },
+        {
+          "NOC": "BEL",
+          "medal_count": 52
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Archery Men's Individual",
+        "Archery Women's Individual",
+        "Archery Men's Team"
+      ],
+      "gender_breakdown": {
+        "male": 56.5,
+        "female": 43.5
+      }
+    },
+    {
+      "name": "Volleyball",
+      "participating_countries": 48,
+      "total_medals": 969,
+      "total_events": 2,
+      "total_athletes": 2502,
+      "top_countries": [
+        {
+          "NOC": "URS",
+          "medal_count": 141
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 120
+        },
+        {
+          "NOC": "BRA",
+          "medal_count": 120
+        }
+      ],
+      "first_appearance": 1964,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Volleyball Men's Volleyball",
+        "Volleyball Women's Volleyball"
+      ],
+      "gender_breakdown": {
+        "male": 54.7,
+        "female": 45.3
+      }
+    },
+    {
+      "name": "Synchronized Swimming",
+      "participating_countries": 47,
+      "total_medals": 215,
+      "total_events": 3,
+      "total_athletes": 549,
+      "top_countries": [
+        {
+          "NOC": "RUS",
+          "medal_count": 54
+        },
+        {
+          "NOC": "JPN",
+          "medal_count": 52
+        },
+        {
+          "NOC": "CHN",
+          "medal_count": 31
+        }
+      ],
+      "first_appearance": 1984,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Synchronized Swimming Women's Team",
+        "Synchronized Swimming Women's Duet",
+        "Synchronized Swimming Women's Solo"
+      ],
+      "gender_breakdown": {
+        "male": 0.0,
+        "female": 100.0
+      }
+    },
+    {
+      "name": "Table Tennis",
+      "participating_countries": 103,
+      "total_medals": 168,
+      "total_events": 6,
+      "total_athletes": 749,
+      "top_countries": [
+        {
+          "NOC": "CHN",
+          "medal_count": 81
+        },
+        {
+          "NOC": "KOR",
+          "medal_count": 33
+        },
+        {
+          "NOC": "GER",
+          "medal_count": 16
+        }
+      ],
+      "first_appearance": 1988,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Table Tennis Men's Singles",
+        "Table Tennis Women's Singles",
+        "Table Tennis Men's Doubles"
+      ],
+      "gender_breakdown": {
+        "male": 51.3,
+        "female": 48.7
+      }
+    },
+    {
+      "name": "Nordic Combined",
+      "participating_countries": 31,
+      "total_medals": 165,
+      "total_events": 5,
+      "total_athletes": 604,
+      "top_countries": [
+        {
+          "NOC": "NOR",
+          "medal_count": 40
+        },
+        {
+          "NOC": "AUT",
+          "medal_count": 29
+        },
+        {
+          "NOC": "FIN",
+          "medal_count": 23
+        }
+      ],
+      "first_appearance": 1924,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Nordic Combined Men's Individual",
+        "Nordic Combined Men's Team",
+        "Nordic Combined Men's Large Hill / 10 km, Individual"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Baseball",
+      "participating_countries": 16,
+      "total_medals": 336,
+      "total_events": 1,
+      "total_athletes": 761,
+      "top_countries": [
+        {
+          "NOC": "CUB",
+          "medal_count": 112
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 68
+        },
+        {
+          "NOC": "JPN",
+          "medal_count": 64
+        }
+      ],
+      "first_appearance": 1992,
+      "latest_appearance": 2008,
+      "popular_events": [
+        "Baseball Men's Baseball"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Rhythmic Gymnastics",
+      "participating_countries": 48,
+      "total_medals": 132,
+      "total_events": 2,
+      "total_athletes": 567,
+      "top_countries": [
+        {
+          "NOC": "RUS",
+          "medal_count": 45
+        },
+        {
+          "NOC": "BLR",
+          "medal_count": 21
+        },
+        {
+          "NOC": "BUL",
+          "medal_count": 18
+        }
+      ],
+      "first_appearance": 1984,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Rhythmic Gymnastics Women's Group",
+        "Rhythmic Gymnastics Women's Individual"
+      ],
+      "gender_breakdown": {
+        "male": 0.0,
+        "female": 100.0
+      }
+    },
+    {
+      "name": "Freestyle Skiing",
+      "participating_countries": 41,
+      "total_medals": 102,
+      "total_events": 10,
+      "total_athletes": 626,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 21
+        },
+        {
+          "NOC": "CAN",
+          "medal_count": 18
+        },
+        {
+          "NOC": "FRA",
+          "medal_count": 12
+        }
+      ],
+      "first_appearance": 1992,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Freestyle Skiing Men's Moguls",
+        "Freestyle Skiing Women's Moguls",
+        "Freestyle Skiing Men's Aerials"
+      ],
+      "gender_breakdown": {
+        "male": 53.8,
+        "female": 46.2
+      }
+    },
+    {
+      "name": "Rugby Sevens",
+      "participating_countries": 14,
+      "total_medals": 74,
+      "total_events": 2,
+      "total_athletes": 299,
+      "top_countries": [
+        {
+          "NOC": "FIJ",
+          "medal_count": 13
+        },
+        {
+          "NOC": "RSA",
+          "medal_count": 13
+        },
+        {
+          "NOC": "AUS",
+          "medal_count": 12
+        }
+      ],
+      "first_appearance": 2016,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Rugby Sevens Men's Rugby Sevens",
+        "Rugby Sevens Women's Rugby Sevens"
+      ],
+      "gender_breakdown": {
+        "male": 50.5,
+        "female": 49.5
+      }
+    },
+    {
+      "name": "Trampolining",
+      "participating_countries": 25,
+      "total_medals": 30,
+      "total_events": 2,
+      "total_athletes": 93,
+      "top_countries": [
+        {
+          "NOC": "CHN",
+          "medal_count": 11
+        },
+        {
+          "NOC": "CAN",
+          "medal_count": 7
+        },
+        {
+          "NOC": "RUS",
+          "medal_count": 4
+        }
+      ],
+      "first_appearance": 2000,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Trampolining Men's Individual",
+        "Trampolining Women's Individual"
+      ],
+      "gender_breakdown": {
+        "male": 50.0,
+        "female": 50.0
+      }
+    },
+    {
+      "name": "Beach Volleyball",
+      "participating_countries": 41,
+      "total_medals": 72,
+      "total_events": 2,
+      "total_athletes": 383,
+      "top_countries": [
+        {
+          "NOC": "BRA",
+          "medal_count": 26
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 20
+        },
+        {
+          "NOC": "GER",
+          "medal_count": 6
+        }
+      ],
+      "first_appearance": 1996,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Beach Volleyball Men's Beach Volleyball",
+        "Beach Volleyball Women's Beach Volleyball"
+      ],
+      "gender_breakdown": {
+        "male": 51.1,
+        "female": 48.9
+      }
+    },
+    {
+      "name": "Triathlon",
+      "participating_countries": 54,
+      "total_medals": 30,
+      "total_events": 2,
+      "total_athletes": 355,
+      "top_countries": [
+        {
+          "NOC": "AUS",
+          "medal_count": 5
+        },
+        {
+          "NOC": "GBR",
+          "medal_count": 5
+        },
+        {
+          "NOC": "SUI",
+          "medal_count": 5
+        }
+      ],
+      "first_appearance": 2000,
+      "latest_appearance": 2016,
+      "popular_events": [
+        "Triathlon Men's Olympic Distance",
+        "Triathlon Women's Olympic Distance"
+      ],
+      "gender_breakdown": {
+        "male": 50.3,
+        "female": 49.7
+      }
+    },
+    {
+      "name": "Ski Jumping",
+      "participating_countries": 37,
+      "total_medals": 207,
+      "total_events": 4,
+      "total_athletes": 874,
+      "top_countries": [
+        {
+          "NOC": "AUT",
+          "medal_count": 43
+        },
+        {
+          "NOC": "NOR",
+          "medal_count": 39
+        },
+        {
+          "NOC": "FIN",
+          "medal_count": 34
+        }
+      ],
+      "first_appearance": 1924,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Ski Jumping Men's Normal Hill, Individual",
+        "Ski Jumping Men's Large Hill, Individual",
+        "Ski Jumping Men's Large Hill, Team"
+      ],
+      "gender_breakdown": {
+        "male": 98.8,
+        "female": 1.2
+      }
+    },
+    {
+      "name": "Curling",
+      "participating_countries": 16,
+      "total_medals": 152,
+      "total_events": 2,
+      "total_athletes": 346,
+      "top_countries": [
+        {
+          "NOC": "CAN",
+          "medal_count": 48
+        },
+        {
+          "NOC": "SWE",
+          "medal_count": 29
+        },
+        {
+          "NOC": "SUI",
+          "medal_count": 23
+        }
+      ],
+      "first_appearance": 1924,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Curling Men's Curling",
+        "Curling Women's Curling"
+      ],
+      "gender_breakdown": {
+        "male": 52.1,
+        "female": 47.9
+      }
+    },
+    {
+      "name": "Snowboarding",
+      "participating_countries": 35,
+      "total_medals": 90,
+      "total_events": 12,
+      "total_athletes": 567,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 24
+        },
+        {
+          "NOC": "SUI",
+          "medal_count": 12
+        },
+        {
+          "NOC": "FRA",
+          "medal_count": 10
+        }
+      ],
+      "first_appearance": 1998,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Snowboarding Men's Halfpipe",
+        "Snowboarding Women's Halfpipe",
+        "Snowboarding Men's Parallel Giant Slalom"
+      ],
+      "gender_breakdown": {
+        "male": 55.6,
+        "female": 44.4
+      }
+    },
+    {
+      "name": "Rugby",
+      "participating_countries": 7,
+      "total_medals": 162,
+      "total_events": 1,
+      "total_athletes": 155,
+      "top_countries": [
+        {
+          "NOC": "FRA",
+          "medal_count": 49
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 36
+        },
+        {
+          "NOC": "GBR",
+          "medal_count": 30
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 1924,
+      "popular_events": [
+        "Rugby Men's Rugby"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Short Track Speed Skating",
+      "participating_countries": 35,
+      "total_medals": 284,
+      "total_events": 8,
+      "total_athletes": 443,
+      "top_countries": [
+        {
+          "NOC": "KOR",
+          "medal_count": 73
+        },
+        {
+          "NOC": "CAN",
+          "medal_count": 70
+        },
+        {
+          "NOC": "CHN",
+          "medal_count": 49
+        }
+      ],
+      "first_appearance": 1992,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Short Track Speed Skating Men's 5,000 metres Relay",
+        "Short Track Speed Skating Women's 3,000 metres Relay",
+        "Short Track Speed Skating Men's 1,000 metres"
+      ],
+      "gender_breakdown": {
+        "male": 50.4,
+        "female": 49.6
+      }
+    },
+    {
+      "name": "Skeleton",
+      "participating_countries": 28,
+      "total_medals": 30,
+      "total_events": 2,
+      "total_athletes": 146,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 8
+        },
+        {
+          "NOC": "GBR",
+          "medal_count": 6
+        },
+        {
+          "NOC": "CAN",
+          "medal_count": 4
+        }
+      ],
+      "first_appearance": 1928,
+      "latest_appearance": 2014,
+      "popular_events": [
+        "Skeleton Men's Skeleton",
+        "Skeleton Women's Skeleton"
+      ],
+      "gender_breakdown": {
+        "male": 66.8,
+        "female": 33.2
+      }
+    },
+    {
+      "name": "Lacrosse",
+      "participating_countries": 3,
+      "total_medals": 60,
+      "total_events": 1,
+      "total_athletes": 60,
+      "top_countries": [
+        {
+          "NOC": "CAN",
+          "medal_count": 36
+        },
+        {
+          "NOC": "GBR",
+          "medal_count": 12
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 12
+        }
+      ],
+      "first_appearance": 1904,
+      "latest_appearance": 1908,
+      "popular_events": [
+        "Lacrosse Men's Lacrosse"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Polo",
+      "participating_countries": 9,
+      "total_medals": 67,
+      "total_events": 1,
+      "total_athletes": 87,
+      "top_countries": [
+        {
+          "NOC": "GBR",
+          "medal_count": 30
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 12
+        },
+        {
+          "NOC": "ARG",
+          "medal_count": 9
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 1936,
+      "popular_events": [
+        "Polo Men's Polo"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Cricket",
+      "participating_countries": 2,
+      "total_medals": 24,
+      "total_events": 1,
+      "total_athletes": 24,
+      "top_countries": [
+        {
+          "NOC": "GBR",
+          "medal_count": 21
+        },
+        {
+          "NOC": "FRA",
+          "medal_count": 3
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 1900,
+      "popular_events": [
+        "Cricket Men's Cricket"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Racquets",
+      "participating_countries": 1,
+      "total_medals": 10,
+      "total_events": 2,
+      "total_athletes": 7,
+      "top_countries": [
+        {
+          "NOC": "GBR",
+          "medal_count": 10
+        }
+      ],
+      "first_appearance": 1908,
+      "latest_appearance": 1908,
+      "popular_events": [
+        "Racquets Men's Doubles",
+        "Racquets Men's Singles"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Motorboating",
+      "participating_countries": 2,
+      "total_medals": 7,
+      "total_events": 3,
+      "total_athletes": 14,
+      "top_countries": [
+        {
+          "NOC": "GBR",
+          "medal_count": 6
+        },
+        {
+          "NOC": "FRA",
+          "medal_count": 1
+        }
+      ],
+      "first_appearance": 1908,
+      "latest_appearance": 1908,
+      "popular_events": [
+        "Motorboating Mixed A-Class (Open)",
+        "Motorboating Mixed B-Class (Under 60 Feet)",
+        "Motorboating Mixed C-Class"
+      ],
+      "gender_breakdown": {
+        "male": 94.1,
+        "female": 5.9
+      }
+    },
+    {
+      "name": "Military Ski Patrol",
+      "participating_countries": 6,
+      "total_medals": 12,
+      "total_events": 1,
+      "total_athletes": 24,
+      "top_countries": [
+        {
+          "NOC": "FIN",
+          "medal_count": 4
+        },
+        {
+          "NOC": "FRA",
+          "medal_count": 4
+        },
+        {
+          "NOC": "SUI",
+          "medal_count": 4
+        }
+      ],
+      "first_appearance": 1924,
+      "latest_appearance": 1924,
+      "popular_events": [
+        "Military Ski Patrol Men's Military Ski Patrol"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Croquet",
+      "participating_countries": 1,
+      "total_medals": 8,
+      "total_events": 3,
+      "total_athletes": 10,
+      "top_countries": [
+        {
+          "NOC": "FRA",
+          "medal_count": 8
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 1900,
+      "popular_events": [
+        "Croquet Mixed Singles, One Ball",
+        "Croquet Mixed Singles, Two Balls",
+        "Croquet Mixed Doubles"
+      ],
+      "gender_breakdown": {
+        "male": 68.4,
+        "female": 31.6
+      }
+    },
+    {
+      "name": "Jeu De Paume",
+      "participating_countries": 2,
+      "total_medals": 3,
+      "total_events": 1,
+      "total_athletes": 11,
+      "top_countries": [
+        {
+          "NOC": "GBR",
+          "medal_count": 2
+        },
+        {
+          "NOC": "USA",
+          "medal_count": 1
+        }
+      ],
+      "first_appearance": 1908,
+      "latest_appearance": 1908,
+      "popular_events": [
+        "Jeu De Paume Men's Singles"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Roque",
+      "participating_countries": 1,
+      "total_medals": 3,
+      "total_events": 1,
+      "total_athletes": 4,
+      "top_countries": [
+        {
+          "NOC": "USA",
+          "medal_count": 3
+        }
+      ],
+      "first_appearance": 1904,
+      "latest_appearance": 1904,
+      "popular_events": [
+        "Roque Men's Singles"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Alpinism",
+      "participating_countries": 6,
+      "total_medals": 25,
+      "total_events": 1,
+      "total_athletes": 25,
+      "top_countries": [
+        {
+          "NOC": "GBR",
+          "medal_count": 12
+        },
+        {
+          "NOC": "IND",
+          "medal_count": 7
+        },
+        {
+          "NOC": "GER",
+          "medal_count": 2
+        }
+      ],
+      "first_appearance": 1924,
+      "latest_appearance": 1936,
+      "popular_events": [
+        "Alpinism Mixed Alpinism"
+      ],
+      "gender_breakdown": {
+        "male": 96.0,
+        "female": 4.0
+      }
+    },
+    {
+      "name": "Basque Pelota",
+      "participating_countries": 1,
+      "total_medals": 2,
+      "total_events": 1,
+      "total_athletes": 2,
+      "top_countries": [
+        {
+          "NOC": "ESP",
+          "medal_count": 2
+        }
+      ],
+      "first_appearance": 1900,
+      "latest_appearance": 1900,
+      "popular_events": [
+        "Basque Pelota Men's Two-Man Teams With Cesta"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    },
+    {
+      "name": "Aeronautics",
+      "participating_countries": 1,
+      "total_medals": 1,
+      "total_events": 1,
+      "total_athletes": 1,
+      "top_countries": [
+        {
+          "NOC": "SUI",
+          "medal_count": 1
+        }
+      ],
+      "first_appearance": 1936,
+      "latest_appearance": 1936,
+      "popular_events": [
+        "Aeronautics Mixed Aeronautics"
+      ],
+      "gender_breakdown": {
+        "male": 100.0,
+        "female": 0.0
+      }
+    }
+  ]
+}
