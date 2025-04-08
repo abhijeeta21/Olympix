@@ -1,0 +1,49 @@
+{
+    "country": "CPV",
+    "medal_counts": {},
+    "participation": {
+        "1996": 3,
+        "2000": 2,
+        "2004": 3,
+        "2008": 2,
+        "2012": 3,
+        "2016": 5
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 27.90909090909091,
+            "avg_height": 176.8181818181818,
+            "avg_weight": 65.0909090909091,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 26.5,
+            "avg_height": 188.0,
+            "avg_weight": 81.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 25.0,
+            "avg_height": 166.0,
+            "avg_weight": 105.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Rhythmic Gymnastics",
+            "avg_age": 19.0,
+            "avg_height": 170.0,
+            "avg_weight": 60.666666666666664,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 23.0,
+            "avg_height": 169.0,
+            "avg_weight": 49.0,
+            "athlete_count": 1
+        }
+    ]
+}

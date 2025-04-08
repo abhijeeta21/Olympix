@@ -1,0 +1,16 @@
+{
+    "country": "NBO",
+    "medal_counts": {},
+    "participation": {
+        "1956": 2
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 22.5,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 2
+        }
+    ]
+}

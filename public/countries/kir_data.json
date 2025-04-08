@@ -1,0 +1,26 @@
+{
+    "country": "KIR",
+    "medal_counts": {},
+    "participation": {
+        "2004": 3,
+        "2008": 2,
+        "2012": 3,
+        "2016": 3
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 19.714285714285715,
+            "avg_height": 164.85714285714286,
+            "avg_weight": 66.85714285714286,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 25.0,
+            "avg_height": 170.5,
+            "avg_weight": 98.5,
+            "athlete_count": 2
+        }
+    ]
+}

@@ -1,0 +1,76 @@
+{
+    "country": "TGA",
+    "medal_counts": {
+        "Silver": 1
+    },
+    "participation": {
+        "1984": 7,
+        "1988": 5,
+        "1992": 5,
+        "1996": 5,
+        "2000": 3,
+        "2004": 5,
+        "2008": 3,
+        "2012": 3,
+        "2014": 1,
+        "2016": 7
+    },
+    "sports_stats": [
+        {
+            "Sport": "Archery",
+            "avg_age": 26.333333333333332,
+            "avg_height": 175.66666666666666,
+            "avg_weight": 81.66666666666667,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.2,
+            "avg_height": 177.52631578947367,
+            "avg_weight": 78.57894736842105,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.307692307692307,
+            "avg_height": 183.33333333333334,
+            "avg_weight": 83.53846153846153,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 25.0,
+            "avg_height": 176.0,
+            "avg_weight": 73.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Luge",
+            "avg_age": 26.0,
+            "avg_height": 184.0,
+            "avg_weight": 89.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 23.333333333333332,
+            "avg_height": 182.0,
+            "avg_weight": 78.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 32.0,
+            "avg_height": 192.0,
+            "avg_weight": 100.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 30.0,
+            "avg_height": 178.5,
+            "avg_weight": 101.0,
+            "athlete_count": 4
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "country": "NFL",
+    "medal_counts": {},
+    "participation": {
+        "1904": 1
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 21.0,
+            "avg_height": 170.0,
+            "avg_weight": 57.0,
+            "athlete_count": 1
+        }
+    ]
+}

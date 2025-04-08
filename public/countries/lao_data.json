@@ -1,0 +1,66 @@
+{
+    "country": "LAO",
+    "medal_counts": {},
+    "participation": {
+        "1980": 19,
+        "1988": 3,
+        "1992": 6,
+        "1996": 5,
+        "2000": 3,
+        "2004": 5,
+        "2008": 4,
+        "2012": 3,
+        "2016": 5
+    },
+    "sports_stats": [
+        {
+            "Sport": "Archery",
+            "avg_age": 24.0,
+            "avg_height": 180.0,
+            "avg_weight": 72.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 22.5,
+            "avg_height": 166.15384615384616,
+            "avg_weight": 57.42307692307692,
+            "athlete_count": 22
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.77777777777778,
+            "avg_height": 165.77777777777777,
+            "avg_weight": 56.55555555555556,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 25.0,
+            "avg_height": 182.0,
+            "avg_weight": 58.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 20.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 19.333333333333332,
+            "avg_height": 164.0,
+            "avg_weight": 57.5,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 17.0,
+            "avg_height": 166.25,
+            "avg_weight": 58.875,
+            "athlete_count": 7
+        }
+    ]
+}

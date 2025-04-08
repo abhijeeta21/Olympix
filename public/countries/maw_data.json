@@ -1,0 +1,53 @@
+{
+    "country": "MAW",
+    "medal_counts": {},
+    "participation": {
+        "1972": 16,
+        "1984": 15,
+        "1988": 16,
+        "1992": 4,
+        "1996": 2,
+        "2000": 2,
+        "2004": 4,
+        "2008": 4,
+        "2012": 3,
+        "2016": 5
+    },
+    "sports_stats": [
+        {
+            "Sport": "Archery",
+            "avg_age": 21.0,
+            "avg_height": 164.0,
+            "avg_weight": 58.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.282608695652176,
+            "avg_height": 170.09302325581396,
+            "avg_weight": 61.97674418604651,
+            "athlete_count": 30
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.8125,
+            "avg_height": 155.26666666666668,
+            "avg_weight": 60.6875,
+            "athlete_count": 15
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 29.764705882352942,
+            "avg_height": 162.8,
+            "avg_weight": 66.47058823529412,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 17.714285714285715,
+            "avg_height": 171.16666666666666,
+            "avg_weight": 69.66666666666667,
+            "athlete_count": 7
+        }
+    ]
+}

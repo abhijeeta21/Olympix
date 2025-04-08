@@ -1,0 +1,55 @@
+{
+    "country": "BOT",
+    "medal_counts": {
+        "Silver": 1
+    },
+    "participation": {
+        "1980": 7,
+        "1984": 7,
+        "1988": 8,
+        "1992": 6,
+        "1996": 7,
+        "2000": 7,
+        "2004": 11,
+        "2008": 11,
+        "2012": 4,
+        "2016": 12
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.93243243243243,
+            "avg_height": 176.23611111111111,
+            "avg_weight": 66.65753424657534,
+            "athlete_count": 47
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 24.77777777777778,
+            "avg_height": 172.5,
+            "avg_weight": 57.888888888888886,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 20.0,
+            "avg_height": 179.0,
+            "avg_weight": 60.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 48.0,
+            "avg_height": 180.0,
+            "avg_weight": 85.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.25,
+            "avg_height": 170.0,
+            "avg_weight": 66.0,
+            "athlete_count": 4
+        }
+    ]
+}

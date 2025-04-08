@@ -1,0 +1,57 @@
+{
+    "country": "YEM",
+    "medal_counts": {},
+    "participation": {
+        "1992": 8,
+        "1996": 4,
+        "2000": 2,
+        "2004": 3,
+        "2008": 5,
+        "2012": 4,
+        "2016": 3
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 20.571428571428573,
+            "avg_height": 169.85714285714286,
+            "avg_weight": 59.714285714285715,
+            "athlete_count": 14
+        },
+        {
+            "Sport": "Gymnastics",
+            "avg_age": 21.0,
+            "avg_height": 162.0,
+            "avg_weight": 54.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 21.0,
+            "avg_height": 168.0,
+            "avg_weight": 64.33333333333333,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 23.0,
+            "avg_height": 170.5,
+            "avg_weight": 67.5,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 19.5,
+            "avg_height": 164.0,
+            "avg_weight": 56.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 27.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        }
+    ]
+}

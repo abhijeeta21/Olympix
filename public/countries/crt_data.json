@@ -1,0 +1,23 @@
+{
+    "country": "CRT",
+    "medal_counts": {},
+    "participation": {
+        "1906": 8
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": null,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 8
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": null,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        }
+    ]
+}

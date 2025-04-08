@@ -1,0 +1,46 @@
+{
+    "country": "WIF",
+    "medal_counts": {
+        "Bronze": 5
+    },
+    "participation": {
+        "1960": 13
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.583333333333332,
+            "avg_height": 178.91666666666666,
+            "avg_weight": 70.66666666666667,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 23.0,
+            "avg_height": 177.0,
+            "avg_weight": 70.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 30.0,
+            "avg_height": 184.5,
+            "avg_weight": 79.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 44.5,
+            "avg_height": 181.0,
+            "avg_weight": 84.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 23.0,
+            "avg_height": 151.0,
+            "avg_weight": 58.0,
+            "athlete_count": 1
+        }
+    ]
+}

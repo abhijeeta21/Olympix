@@ -1,0 +1,94 @@
+{
+    "country": "ANG",
+    "medal_counts": {},
+    "participation": {
+        "1980": 11,
+        "1988": 24,
+        "1992": 28,
+        "1996": 28,
+        "2000": 30,
+        "2004": 30,
+        "2008": 32,
+        "2012": 33,
+        "2016": 26
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 25.103448275862068,
+            "avg_height": 171.53571428571428,
+            "avg_weight": 61.357142857142854,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Basketball",
+            "avg_age": 26.985915492957748,
+            "avg_height": 191.7887323943662,
+            "avg_weight": 90.22535211267606,
+            "athlete_count": 46
+        },
+        {
+            "Sport": "Beach Volleyball",
+            "avg_age": 40.5,
+            "avg_height": 189.0,
+            "avg_weight": 79.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 21.857142857142858,
+            "avg_height": 170.0,
+            "avg_weight": 61.42857142857143,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Canoeing",
+            "avg_age": 29.333333333333332,
+            "avg_height": 170.0,
+            "avg_weight": 69.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Handball",
+            "avg_age": 26.083333333333332,
+            "avg_height": 174.29113924050634,
+            "avg_weight": 72.13924050632912,
+            "athlete_count": 49
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 24.357142857142858,
+            "avg_height": 172.0,
+            "avg_weight": 70.0,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Rowing",
+            "avg_age": 26.5,
+            "avg_height": 180.0,
+            "avg_weight": 76.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 26.5,
+            "avg_height": 171.66666666666666,
+            "avg_weight": 72.66666666666667,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 36.333333333333336,
+            "avg_height": 176.0,
+            "avg_weight": 90.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 17.302325581395348,
+            "avg_height": 170.0,
+            "avg_weight": 61.404761904761905,
+            "athlete_count": 19
+        }
+    ]
+}

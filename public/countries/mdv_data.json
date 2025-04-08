@@ -1,0 +1,37 @@
+{
+    "country": "MDV",
+    "medal_counts": {},
+    "participation": {
+        "1988": 7,
+        "1992": 7,
+        "1996": 6,
+        "2000": 4,
+        "2004": 4,
+        "2008": 4,
+        "2012": 5,
+        "2016": 4
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 21.454545454545453,
+            "avg_height": 162.40625,
+            "avg_weight": 55.40625,
+            "athlete_count": 20
+        },
+        {
+            "Sport": "Badminton",
+            "avg_age": 22.0,
+            "avg_height": 165.0,
+            "avg_weight": 55.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.666666666666668,
+            "avg_height": 168.44444444444446,
+            "avg_weight": 53.44444444444444,
+            "athlete_count": 10
+        }
+    ]
+}

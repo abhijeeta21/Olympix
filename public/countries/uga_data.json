@@ -1,0 +1,90 @@
+{
+    "country": "UGA",
+    "medal_counts": {
+        "Silver": 3,
+        "Gold": 2,
+        "Bronze": 2
+    },
+    "participation": {
+        "1956": 3,
+        "1960": 10,
+        "1964": 13,
+        "1968": 11,
+        "1972": 33,
+        "1980": 13,
+        "1984": 26,
+        "1988": 24,
+        "1992": 8,
+        "1996": 10,
+        "2000": 13,
+        "2004": 11,
+        "2008": 11,
+        "2012": 15,
+        "2016": 21
+    },
+    "sports_stats": [
+        {
+            "Sport": "Archery",
+            "avg_age": 38.0,
+            "avg_height": 165.0,
+            "avg_weight": 67.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.843971631205672,
+            "avg_height": 173.42016806722688,
+            "avg_weight": 63.79831932773109,
+            "athlete_count": 81
+        },
+        {
+            "Sport": "Badminton",
+            "avg_age": 26.0,
+            "avg_height": 183.0,
+            "avg_weight": 65.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 22.676056338028168,
+            "avg_height": 170.98529411764707,
+            "avg_weight": 63.82608695652174,
+            "athlete_count": 56
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": null,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Hockey",
+            "avg_age": 27.764705882352942,
+            "avg_height": 171.58823529411765,
+            "avg_weight": 70.70588235294117,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 22.1,
+            "avg_height": 167.88888888888889,
+            "avg_weight": 61.5,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Table Tennis",
+            "avg_age": 29.666666666666668,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 21.714285714285715,
+            "avg_height": 163.71428571428572,
+            "avg_weight": 76.42857142857143,
+            "athlete_count": 6
+        }
+    ]
+}

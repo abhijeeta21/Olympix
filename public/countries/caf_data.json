@@ -1,0 +1,81 @@
+{
+    "country": "CAF",
+    "medal_counts": {},
+    "participation": {
+        "1968": 1,
+        "1984": 3,
+        "1988": 15,
+        "1992": 15,
+        "1996": 5,
+        "2000": 3,
+        "2004": 4,
+        "2008": 3,
+        "2012": 6,
+        "2016": 6
+    },
+    "sports_stats": [
+        {
+            "Sport": "Archery",
+            "avg_age": 42.0,
+            "avg_height": 172.0,
+            "avg_weight": 63.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.964285714285715,
+            "avg_height": 176.72727272727272,
+            "avg_weight": 68.04761904761905,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Basketball",
+            "avg_age": 25.0,
+            "avg_height": 192.58333333333334,
+            "avg_weight": 84.75,
+            "athlete_count": 12
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 21.666666666666668,
+            "avg_height": 169.2,
+            "avg_weight": 62.833333333333336,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 27.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 22.5,
+            "avg_height": 158.0,
+            "avg_weight": 48.0,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 18.666666666666668,
+            "avg_height": 166.0,
+            "avg_weight": 68.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 24.5,
+            "avg_height": 180.5,
+            "avg_weight": 61.75,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 24.0,
+            "avg_height": 163.0,
+            "avg_weight": null,
+            "athlete_count": 1
+        }
+    ]
+}

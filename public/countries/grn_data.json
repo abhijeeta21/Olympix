@@ -1,0 +1,48 @@
+{
+    "country": "GRN",
+    "medal_counts": {
+        "Gold": 1,
+        "Silver": 1
+    },
+    "participation": {
+        "1984": 6,
+        "1988": 6,
+        "1992": 4,
+        "1996": 5,
+        "2000": 3,
+        "2004": 5,
+        "2008": 9,
+        "2012": 8,
+        "2016": 6
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.054054054054053,
+            "avg_height": 175.76923076923077,
+            "avg_weight": 66.65384615384616,
+            "athlete_count": 29
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.833333333333332,
+            "avg_height": 173.6,
+            "avg_weight": 70.8,
+            "athlete_count": 8
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.0,
+            "avg_height": 173.25,
+            "avg_weight": 69.5,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 32.0,
+            "avg_height": 175.0,
+            "avg_weight": 66.0,
+            "athlete_count": 1
+        }
+    ]
+}

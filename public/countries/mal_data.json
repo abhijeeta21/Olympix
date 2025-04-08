@@ -1,0 +1,45 @@
+{
+    "country": "MAL",
+    "medal_counts": {},
+    "participation": {
+        "1956": 32,
+        "1960": 9
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 21.0,
+            "avg_height": 171.5,
+            "avg_weight": 59.25,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Hockey",
+            "avg_age": 25.666666666666668,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 32.5,
+            "avg_height": 161.5,
+            "avg_weight": 53.5,
+            "athlete_count": 5
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.5,
+            "avg_height": 165.5,
+            "avg_weight": 65.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 26.0,
+            "avg_height": 168.0,
+            "avg_weight": 71.7,
+            "athlete_count": 5
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+    "country": "PLW",
+    "medal_counts": {},
+    "participation": {
+        "2000": 5,
+        "2004": 4,
+        "2008": 5,
+        "2012": 5,
+        "2016": 5
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.0,
+            "avg_height": 164.77777777777777,
+            "avg_weight": 57.888888888888886,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Canoeing",
+            "avg_age": 22.0,
+            "avg_height": 153.0,
+            "avg_weight": 69.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 35.0,
+            "avg_height": 165.0,
+            "avg_weight": 63.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 17.571428571428573,
+            "avg_height": 166.0,
+            "avg_weight": 60.833333333333336,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 23.5,
+            "avg_height": 158.5,
+            "avg_weight": 65.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 27.75,
+            "avg_height": 176.0,
+            "avg_weight": 100.25,
+            "athlete_count": 3
+        }
+    ]
+}

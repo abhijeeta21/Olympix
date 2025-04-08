@@ -1,0 +1,44 @@
+{
+    "country": "RHO",
+    "medal_counts": {},
+    "participation": {
+        "1960": 10
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.5,
+            "avg_height": 163.5,
+            "avg_weight": 60.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 22.5,
+            "avg_height": 168.0,
+            "avg_weight": 60.25,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Diving",
+            "avg_age": 20.0,
+            "avg_height": 161.0,
+            "avg_weight": 55.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 27.5,
+            "avg_height": 184.0,
+            "avg_weight": 83.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 47.0,
+            "avg_height": 177.0,
+            "avg_weight": 83.0,
+            "athlete_count": 1
+        }
+    ]
+}

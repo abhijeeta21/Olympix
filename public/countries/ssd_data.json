@@ -1,0 +1,16 @@
+{
+    "country": "SSD",
+    "medal_counts": {},
+    "participation": {
+        "2016": 3
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.0,
+            "avg_height": 173.33333333333334,
+            "avg_weight": 63.333333333333336,
+            "athlete_count": 3
+        }
+    ]
+}

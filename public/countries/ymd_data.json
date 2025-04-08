@@ -1,0 +1,23 @@
+{
+    "country": "YMD",
+    "medal_counts": {},
+    "participation": {
+        "1988": 5
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 19.0,
+            "avg_height": 175.0,
+            "avg_weight": 65.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 30.5,
+            "avg_height": 175.0,
+            "avg_weight": 62.5,
+            "athlete_count": 2
+        }
+    ]
+}

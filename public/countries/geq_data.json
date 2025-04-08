@@ -1,0 +1,38 @@
+{
+    "country": "GEQ",
+    "medal_counts": {},
+    "participation": {
+        "1984": 4,
+        "1988": 6,
+        "1992": 7,
+        "1996": 5,
+        "2000": 4,
+        "2004": 2,
+        "2008": 3,
+        "2012": 2,
+        "2016": 1
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 22.513513513513512,
+            "avg_height": 170.8181818181818,
+            "avg_weight": 67.54545454545455,
+            "athlete_count": 23
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 42.0,
+            "avg_height": null,
+            "avg_weight": 81.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 21.0,
+            "avg_height": 158.0,
+            "avg_weight": 60.0,
+            "athlete_count": 2
+        }
+    ]
+}

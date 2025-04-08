@@ -1,0 +1,59 @@
+{
+    "country": "BAN",
+    "medal_counts": {},
+    "participation": {
+        "1984": 1,
+        "1988": 6,
+        "1992": 6,
+        "1996": 4,
+        "2000": 5,
+        "2004": 4,
+        "2008": 5,
+        "2012": 5,
+        "2016": 7
+    },
+    "sports_stats": [
+        {
+            "Sport": "Archery",
+            "avg_age": 20.5,
+            "avg_height": 174.0,
+            "avg_weight": 60.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 22.428571428571427,
+            "avg_height": 168.03703703703704,
+            "avg_weight": 61.48148148148148,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Golf",
+            "avg_age": 31.0,
+            "avg_height": 165.0,
+            "avg_weight": 84.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Gymnastics",
+            "avg_age": 21.0,
+            "avg_height": 158.0,
+            "avg_weight": 58.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 25.25,
+            "avg_height": 161.83333333333334,
+            "avg_weight": 58.833333333333336,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 21.53846153846154,
+            "avg_height": 165.6,
+            "avg_weight": 61.3,
+            "athlete_count": 10
+        }
+    ]
+}

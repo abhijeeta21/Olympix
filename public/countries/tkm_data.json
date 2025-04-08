@@ -1,0 +1,70 @@
+{
+    "country": "TKM",
+    "medal_counts": {},
+    "participation": {
+        "1996": 7,
+        "2000": 8,
+        "2004": 9,
+        "2008": 10,
+        "2012": 10,
+        "2016": 9
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.545454545454547,
+            "avg_height": 179.0,
+            "avg_weight": 80.36363636363636,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 25.571428571428573,
+            "avg_height": 177.71428571428572,
+            "avg_weight": 72.0,
+            "athlete_count": 5
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 24.2,
+            "avg_height": 161.88888888888889,
+            "avg_weight": 61.55555555555556,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 28.8,
+            "avg_height": 179.4,
+            "avg_weight": 77.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 18.0,
+            "avg_height": 177.0,
+            "avg_weight": 66.125,
+            "athlete_count": 8
+        },
+        {
+            "Sport": "Table Tennis",
+            "avg_age": 29.5,
+            "avg_height": 168.0,
+            "avg_weight": 58.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 23.77777777777778,
+            "avg_height": 168.33333333333334,
+            "avg_weight": 74.77777777777777,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 24.0,
+            "avg_height": 174.0,
+            "avg_weight": 76.0,
+            "athlete_count": 2
+        }
+    ]
+}

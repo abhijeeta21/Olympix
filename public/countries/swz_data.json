@@ -1,0 +1,67 @@
+{
+    "country": "SWZ",
+    "medal_counts": {},
+    "participation": {
+        "1972": 2,
+        "1984": 8,
+        "1988": 11,
+        "1992": 7,
+        "1996": 6,
+        "2000": 6,
+        "2004": 3,
+        "2008": 4,
+        "2012": 3,
+        "2016": 2
+    },
+    "sports_stats": [
+        {
+            "Sport": "Alpine Skiing",
+            "avg_age": 24.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.852941176470587,
+            "avg_height": 173.10714285714286,
+            "avg_weight": 63.785714285714285,
+            "athlete_count": 22
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.75,
+            "avg_height": 168.5,
+            "avg_weight": 60.5,
+            "athlete_count": 8
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 42.0,
+            "avg_height": 173.0,
+            "avg_weight": 85.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.4375,
+            "avg_height": 169.33333333333334,
+            "avg_weight": 70.93333333333334,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 20.0,
+            "avg_height": 169.0,
+            "avg_weight": 56.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 32.0,
+            "avg_height": 173.66666666666666,
+            "avg_weight": 74.66666666666667,
+            "athlete_count": 2
+        }
+    ]
+}

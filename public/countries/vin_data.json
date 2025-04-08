@@ -1,0 +1,30 @@
+{
+    "country": "VIN",
+    "medal_counts": {},
+    "participation": {
+        "1988": 6,
+        "1992": 6,
+        "1996": 8,
+        "2000": 4,
+        "2004": 3,
+        "2008": 2,
+        "2012": 3,
+        "2016": 4
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 22.166666666666668,
+            "avg_height": 178.6,
+            "avg_weight": 67.65,
+            "athlete_count": 22
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 17.833333333333332,
+            "avg_height": 166.66666666666666,
+            "avg_weight": 60.666666666666664,
+            "athlete_count": 6
+        }
+    ]
+}

@@ -1,0 +1,78 @@
+{
+    "country": "BOH",
+    "medal_counts": {
+        "Bronze": 11,
+        "Silver": 1
+    },
+    "participation": {
+        "1900": 7,
+        "1906": 13,
+        "1908": 19,
+        "1912": 43
+    },
+    "sports_stats": [
+        {
+            "Sport": "Art Competitions",
+            "avg_age": 30.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 25.444444444444443,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 18
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 21.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Fencing",
+            "avg_age": 26.5,
+            "avg_height": 165.0,
+            "avg_weight": null,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Gymnastics",
+            "avg_age": 30.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Rowing",
+            "avg_age": 24.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": null,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Tennis",
+            "avg_age": 24.043478260869566,
+            "avg_height": 183.0,
+            "avg_weight": null,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 23.625,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 8
+        }
+    ]
+}

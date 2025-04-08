@@ -1,0 +1,98 @@
+{
+    "country": "NEP",
+    "medal_counts": {
+        "Gold": 1
+    },
+    "participation": {
+        "1924": 1,
+        "1964": 6,
+        "1972": 2,
+        "1976": 1,
+        "1980": 10,
+        "1984": 10,
+        "1988": 16,
+        "1992": 2,
+        "1996": 6,
+        "2000": 5,
+        "2002": 1,
+        "2004": 6,
+        "2006": 1,
+        "2008": 8,
+        "2010": 1,
+        "2012": 5,
+        "2014": 1,
+        "2016": 7
+    },
+    "sports_stats": [
+        {
+            "Sport": "Alpinism",
+            "avg_age": null,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Archery",
+            "avg_age": 36.0,
+            "avg_height": 168.0,
+            "avg_weight": 64.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 25.8125,
+            "avg_height": 163.86486486486487,
+            "avg_weight": 54.567567567567565,
+            "athlete_count": 30
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 20.6,
+            "avg_height": 164.33333333333334,
+            "avg_weight": 56.46666666666667,
+            "athlete_count": 14
+        },
+        {
+            "Sport": "Cross Country Skiing",
+            "avg_age": 35.6,
+            "avg_height": 170.0,
+            "avg_weight": 66.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 26.5,
+            "avg_height": 164.25,
+            "avg_weight": 65.5,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 28.0,
+            "avg_height": 158.6,
+            "avg_weight": 53.4,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.25,
+            "avg_height": 163.2,
+            "avg_weight": 56.6,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 27.0,
+            "avg_height": 168.0,
+            "avg_weight": 67.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 27.5,
+            "avg_height": 160.0,
+            "avg_weight": 65.85714285714286,
+            "athlete_count": 7
+        }
+    ]
+}

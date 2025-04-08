@@ -1,0 +1,54 @@
+{
+    "country": "LES",
+    "medal_counts": {},
+    "participation": {
+        "1972": 1,
+        "1980": 5,
+        "1984": 4,
+        "1988": 6,
+        "1992": 6,
+        "1996": 9,
+        "2000": 6,
+        "2004": 3,
+        "2008": 5,
+        "2012": 4,
+        "2016": 8
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 25.313725490196077,
+            "avg_height": 167.390243902439,
+            "avg_weight": 60.5609756097561,
+            "athlete_count": 36
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 22.4,
+            "avg_height": 165.85714285714286,
+            "avg_weight": 63.375,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 31.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 25.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 24.333333333333332,
+            "avg_height": 168.66666666666666,
+            "avg_weight": 59.333333333333336,
+            "athlete_count": 3
+        }
+    ]
+}

@@ -1,0 +1,41 @@
+{
+    "country": "CHA",
+    "medal_counts": {},
+    "participation": {
+        "1964": 2,
+        "1968": 3,
+        "1972": 4,
+        "1984": 3,
+        "1988": 6,
+        "1992": 6,
+        "1996": 4,
+        "2000": 2,
+        "2004": 1,
+        "2008": 2,
+        "2012": 2,
+        "2016": 2
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.0,
+            "avg_height": 176.5625,
+            "avg_weight": 65.21875,
+            "athlete_count": 23
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 29.0,
+            "avg_height": 178.0,
+            "avg_weight": 81.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 24.0,
+            "avg_height": 175.0,
+            "avg_weight": 70.0,
+            "athlete_count": 3
+        }
+    ]
+}

@@ -1,0 +1,28 @@
+{
+    "country": "STP",
+    "medal_counts": {},
+    "participation": {
+        "1996": 2,
+        "2000": 2,
+        "2004": 2,
+        "2008": 3,
+        "2012": 2,
+        "2016": 3
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 22.833333333333332,
+            "avg_height": 172.58333333333334,
+            "avg_weight": 62.916666666666664,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Canoeing",
+            "avg_age": 19.666666666666668,
+            "avg_height": 171.33333333333334,
+            "avg_weight": 66.0,
+            "athlete_count": 2
+        }
+    ]
+}

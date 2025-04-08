@@ -1,0 +1,53 @@
+{
+    "country": "DJI",
+    "medal_counts": {
+        "Bronze": 1
+    },
+    "participation": {
+        "1984": 3,
+        "1988": 6,
+        "1992": 8,
+        "1996": 5,
+        "2000": 2,
+        "2008": 2,
+        "2012": 4,
+        "2016": 7
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.846153846153847,
+            "avg_height": 173.03846153846155,
+            "avg_weight": 57.69230769230769,
+            "athlete_count": 20
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 21.333333333333332,
+            "avg_height": 175.0,
+            "avg_weight": 66.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 28.75,
+            "avg_height": 174.0,
+            "avg_weight": 60.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.5,
+            "avg_height": 180.0,
+            "avg_weight": 70.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Table Tennis",
+            "avg_age": 18.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        }
+    ]
+}

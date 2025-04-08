@@ -1,0 +1,80 @@
+{
+    "country": "CAM",
+    "medal_counts": {},
+    "participation": {
+        "1956": 2,
+        "1964": 13,
+        "1972": 9,
+        "1996": 5,
+        "2000": 4,
+        "2004": 4,
+        "2008": 4,
+        "2012": 6,
+        "2016": 6
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 25.529411764705884,
+            "avg_height": 162.64705882352942,
+            "avg_weight": 57.11764705882353,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 22.6,
+            "avg_height": 165.2,
+            "avg_weight": 58.4,
+            "athlete_count": 5
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 25.0,
+            "avg_height": 163.75,
+            "avg_weight": 54.625,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Equestrianism",
+            "avg_age": 27.5,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 29.0,
+            "avg_height": 169.0,
+            "avg_weight": 60.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 23.666666666666668,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 20.91304347826087,
+            "avg_height": 170.77272727272728,
+            "avg_weight": 64.81818181818181,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 20.0,
+            "avg_height": 180.5,
+            "avg_weight": 69.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 27.5,
+            "avg_height": 157.5,
+            "avg_weight": 55.0,
+            "athlete_count": 2
+        }
+    ]
+}

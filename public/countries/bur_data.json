@@ -1,0 +1,52 @@
+{
+    "country": "BUR",
+    "medal_counts": {},
+    "participation": {
+        "1972": 1,
+        "1988": 6,
+        "1992": 4,
+        "1996": 5,
+        "2000": 4,
+        "2004": 5,
+        "2008": 6,
+        "2012": 5,
+        "2016": 5
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.91304347826087,
+            "avg_height": 179.77272727272728,
+            "avg_weight": 74.13636363636364,
+            "athlete_count": 16
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 22.5,
+            "avg_height": 156.0,
+            "avg_weight": 55.5,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Fencing",
+            "avg_age": 26.0,
+            "avg_height": 175.0,
+            "avg_weight": 73.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 26.833333333333332,
+            "avg_height": 165.2,
+            "avg_weight": 71.4,
+            "athlete_count": 5
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 24.571428571428573,
+            "avg_height": 177.71428571428572,
+            "avg_weight": 72.57142857142857,
+            "athlete_count": 6
+        }
+    ]
+}

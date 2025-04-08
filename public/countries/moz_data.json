@@ -1,0 +1,56 @@
+{
+    "country": "MOZ",
+    "medal_counts": {
+        "Bronze": 1,
+        "Gold": 1
+    },
+    "participation": {
+        "1980": 14,
+        "1984": 9,
+        "1988": 8,
+        "1992": 6,
+        "1996": 3,
+        "2000": 4,
+        "2004": 4,
+        "2008": 4,
+        "2012": 6,
+        "2016": 6
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 26.161290322580644,
+            "avg_height": 173.46153846153845,
+            "avg_weight": 66.3076923076923,
+            "athlete_count": 23
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.6,
+            "avg_height": 173.66666666666666,
+            "avg_weight": 67.0,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Canoeing",
+            "avg_age": 22.0,
+            "avg_height": 172.0,
+            "avg_weight": 66.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 28.0,
+            "avg_height": 174.33333333333334,
+            "avg_weight": 69.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 18.875,
+            "avg_height": 171.33333333333334,
+            "avg_weight": 65.14285714285714,
+            "athlete_count": 20
+        }
+    ]
+}

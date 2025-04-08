@@ -1,0 +1,88 @@
+{
+    "country": "LBA",
+    "medal_counts": {},
+    "participation": {
+        "1968": 1,
+        "1980": 29,
+        "1988": 6,
+        "1992": 5,
+        "1996": 5,
+        "2000": 3,
+        "2004": 8,
+        "2008": 6,
+        "2012": 4,
+        "2016": 7
+    },
+    "sports_stats": [
+        {
+            "Sport": "Archery",
+            "avg_age": 19.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 25.375,
+            "avg_height": 171.30769230769232,
+            "avg_weight": 63.5,
+            "athlete_count": 19
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 23.0,
+            "avg_height": 171.33333333333334,
+            "avg_weight": 67.66666666666667,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 25.428571428571427,
+            "avg_height": 171.0,
+            "avg_weight": 73.0,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Rowing",
+            "avg_age": 26.0,
+            "avg_height": 175.0,
+            "avg_weight": 68.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 18.0,
+            "avg_height": 156.7,
+            "avg_weight": 59.8,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Table Tennis",
+            "avg_age": null,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 23.333333333333332,
+            "avg_height": 173.0,
+            "avg_weight": 63.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Volleyball",
+            "avg_age": null,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 23.2,
+            "avg_height": 163.0,
+            "avg_weight": 78.85714285714286,
+            "athlete_count": 7
+        }
+    ]
+}

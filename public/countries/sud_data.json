@@ -1,0 +1,78 @@
+{
+    "country": "SUD",
+    "medal_counts": {
+        "Silver": 1
+    },
+    "participation": {
+        "1960": 10,
+        "1968": 5,
+        "1972": 26,
+        "1984": 7,
+        "1988": 8,
+        "1992": 6,
+        "1996": 4,
+        "2000": 3,
+        "2004": 4,
+        "2008": 9,
+        "2012": 6,
+        "2016": 6
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.23076923076923,
+            "avg_height": 175.48076923076923,
+            "avg_weight": 65.61538461538461,
+            "athlete_count": 33
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.166666666666668,
+            "avg_height": 172.23529411764707,
+            "avg_weight": 63.88235294117647,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Football",
+            "avg_age": 28.0,
+            "avg_height": 167.85714285714286,
+            "avg_weight": 66.28571428571429,
+            "athlete_count": 14
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 28.0,
+            "avg_height": 182.0,
+            "avg_weight": 90.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": null,
+            "avg_height": 181.33333333333334,
+            "avg_weight": 79.5,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.666666666666668,
+            "avg_height": 166.83333333333334,
+            "avg_weight": 56.333333333333336,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Table Tennis",
+            "avg_age": 33.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 21.0,
+            "avg_height": 166.66666666666666,
+            "avg_weight": 66.5,
+            "athlete_count": 4
+        }
+    ]
+}

@@ -1,0 +1,109 @@
+{
+    "country": "AND",
+    "medal_counts": {},
+    "participation": {
+        "1976": 8,
+        "1980": 5,
+        "1984": 4,
+        "1988": 7,
+        "1992": 13,
+        "1994": 6,
+        "1996": 8,
+        "1998": 3,
+        "2000": 5,
+        "2002": 3,
+        "2004": 6,
+        "2006": 3,
+        "2008": 5,
+        "2010": 6,
+        "2012": 6,
+        "2014": 6,
+        "2016": 4
+    },
+    "sports_stats": [
+        {
+            "Sport": "Alpine Skiing",
+            "avg_age": 20.447619047619046,
+            "avg_height": 173.53246753246754,
+            "avg_weight": 72.23376623376623,
+            "athlete_count": 25
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 30.0,
+            "avg_height": 171.5,
+            "avg_weight": 61.083333333333336,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Biathlon",
+            "avg_age": 26.0,
+            "avg_height": 160.0,
+            "avg_weight": 49.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 20.0,
+            "avg_height": 185.0,
+            "avg_weight": 80.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Canoeing",
+            "avg_age": 18.0,
+            "avg_height": 160.0,
+            "avg_weight": 50.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Cross Country Skiing",
+            "avg_age": 29.285714285714285,
+            "avg_height": 181.0,
+            "avg_weight": 71.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 21.8,
+            "avg_height": 170.8,
+            "avg_weight": 66.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 26.333333333333332,
+            "avg_height": 176.5,
+            "avg_weight": 70.75,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 22.0,
+            "avg_height": 170.8,
+            "avg_weight": 63.8,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 37.25,
+            "avg_height": 176.2,
+            "avg_weight": 81.3,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Snowboarding",
+            "avg_age": 23.0,
+            "avg_height": 185.0,
+            "avg_weight": 85.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.6,
+            "avg_height": 172.44444444444446,
+            "avg_weight": 66.88888888888889,
+            "athlete_count": 7
+        }
+    ]
+}

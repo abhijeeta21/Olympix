@@ -1,0 +1,63 @@
+{
+    "country": "VNM",
+    "medal_counts": {},
+    "participation": {
+        "1952": 8,
+        "1956": 6,
+        "1960": 3,
+        "1964": 16,
+        "1968": 9,
+        "1972": 2
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.8,
+            "avg_height": 166.75,
+            "avg_weight": 58.75,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 31.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 26.9,
+            "avg_height": 164.46153846153845,
+            "avg_weight": 55.84615384615385,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Fencing",
+            "avg_age": 26.625,
+            "avg_height": 166.14285714285714,
+            "avg_weight": 60.714285714285715,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 30.0,
+            "avg_height": 167.0,
+            "avg_weight": 71.33333333333333,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 38.5,
+            "avg_height": 165.75,
+            "avg_weight": 57.5,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 20.77777777777778,
+            "avg_height": 166.71428571428572,
+            "avg_weight": 55.57142857142857,
+            "athlete_count": 7
+        }
+    ]
+}

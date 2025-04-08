@@ -1,0 +1,29 @@
+{
+    "country": "ERI",
+    "medal_counts": {
+        "Bronze": 1
+    },
+    "participation": {
+        "2000": 3,
+        "2004": 4,
+        "2008": 10,
+        "2012": 12,
+        "2016": 12
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.658536585365855,
+            "avg_height": 168.9142857142857,
+            "avg_weight": 55.2,
+            "athlete_count": 25
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 25.0,
+            "avg_height": 188.0,
+            "avg_weight": 71.0,
+            "athlete_count": 1
+        }
+    ]
+}

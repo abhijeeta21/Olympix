@@ -1,0 +1,74 @@
+{
+    "country": "PNG",
+    "medal_counts": {},
+    "participation": {
+        "1976": 6,
+        "1984": 7,
+        "1988": 11,
+        "1992": 13,
+        "1996": 11,
+        "2000": 5,
+        "2004": 4,
+        "2008": 7,
+        "2012": 8,
+        "2016": 8
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.233333333333334,
+            "avg_height": 170.16949152542372,
+            "avg_weight": 62.271186440677965,
+            "athlete_count": 29
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.6,
+            "avg_height": 164.26666666666668,
+            "avg_weight": 56.13333333333333,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 29.0,
+            "avg_height": 169.0,
+            "avg_weight": 68.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 35.5,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 37.333333333333336,
+            "avg_height": 175.33333333333334,
+            "avg_weight": 69.33333333333333,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 23.416666666666668,
+            "avg_height": 186.83333333333334,
+            "avg_weight": 90.2,
+            "athlete_count": 5
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 22.0,
+            "avg_height": 162.5,
+            "avg_weight": 52.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 22.625,
+            "avg_height": 158.83333333333334,
+            "avg_weight": 65.5,
+            "athlete_count": 7
+        }
+    ]
+}

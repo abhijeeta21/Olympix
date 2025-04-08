@@ -1,0 +1,58 @@
+{
+    "country": "VAN",
+    "medal_counts": {},
+    "participation": {
+        "1988": 4,
+        "1992": 6,
+        "1996": 4,
+        "2000": 3,
+        "2004": 2,
+        "2008": 3,
+        "2012": 5,
+        "2016": 4
+    },
+    "sports_stats": [
+        {
+            "Sport": "Archery",
+            "avg_age": 62.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 22.64,
+            "avg_height": 167.43478260869566,
+            "avg_weight": 60.76190476190476,
+            "athlete_count": 16
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 25.0,
+            "avg_height": 177.0,
+            "avg_weight": 73.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 24.0,
+            "avg_height": 179.5,
+            "avg_weight": 94.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Rowing",
+            "avg_age": 24.0,
+            "avg_height": 187.0,
+            "avg_weight": 80.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Table Tennis",
+            "avg_age": 23.0,
+            "avg_height": 168.5,
+            "avg_weight": 64.25,
+            "athlete_count": 3
+        }
+    ]
+}

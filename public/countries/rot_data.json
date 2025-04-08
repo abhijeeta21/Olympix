@@ -1,0 +1,30 @@
+{
+    "country": "ROT",
+    "medal_counts": {},
+    "participation": {
+        "2016": 10
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.833333333333332,
+            "avg_height": 169.83333333333334,
+            "avg_weight": 56.5,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 26.0,
+            "avg_height": 175.0,
+            "avg_weight": 80.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 21.5,
+            "avg_height": 167.5,
+            "avg_weight": 65.5,
+            "athlete_count": 2
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "country": "LCA",
+    "medal_counts": {},
+    "participation": {
+        "1996": 6,
+        "2000": 5,
+        "2004": 2,
+        "2008": 4,
+        "2012": 4,
+        "2016": 5
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.42105263157895,
+            "avg_height": 178.52631578947367,
+            "avg_weight": 68.10526315789474,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 30.666666666666668,
+            "avg_height": 158.0,
+            "avg_weight": 61.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.0,
+            "avg_height": 169.0,
+            "avg_weight": 58.833333333333336,
+            "athlete_count": 5
+        }
+    ]
+}

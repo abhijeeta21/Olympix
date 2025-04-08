@@ -1,0 +1,69 @@
+{
+    "country": "GUY",
+    "medal_counts": {
+        "Bronze": 1
+    },
+    "participation": {
+        "1948": 4,
+        "1952": 1,
+        "1956": 4,
+        "1960": 5,
+        "1964": 1,
+        "1968": 5,
+        "1972": 3,
+        "1980": 8,
+        "1984": 10,
+        "1988": 8,
+        "1992": 6,
+        "1996": 7,
+        "2000": 4,
+        "2004": 4,
+        "2008": 4,
+        "2012": 6,
+        "2016": 6
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.0,
+            "avg_height": 175.9777777777778,
+            "avg_weight": 64.71111111111111,
+            "athlete_count": 34
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 22.5,
+            "avg_height": 172.11111111111111,
+            "avg_weight": 63.55555555555556,
+            "athlete_count": 18
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 26.076923076923077,
+            "avg_height": 173.46153846153845,
+            "avg_weight": 66.15384615384616,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 17.0,
+            "avg_height": null,
+            "avg_weight": 59.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 18.333333333333332,
+            "avg_height": 173.0,
+            "avg_weight": 71.66666666666667,
+            "athlete_count": 5
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 24.8,
+            "avg_height": 173.0,
+            "avg_weight": 70.75,
+            "athlete_count": 8
+        }
+    ]
+}

@@ -116,12 +116,18 @@ export default function Countries() {
                       </div>
                     </div>
                   </div>
-                  <button 
-                    className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors"
-                    onClick={() => console.log(`View details for ${country.region}`)}
-                  >
-                    View Details
-                  </button>
+
+                  {country && (
+                    <Link href={`/countries/${country.noc.toLowerCase()}`}>
+
+                    <button 
+                      className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors"
+                      onClick={() => console.log(`View details for ${country.region}`)}
+                    >
+                      View Details
+                    </button>
+                    </Link>
+                  )}
                 </div>
               </div>
             ))}

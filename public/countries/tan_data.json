@@ -1,0 +1,58 @@
+{
+    "country": "TAN",
+    "medal_counts": {
+        "Silver": 2
+    },
+    "participation": {
+        "1964": 4,
+        "1968": 4,
+        "1972": 15,
+        "1980": 41,
+        "1984": 18,
+        "1988": 10,
+        "1992": 9,
+        "1996": 7,
+        "2000": 4,
+        "2004": 8,
+        "2008": 9,
+        "2012": 6,
+        "2016": 7
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.979166666666668,
+            "avg_height": 169.35416666666666,
+            "avg_weight": 59.666666666666664,
+            "athlete_count": 60
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 24.1,
+            "avg_height": 168.8709677419355,
+            "avg_weight": 65.61764705882354,
+            "athlete_count": 29
+        },
+        {
+            "Sport": "Hockey",
+            "avg_age": 27.625,
+            "avg_height": 172.8,
+            "avg_weight": 68.93333333333334,
+            "athlete_count": 16
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 20.0,
+            "avg_height": 158.0,
+            "avg_weight": 73.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 21.333333333333332,
+            "avg_height": 172.16666666666666,
+            "avg_weight": 66.66666666666667,
+            "athlete_count": 4
+        }
+    ]
+}

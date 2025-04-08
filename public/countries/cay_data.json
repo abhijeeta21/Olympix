@@ -1,0 +1,55 @@
+{
+    "country": "CAY",
+    "medal_counts": {},
+    "participation": {
+        "1976": 2,
+        "1984": 8,
+        "1988": 8,
+        "1992": 10,
+        "1996": 9,
+        "2000": 3,
+        "2004": 5,
+        "2008": 4,
+        "2010": 1,
+        "2012": 4,
+        "2014": 1,
+        "2016": 5
+    },
+    "sports_stats": [
+        {
+            "Sport": "Alpine Skiing",
+            "avg_age": 24.666666666666668,
+            "avg_height": 180.0,
+            "avg_weight": 86.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.823529411764707,
+            "avg_height": 179.05882352941177,
+            "avg_weight": 76.29411764705883,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 23.06896551724138,
+            "avg_height": 180.0,
+            "avg_weight": 72.79310344827586,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 31.5625,
+            "avg_height": 173.75,
+            "avg_weight": 69.375,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.9375,
+            "avg_height": 181.875,
+            "avg_weight": 78.375,
+            "athlete_count": 6
+        }
+    ]
+}

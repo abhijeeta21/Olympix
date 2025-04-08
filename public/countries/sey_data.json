@@ -1,0 +1,73 @@
+{
+    "country": "SEY",
+    "medal_counts": {},
+    "participation": {
+        "1980": 11,
+        "1984": 9,
+        "1992": 11,
+        "1996": 9,
+        "2000": 9,
+        "2004": 9,
+        "2008": 9,
+        "2012": 6,
+        "2016": 10
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 22.914893617021278,
+            "avg_height": 175.69565217391303,
+            "avg_weight": 64.78260869565217,
+            "athlete_count": 26
+        },
+        {
+            "Sport": "Badminton",
+            "avg_age": 26.5,
+            "avg_height": 165.0,
+            "avg_weight": 68.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 24.857142857142858,
+            "avg_height": 174.28571428571428,
+            "avg_weight": 67.5,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Canoeing",
+            "avg_age": 29.0,
+            "avg_height": 182.0,
+            "avg_weight": 85.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 26.0,
+            "avg_height": 179.5,
+            "avg_weight": 79.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 26.90909090909091,
+            "avg_height": 175.7,
+            "avg_weight": 82.11111111111111,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 16.916666666666668,
+            "avg_height": 177.86666666666667,
+            "avg_weight": 73.06666666666666,
+            "athlete_count": 12
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 22.8,
+            "avg_height": 165.4,
+            "avg_weight": 73.8,
+            "athlete_count": 5
+        }
+    ]
+}

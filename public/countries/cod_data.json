@@ -1,0 +1,74 @@
+{
+    "country": "COD",
+    "medal_counts": {},
+    "participation": {
+        "1968": 5,
+        "1984": 8,
+        "1988": 15,
+        "1992": 17,
+        "1996": 14,
+        "2000": 2,
+        "2004": 4,
+        "2008": 5,
+        "2012": 4,
+        "2016": 4
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.029411764705884,
+            "avg_height": 172.66666666666666,
+            "avg_weight": 63.041666666666664,
+            "athlete_count": 20
+        },
+        {
+            "Sport": "Basketball",
+            "avg_age": 25.25,
+            "avg_height": 182.1818181818182,
+            "avg_weight": 71.9090909090909,
+            "athlete_count": 12
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 24.428571428571427,
+            "avg_height": 180.85714285714286,
+            "avg_weight": 81.14285714285714,
+            "athlete_count": 14
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 23.22222222222222,
+            "avg_height": 173.94444444444446,
+            "avg_weight": 70.16666666666667,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 24.444444444444443,
+            "avg_height": 176.5,
+            "avg_weight": 86.33333333333333,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 34.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Table Tennis",
+            "avg_age": 19.0,
+            "avg_height": 172.0,
+            "avg_weight": 65.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 21.0,
+            "avg_height": 163.0,
+            "avg_weight": 48.0,
+            "athlete_count": 1
+        }
+    ]
+}

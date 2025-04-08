@@ -1,0 +1,54 @@
+{
+    "country": "SLE",
+    "medal_counts": {},
+    "participation": {
+        "1968": 3,
+        "1980": 14,
+        "1984": 7,
+        "1988": 12,
+        "1992": 11,
+        "1996": 14,
+        "2000": 3,
+        "2004": 2,
+        "2008": 3,
+        "2012": 2,
+        "2016": 4
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 22.270833333333332,
+            "avg_height": 177.06593406593407,
+            "avg_weight": 67.23255813953489,
+            "athlete_count": 47
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.77777777777778,
+            "avg_height": 176.625,
+            "avg_weight": 72.44444444444444,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 23.0,
+            "avg_height": 178.0,
+            "avg_weight": 73.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 23.333333333333332,
+            "avg_height": null,
+            "avg_weight": 78.5,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 23.0,
+            "avg_height": 177.0,
+            "avg_weight": 77.5,
+            "athlete_count": 2
+        }
+    ]
+}

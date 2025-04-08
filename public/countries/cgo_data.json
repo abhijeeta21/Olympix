@@ -1,0 +1,69 @@
+{
+    "country": "CGO",
+    "medal_counts": {},
+    "participation": {
+        "1964": 2,
+        "1972": 6,
+        "1980": 23,
+        "1984": 9,
+        "1988": 7,
+        "1992": 7,
+        "1996": 5,
+        "2000": 5,
+        "2004": 5,
+        "2008": 5,
+        "2012": 7,
+        "2016": 10
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.614035087719298,
+            "avg_height": 175.5,
+            "avg_weight": 66.86792452830188,
+            "athlete_count": 34
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 21.2,
+            "avg_height": 177.25,
+            "avg_weight": 67.66666666666667,
+            "athlete_count": 5
+        },
+        {
+            "Sport": "Fencing",
+            "avg_age": 28.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Handball",
+            "avg_age": null,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 14
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 22.5,
+            "avg_height": 170.83333333333334,
+            "avg_weight": 90.66666666666667,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 21.666666666666668,
+            "avg_height": 174.4,
+            "avg_weight": 70.88888888888889,
+            "athlete_count": 8
+        },
+        {
+            "Sport": "Table Tennis",
+            "avg_age": 29.625,
+            "avg_height": 170.125,
+            "avg_weight": 64.5,
+            "athlete_count": 5
+        }
+    ]
+}

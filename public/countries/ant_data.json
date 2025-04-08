@@ -1,0 +1,60 @@
+{
+    "country": "ANT",
+    "medal_counts": {},
+    "participation": {
+        "1976": 10,
+        "1984": 14,
+        "1988": 15,
+        "1992": 13,
+        "1996": 13,
+        "2000": 3,
+        "2004": 5,
+        "2008": 5,
+        "2012": 4,
+        "2016": 8
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.0625,
+            "avg_height": 175.23076923076923,
+            "avg_weight": 65.98913043478261,
+            "athlete_count": 41
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.0,
+            "avg_height": 174.5,
+            "avg_weight": 57.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Canoeing",
+            "avg_age": 31.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 22.375,
+            "avg_height": 174.53846153846155,
+            "avg_weight": 67.53846153846153,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 28.77777777777778,
+            "avg_height": 180.66666666666666,
+            "avg_weight": 76.66666666666667,
+            "athlete_count": 8
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 16.0,
+            "avg_height": 172.16666666666666,
+            "avg_weight": 63.666666666666664,
+            "athlete_count": 6
+        }
+    ]
+}

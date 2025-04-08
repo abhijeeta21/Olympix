@@ -1,0 +1,58 @@
+{
+    "country": "SUR",
+    "medal_counts": {
+        "Gold": 1,
+        "Bronze": 1
+    },
+    "participation": {
+        "1968": 1,
+        "1972": 2,
+        "1976": 3,
+        "1984": 5,
+        "1988": 6,
+        "1992": 6,
+        "1996": 7,
+        "2000": 4,
+        "2004": 4,
+        "2008": 4,
+        "2012": 5,
+        "2016": 6
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.82758620689655,
+            "avg_height": 168.96428571428572,
+            "avg_weight": 63.964285714285715,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Badminton",
+            "avg_age": 23.333333333333332,
+            "avg_height": 180.66666666666666,
+            "avg_weight": 76.5,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 20.0,
+            "avg_height": 184.0,
+            "avg_weight": 66.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 23.75,
+            "avg_height": 167.0,
+            "avg_weight": 60.333333333333336,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.142857142857142,
+            "avg_height": 172.1,
+            "avg_weight": 65.5,
+            "athlete_count": 12
+        }
+    ]
+}

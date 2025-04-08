@@ -1,0 +1,318 @@
+{
+    "country": "CZE",
+    "medal_counts": {
+        "Bronze": 66,
+        "Gold": 42,
+        "Silver": 36
+    },
+    "participation": {
+        "1994": 63,
+        "1996": 115,
+        "1998": 61,
+        "2000": 119,
+        "2002": 76,
+        "2004": 142,
+        "2006": 83,
+        "2008": 134,
+        "2010": 90,
+        "2012": 133,
+        "2014": 87,
+        "2016": 104
+    },
+    "sports_stats": [
+        {
+            "Sport": "Alpine Skiing",
+            "avg_age": 24.43103448275862,
+            "avg_height": 176.16379310344828,
+            "avg_weight": 78.02586206896552,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Archery",
+            "avg_age": 39.0,
+            "avg_height": 183.0,
+            "avg_weight": 89.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 26.934426229508198,
+            "avg_height": 181.87431693989072,
+            "avg_weight": 77.30054644808743,
+            "athlete_count": 100
+        },
+        {
+            "Sport": "Badminton",
+            "avg_age": 24.5,
+            "avg_height": 184.5,
+            "avg_weight": 82.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Basketball",
+            "avg_age": 24.52777777777778,
+            "avg_height": 185.77777777777777,
+            "avg_weight": 74.91666666666667,
+            "athlete_count": 24
+        },
+        {
+            "Sport": "Beach Volleyball",
+            "avg_age": 28.555555555555557,
+            "avg_height": 184.58823529411765,
+            "avg_weight": 76.76470588235294,
+            "athlete_count": 14
+        },
+        {
+            "Sport": "Biathlon",
+            "avg_age": 26.661016949152543,
+            "avg_height": 173.87005649717514,
+            "avg_weight": 63.954802259887,
+            "athlete_count": 27
+        },
+        {
+            "Sport": "Bobsleigh",
+            "avg_age": 30.367346938775512,
+            "avg_height": 183.22448979591837,
+            "avg_weight": 94.10204081632654,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 22.0,
+            "avg_height": 177.42857142857142,
+            "avg_weight": 74.14285714285714,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Canoeing",
+            "avg_age": 26.276190476190475,
+            "avg_height": 178.98095238095237,
+            "avg_weight": 76.74285714285715,
+            "athlete_count": 55
+        },
+        {
+            "Sport": "Cross Country Skiing",
+            "avg_age": 25.446601941747574,
+            "avg_height": 173.90686274509804,
+            "avg_weight": 64.61764705882354,
+            "athlete_count": 32
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 26.0,
+            "avg_height": 178.73684210526315,
+            "avg_weight": 72.61842105263158,
+            "athlete_count": 38
+        },
+        {
+            "Sport": "Diving",
+            "avg_age": 24.0,
+            "avg_height": 164.0,
+            "avg_weight": 61.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Equestrianism",
+            "avg_age": 33.0,
+            "avg_height": 178.0,
+            "avg_weight": 65.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Fencing",
+            "avg_age": 28.333333333333332,
+            "avg_height": 191.33333333333334,
+            "avg_weight": 84.66666666666667,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Figure Skating",
+            "avg_age": 22.44,
+            "avg_height": 173.52,
+            "avg_weight": 63.333333333333336,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Football",
+            "avg_age": 21.5625,
+            "avg_height": 184.125,
+            "avg_weight": 78.375,
+            "athlete_count": 16
+        },
+        {
+            "Sport": "Freestyle Skiing",
+            "avg_age": 25.736842105263158,
+            "avg_height": 169.89473684210526,
+            "avg_weight": 65.6842105263158,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Golf",
+            "avg_age": 21.0,
+            "avg_height": 168.0,
+            "avg_weight": 53.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Gymnastics",
+            "avg_age": 20.42,
+            "avg_height": 166.0,
+            "avg_weight": 57.68,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Ice Hockey",
+            "avg_age": 28.30597014925373,
+            "avg_height": 185.2462686567164,
+            "avg_weight": 90.30597014925372,
+            "athlete_count": 91
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 24.3125,
+            "avg_height": 177.9375,
+            "avg_weight": 76.625,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Luge",
+            "avg_age": 23.38888888888889,
+            "avg_height": 179.94444444444446,
+            "avg_weight": 79.83333333333333,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Modern Pentathlon",
+            "avg_age": 26.833333333333332,
+            "avg_height": 178.75,
+            "avg_weight": 68.75,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Nordic Combined",
+            "avg_age": 25.048387096774192,
+            "avg_height": 177.88709677419354,
+            "avg_weight": 66.62903225806451,
+            "athlete_count": 15
+        },
+        {
+            "Sport": "Rhythmic Gymnastics",
+            "avg_age": 19.0,
+            "avg_height": 165.0,
+            "avg_weight": 43.333333333333336,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Rowing",
+            "avg_age": 26.10169491525424,
+            "avg_height": 187.54237288135593,
+            "avg_weight": 85.96610169491525,
+            "athlete_count": 32
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 30.894736842105264,
+            "avg_height": 181.89473684210526,
+            "avg_weight": 77.89473684210526,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 28.736842105263158,
+            "avg_height": 176.1578947368421,
+            "avg_weight": 77.0421052631579,
+            "athlete_count": 36
+        },
+        {
+            "Sport": "Short Track Speed Skating",
+            "avg_age": 22.5,
+            "avg_height": 163.0,
+            "avg_weight": 58.833333333333336,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Skeleton",
+            "avg_age": 28.0,
+            "avg_height": 184.0,
+            "avg_weight": 80.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Ski Jumping",
+            "avg_age": 24.555555555555557,
+            "avg_height": 176.23611111111111,
+            "avg_weight": 62.31944444444444,
+            "athlete_count": 16
+        },
+        {
+            "Sport": "Snowboarding",
+            "avg_age": 25.266666666666666,
+            "avg_height": 174.8,
+            "avg_weight": 71.13333333333334,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Speed Skating",
+            "avg_age": 20.714285714285715,
+            "avg_height": 173.78571428571428,
+            "avg_weight": 62.07142857142857,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 23.137254901960784,
+            "avg_height": 180.81372549019608,
+            "avg_weight": 72.33333333333333,
+            "athlete_count": 32
+        },
+        {
+            "Sport": "Synchronized Swimming",
+            "avg_age": 27.5,
+            "avg_height": 169.3,
+            "avg_weight": 56.5,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Table Tennis",
+            "avg_age": 28.727272727272727,
+            "avg_height": 176.86363636363637,
+            "avg_weight": 67.77272727272727,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Tennis",
+            "avg_age": 26.47222222222222,
+            "avg_height": 180.59722222222223,
+            "avg_weight": 72.51388888888889,
+            "athlete_count": 27
+        },
+        {
+            "Sport": "Trampolining",
+            "avg_age": 24.666666666666668,
+            "avg_height": 166.0,
+            "avg_weight": 56.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Triathlon",
+            "avg_age": 27.647058823529413,
+            "avg_height": 172.1764705882353,
+            "avg_weight": 59.411764705882355,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 25.714285714285715,
+            "avg_height": 179.42857142857142,
+            "avg_weight": 111.28571428571429,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 28.09090909090909,
+            "avg_height": 180.54545454545453,
+            "avg_weight": 89.27272727272727,
+            "athlete_count": 6
+        }
+    ]
+}

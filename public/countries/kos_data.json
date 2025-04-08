@@ -1,0 +1,46 @@
+{
+    "country": "KOS",
+    "medal_counts": {
+        "Gold": 1
+    },
+    "participation": {
+        "2016": 8
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.0,
+            "avg_height": 177.0,
+            "avg_weight": 62.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 22.0,
+            "avg_height": 175.0,
+            "avg_weight": 70.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 24.0,
+            "avg_height": 163.5,
+            "avg_weight": 54.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 29.0,
+            "avg_height": 173.0,
+            "avg_weight": 64.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 23.0,
+            "avg_height": 179.5,
+            "avg_weight": 71.5,
+            "athlete_count": 2
+        }
+    ]
+}

@@ -1,0 +1,38 @@
+{
+    "country": "BDI",
+    "medal_counts": {
+        "Gold": 1,
+        "Silver": 1
+    },
+    "participation": {
+        "1996": 7,
+        "2000": 6,
+        "2004": 7,
+        "2008": 3,
+        "2012": 6,
+        "2016": 9
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 25.4,
+            "avg_height": 172.76666666666668,
+            "avg_weight": 58.03333333333333,
+            "athlete_count": 18
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 20.0,
+            "avg_height": 170.0,
+            "avg_weight": 64.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 21.571428571428573,
+            "avg_height": 172.42857142857142,
+            "avg_weight": 62.142857142857146,
+            "athlete_count": 5
+        }
+    ]
+}

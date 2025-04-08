@@ -1,0 +1,151 @@
+{
+    "country": "ECU",
+    "medal_counts": {
+        "Gold": 1,
+        "Silver": 1
+    },
+    "participation": {
+        "1924": 3,
+        "1968": 15,
+        "1972": 2,
+        "1976": 5,
+        "1980": 12,
+        "1984": 11,
+        "1988": 13,
+        "1992": 13,
+        "1996": 19,
+        "2000": 10,
+        "2004": 16,
+        "2008": 25,
+        "2012": 36,
+        "2016": 37
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 27.098765432098766,
+            "avg_height": 167.126582278481,
+            "avg_weight": 59.18987341772152,
+            "athlete_count": 47
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 22.333333333333332,
+            "avg_height": 174.1904761904762,
+            "avg_weight": 68.42857142857143,
+            "athlete_count": 20
+        },
+        {
+            "Sport": "Canoeing",
+            "avg_age": 34.0,
+            "avg_height": 190.0,
+            "avg_weight": 92.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 23.423076923076923,
+            "avg_height": 171.8846153846154,
+            "avg_weight": 67.8,
+            "athlete_count": 16
+        },
+        {
+            "Sport": "Diving",
+            "avg_age": 19.5,
+            "avg_height": 182.0,
+            "avg_weight": 72.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Equestrianism",
+            "avg_age": 34.666666666666664,
+            "avg_height": 168.66666666666666,
+            "avg_weight": 64.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Gymnastics",
+            "avg_age": 22.333333333333332,
+            "avg_height": 168.66666666666666,
+            "avg_weight": 61.0,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 25.41176470588235,
+            "avg_height": 170.75,
+            "avg_weight": 72.53333333333333,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Rowing",
+            "avg_age": 24.0,
+            "avg_height": 178.0,
+            "avg_weight": 75.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 19.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 35.8125,
+            "avg_height": 168.4,
+            "avg_weight": 74.06666666666666,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 20.630434782608695,
+            "avg_height": 178.15,
+            "avg_weight": 71.225,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Table Tennis",
+            "avg_age": 19.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 26.0,
+            "avg_height": 174.0,
+            "avg_weight": 67.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Tennis",
+            "avg_age": 23.666666666666668,
+            "avg_height": 186.33333333333334,
+            "avg_weight": 79.66666666666667,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Triathlon",
+            "avg_age": 27.0,
+            "avg_height": 160.0,
+            "avg_weight": 49.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 26.0625,
+            "avg_height": 169.3125,
+            "avg_weight": 77.0625,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 21.666666666666668,
+            "avg_height": 167.0,
+            "avg_weight": 78.0,
+            "athlete_count": 6
+        }
+    ]
+}

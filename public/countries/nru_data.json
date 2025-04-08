@@ -1,0 +1,28 @@
+{
+    "country": "NRU",
+    "medal_counts": {},
+    "participation": {
+        "1996": 3,
+        "2000": 2,
+        "2004": 3,
+        "2008": 1,
+        "2012": 2,
+        "2016": 2
+    },
+    "sports_stats": [
+        {
+            "Sport": "Judo",
+            "avg_age": 28.5,
+            "avg_height": 172.0,
+            "avg_weight": 81.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 22.545454545454547,
+            "avg_height": 166.11111111111111,
+            "avg_weight": 98.45454545454545,
+            "athlete_count": 8
+        }
+    ]
+}

@@ -1,0 +1,62 @@
+{
+    "country": "ETH",
+    "medal_counts": {
+        "Bronze": 22,
+        "Gold": 22,
+        "Silver": 9
+    },
+    "participation": {
+        "1956": 12,
+        "1960": 10,
+        "1964": 12,
+        "1968": 18,
+        "1972": 31,
+        "1980": 41,
+        "1992": 20,
+        "1996": 18,
+        "2000": 26,
+        "2004": 26,
+        "2006": 1,
+        "2008": 27,
+        "2010": 1,
+        "2012": 33,
+        "2016": 37
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.31768953068592,
+            "avg_height": 169.98154981549814,
+            "avg_weight": 55.35424354243543,
+            "athlete_count": 174
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.51851851851852,
+            "avg_height": 169.32,
+            "avg_weight": 59.96296296296296,
+            "athlete_count": 24
+        },
+        {
+            "Sport": "Cross Country Skiing",
+            "avg_age": 33.0,
+            "avg_height": 177.0,
+            "avg_weight": 65.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 24.84,
+            "avg_height": 171.8,
+            "avg_weight": 63.1,
+            "athlete_count": 29
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 21.5,
+            "avg_height": 169.75,
+            "avg_weight": 63.0,
+            "athlete_count": 4
+        }
+    ]
+}

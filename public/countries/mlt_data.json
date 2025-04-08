@@ -1,0 +1,102 @@
+{
+    "country": "MLT",
+    "medal_counts": {},
+    "participation": {
+        "1928": 9,
+        "1936": 11,
+        "1948": 1,
+        "1960": 10,
+        "1968": 1,
+        "1972": 5,
+        "1980": 8,
+        "1984": 7,
+        "1988": 6,
+        "1992": 6,
+        "1996": 7,
+        "2000": 7,
+        "2004": 7,
+        "2008": 6,
+        "2012": 5,
+        "2014": 1,
+        "2016": 7
+    },
+    "sports_stats": [
+        {
+            "Sport": "Alpine Skiing",
+            "avg_age": 22.0,
+            "avg_height": 162.0,
+            "avg_weight": 58.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Archery",
+            "avg_age": 27.75,
+            "avg_height": 170.0,
+            "avg_weight": 61.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.4,
+            "avg_height": 167.8125,
+            "avg_weight": 61.125,
+            "athlete_count": 16
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 23.5,
+            "avg_height": 166.5,
+            "avg_weight": 60.4375,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 25.0,
+            "avg_height": 166.0,
+            "avg_weight": 63.5,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 28.9,
+            "avg_height": 173.25,
+            "avg_weight": 72.0,
+            "athlete_count": 8
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 32.77777777777778,
+            "avg_height": 174.8125,
+            "avg_weight": 83.28571428571429,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 18.866666666666667,
+            "avg_height": 173.33333333333334,
+            "avg_weight": 67.16666666666667,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Water Polo",
+            "avg_age": 22.928571428571427,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 18
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 29.0,
+            "avg_height": 177.0,
+            "avg_weight": 86.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 20.75,
+            "avg_height": 165.5,
+            "avg_weight": 62.0,
+            "athlete_count": 3
+        }
+    ]
+}

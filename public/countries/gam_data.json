@@ -1,0 +1,52 @@
+{
+    "country": "GAM",
+    "medal_counts": {},
+    "participation": {
+        "1984": 10,
+        "1988": 6,
+        "1992": 5,
+        "1996": 9,
+        "2000": 2,
+        "2004": 2,
+        "2008": 3,
+        "2012": 2,
+        "2016": 4
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.25,
+            "avg_height": 170.55,
+            "avg_weight": 64.58974358974359,
+            "athlete_count": 27
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 24.0,
+            "avg_height": null,
+            "avg_weight": 75.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 22.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 19.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 29.0,
+            "avg_height": null,
+            "avg_weight": 74.66666666666667,
+            "athlete_count": 3
+        }
+    ]
+}

@@ -1,0 +1,48 @@
+{
+    "country": "FSM",
+    "medal_counts": {},
+    "participation": {
+        "2000": 5,
+        "2004": 5,
+        "2008": 5,
+        "2012": 6,
+        "2016": 5
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.4,
+            "avg_height": 163.6,
+            "avg_weight": 60.6,
+            "athlete_count": 9
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 30.0,
+            "avg_height": 161.0,
+            "avg_weight": 60.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 20.6,
+            "avg_height": 160.11111111111111,
+            "avg_weight": 58.111111111111114,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 27.0,
+            "avg_height": 155.0,
+            "avg_weight": 62.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 32.0,
+            "avg_height": 173.0,
+            "avg_weight": 84.0,
+            "athlete_count": 1
+        }
+    ]
+}

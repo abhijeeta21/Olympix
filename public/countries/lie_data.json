@@ -1,0 +1,121 @@
+{
+    "country": "LIE",
+    "medal_counts": {
+        "Bronze": 5,
+        "Silver": 2,
+        "Gold": 2
+    },
+    "participation": {
+        "1936": 10,
+        "1948": 12,
+        "1952": 2,
+        "1956": 8,
+        "1960": 8,
+        "1964": 8,
+        "1968": 11,
+        "1972": 10,
+        "1976": 15,
+        "1980": 7,
+        "1984": 17,
+        "1988": 25,
+        "1992": 14,
+        "1994": 10,
+        "1996": 2,
+        "1998": 8,
+        "2000": 2,
+        "2002": 8,
+        "2004": 1,
+        "2006": 5,
+        "2008": 2,
+        "2010": 4,
+        "2012": 3,
+        "2014": 3,
+        "2016": 3
+    },
+    "sports_stats": [
+        {
+            "Sport": "Alpine Skiing",
+            "avg_age": 21.87317073170732,
+            "avg_height": 174.83116883116884,
+            "avg_weight": 73.90845070422536,
+            "athlete_count": 51
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.15625,
+            "avg_height": 174.59259259259258,
+            "avg_weight": 64.51851851851852,
+            "athlete_count": 17
+        },
+        {
+            "Sport": "Bobsleigh",
+            "avg_age": 25.333333333333332,
+            "avg_height": 189.0,
+            "avg_weight": 96.0,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Cross Country Skiing",
+            "avg_age": 25.5,
+            "avg_height": 176.0909090909091,
+            "avg_weight": 72.18181818181819,
+            "athlete_count": 12
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 21.571428571428573,
+            "avg_height": 179.7,
+            "avg_weight": 71.2,
+            "athlete_count": 8
+        },
+        {
+            "Sport": "Equestrianism",
+            "avg_age": 29.0,
+            "avg_height": 176.0,
+            "avg_weight": 74.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Gymnastics",
+            "avg_age": 25.0,
+            "avg_height": 173.0,
+            "avg_weight": 65.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 24.125,
+            "avg_height": 176.92307692307693,
+            "avg_weight": 77.92307692307692,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Luge",
+            "avg_age": 20.894736842105264,
+            "avg_height": 175.0,
+            "avg_weight": 71.83333333333333,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 35.25,
+            "avg_height": 173.66666666666666,
+            "avg_weight": 87.41666666666667,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 21.0,
+            "avg_height": 182.0,
+            "avg_weight": 78.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Tennis",
+            "avg_age": 24.0,
+            "avg_height": 165.0,
+            "avg_weight": 63.0,
+            "athlete_count": 1
+        }
+    ]
+}

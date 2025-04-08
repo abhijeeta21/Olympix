@@ -1,0 +1,82 @@
+{
+    "country": "GHA",
+    "medal_counts": {
+        "Bronze": 22,
+        "Silver": 1
+    },
+    "participation": {
+        "1952": 7,
+        "1960": 13,
+        "1964": 33,
+        "1968": 31,
+        "1972": 35,
+        "1984": 21,
+        "1988": 16,
+        "1992": 34,
+        "1996": 35,
+        "2000": 22,
+        "2004": 26,
+        "2008": 9,
+        "2010": 1,
+        "2012": 7,
+        "2016": 13
+    },
+    "sports_stats": [
+        {
+            "Sport": "Alpine Skiing",
+            "avg_age": 35.0,
+            "avg_height": 180.0,
+            "avg_weight": 85.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.132275132275133,
+            "avg_height": 174.39106145251398,
+            "avg_weight": 66.89385474860335,
+            "athlete_count": 95
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 22.785714285714285,
+            "avg_height": 171.48936170212767,
+            "avg_weight": 62.04081632653061,
+            "athlete_count": 50
+        },
+        {
+            "Sport": "Football",
+            "avg_age": 23.04255319148936,
+            "avg_height": 174.16216216216216,
+            "avg_weight": 72.94594594594595,
+            "athlete_count": 88
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 28.0,
+            "avg_height": 158.0,
+            "avg_weight": 67.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 15.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Table Tennis",
+            "avg_age": 22.625,
+            "avg_height": null,
+            "avg_weight": 120.0,
+            "athlete_count": 5
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 17.0,
+            "avg_height": 184.0,
+            "avg_weight": 81.0,
+            "athlete_count": 2
+        }
+    ]
+}

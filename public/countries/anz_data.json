@@ -1,0 +1,70 @@
+{
+    "country": "ANZ",
+    "medal_counts": {
+        "Gold": 20,
+        "Bronze": 5,
+        "Silver": 4
+    },
+    "participation": {
+        "1908": 30,
+        "1912": 25
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.40909090909091,
+            "avg_height": 175.88888888888889,
+            "avg_weight": 68.6,
+            "athlete_count": 14
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 24.0,
+            "avg_height": 178.0,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Diving",
+            "avg_age": 24.0,
+            "avg_height": 178.0,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Rowing",
+            "avg_age": 26.0,
+            "avg_height": 188.5,
+            "avg_weight": 85.0,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Rugby",
+            "avg_age": 24.266666666666666,
+            "avg_height": 176.14285714285714,
+            "avg_weight": null,
+            "athlete_count": 15
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": null,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 23.451612903225808,
+            "avg_height": 171.6,
+            "avg_weight": 65.0,
+            "athlete_count": 13
+        },
+        {
+            "Sport": "Tennis",
+            "avg_age": 28.0,
+            "avg_height": 188.0,
+            "avg_weight": 84.0,
+            "athlete_count": 1
+        }
+    ]
+}

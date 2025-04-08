@@ -1,0 +1,86 @@
+{
+    "country": "ARU",
+    "medal_counts": {},
+    "participation": {
+        "1988": 8,
+        "1992": 5,
+        "1996": 3,
+        "2000": 5,
+        "2004": 4,
+        "2008": 2,
+        "2012": 4,
+        "2016": 7
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 26.555555555555557,
+            "avg_height": 170.0,
+            "avg_weight": 64.0,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 29.0,
+            "avg_height": 174.5,
+            "avg_weight": 76.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 26.0,
+            "avg_height": 172.66666666666666,
+            "avg_weight": 73.66666666666667,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Fencing",
+            "avg_age": 49.0,
+            "avg_height": 186.0,
+            "avg_weight": 85.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 26.4,
+            "avg_height": 174.8,
+            "avg_weight": 73.4,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Sailing",
+            "avg_age": 24.25,
+            "avg_height": 174.33333333333334,
+            "avg_weight": 71.66666666666667,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 18.77777777777778,
+            "avg_height": 175.66666666666666,
+            "avg_weight": 68.55555555555556,
+            "athlete_count": 7
+        },
+        {
+            "Sport": "Synchronized Swimming",
+            "avg_age": 17.5,
+            "avg_height": 166.0,
+            "avg_weight": 58.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 27.0,
+            "avg_height": 171.0,
+            "avg_weight": 49.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 25.333333333333332,
+            "avg_height": 173.33333333333334,
+            "avg_weight": 106.66666666666667,
+            "athlete_count": 2
+        }
+    ]
+}

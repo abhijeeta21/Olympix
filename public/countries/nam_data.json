@@ -1,0 +1,66 @@
+{
+    "country": "NAM",
+    "medal_counts": {
+        "Silver": 4
+    },
+    "participation": {
+        "1992": 6,
+        "1996": 8,
+        "2000": 11,
+        "2004": 8,
+        "2008": 10,
+        "2012": 9,
+        "2016": 10
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 29.033333333333335,
+            "avg_height": 172.26666666666668,
+            "avg_weight": 60.06666666666667,
+            "athlete_count": 15
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 24.53846153846154,
+            "avg_height": 169.83333333333334,
+            "avg_weight": 60.53846153846154,
+            "athlete_count": 12
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 30.7,
+            "avg_height": 174.2,
+            "avg_weight": 67.0,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Gymnastics",
+            "avg_age": 18.0,
+            "avg_height": 161.0,
+            "avg_weight": 46.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 39.625,
+            "avg_height": 178.375,
+            "avg_weight": 75.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 22.0,
+            "avg_height": 187.0,
+            "avg_weight": 87.0,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 21.5,
+            "avg_height": 172.5,
+            "avg_weight": 75.5,
+            "athlete_count": 2
+        }
+    ]
+}

@@ -1,0 +1,41 @@
+{
+    "country": "BRU",
+    "medal_counts": {},
+    "participation": {
+        "1996": 1,
+        "2000": 2,
+        "2004": 1,
+        "2012": 3,
+        "2016": 3
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 21.666666666666668,
+            "avg_height": 163.6,
+            "avg_weight": 58.4,
+            "athlete_count": 6
+        },
+        {
+            "Sport": "Badminton",
+            "avg_age": 27.0,
+            "avg_height": 167.0,
+            "avg_weight": 60.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 25.0,
+            "avg_height": 172.0,
+            "avg_weight": 90.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 16.0,
+            "avg_height": 166.0,
+            "avg_weight": 62.0,
+            "athlete_count": 1
+        }
+    ]
+}

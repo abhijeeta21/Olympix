@@ -1,0 +1,34 @@
+{
+    "country": "LBR",
+    "medal_counts": {},
+    "participation": {
+        "1956": 4,
+        "1960": 4,
+        "1964": 1,
+        "1972": 5,
+        "1984": 7,
+        "1988": 8,
+        "1996": 5,
+        "2000": 8,
+        "2004": 2,
+        "2008": 3,
+        "2012": 3,
+        "2016": 2
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 22.779411764705884,
+            "avg_height": 173.8490566037736,
+            "avg_weight": 66.23076923076923,
+            "athlete_count": 38
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 23.75,
+            "avg_height": 161.0,
+            "avg_weight": 48.0,
+            "athlete_count": 4
+        }
+    ]
+}

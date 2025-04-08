@@ -1,0 +1,16 @@
+{
+    "country": "UNK",
+    "medal_counts": {},
+    "participation": {
+        "1912": 2
+    },
+    "sports_stats": [
+        {
+            "Sport": "Art Competitions",
+            "avg_age": null,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 2
+        }
+    ]
+}

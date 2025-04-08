@@ -1,0 +1,21 @@
+{
+    "country": "SKN",
+    "medal_counts": {},
+    "participation": {
+        "1996": 10,
+        "2000": 2,
+        "2004": 2,
+        "2008": 4,
+        "2012": 4,
+        "2016": 6
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 24.976190476190474,
+            "avg_height": 175.2051282051282,
+            "avg_weight": 69.74358974358974,
+            "athlete_count": 19
+        }
+    ]
+}

@@ -1,0 +1,73 @@
+{
+    "country": "AFG",
+    "medal_counts": {
+        "Bronze": 2
+    },
+    "participation": {
+        "1936": 15,
+        "1948": 25,
+        "1956": 12,
+        "1960": 12,
+        "1964": 8,
+        "1968": 5,
+        "1972": 8,
+        "1980": 11,
+        "1988": 5,
+        "1996": 2,
+        "2004": 5,
+        "2008": 4,
+        "2012": 6,
+        "2016": 3
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 22.0,
+            "avg_height": 172.11764705882354,
+            "avg_weight": 62.76470588235294,
+            "athlete_count": 14
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 21.6,
+            "avg_height": 166.4,
+            "avg_weight": 56.6,
+            "athlete_count": 5
+        },
+        {
+            "Sport": "Football",
+            "avg_age": null,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Hockey",
+            "avg_age": 24.25,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 33
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 24.333333333333332,
+            "avg_height": 173.0,
+            "avg_weight": 78.33333333333333,
+            "athlete_count": 3
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 24.5,
+            "avg_height": 184.5,
+            "avg_weight": 65.5,
+            "athlete_count": 2
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 24.4375,
+            "avg_height": 167.88,
+            "avg_weight": 67.90625,
+            "athlete_count": 35
+        }
+    ]
+}

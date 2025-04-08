@@ -1,0 +1,90 @@
+{
+    "country": "NCA",
+    "medal_counts": {},
+    "participation": {
+        "1968": 11,
+        "1972": 8,
+        "1976": 15,
+        "1980": 5,
+        "1984": 5,
+        "1992": 8,
+        "1996": 26,
+        "2000": 6,
+        "2004": 5,
+        "2008": 6,
+        "2012": 6,
+        "2016": 5
+    },
+    "sports_stats": [
+        {
+            "Sport": "Athletics",
+            "avg_age": 23.13157894736842,
+            "avg_height": 170.11428571428573,
+            "avg_weight": 61.861111111111114,
+            "athlete_count": 25
+        },
+        {
+            "Sport": "Baseball",
+            "avg_age": 26.45,
+            "avg_height": 186.5,
+            "avg_weight": 87.0,
+            "athlete_count": 20
+        },
+        {
+            "Sport": "Boxing",
+            "avg_age": 20.428571428571427,
+            "avg_height": 165.0,
+            "avg_weight": 59.142857142857146,
+            "athlete_count": 14
+        },
+        {
+            "Sport": "Cycling",
+            "avg_age": 31.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 5
+        },
+        {
+            "Sport": "Judo",
+            "avg_age": 22.4,
+            "avg_height": 177.0,
+            "avg_weight": 84.66666666666667,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Shooting",
+            "avg_age": 31.125,
+            "avg_height": 174.28571428571428,
+            "avg_weight": 79.57142857142857,
+            "athlete_count": 4
+        },
+        {
+            "Sport": "Swimming",
+            "avg_age": 18.80952380952381,
+            "avg_height": 172.58333333333334,
+            "avg_weight": 62.083333333333336,
+            "athlete_count": 11
+        },
+        {
+            "Sport": "Taekwondo",
+            "avg_age": 29.0,
+            "avg_height": 177.0,
+            "avg_weight": 94.0,
+            "athlete_count": 1
+        },
+        {
+            "Sport": "Weightlifting",
+            "avg_age": 26.727272727272727,
+            "avg_height": 158.14285714285714,
+            "avg_weight": 59.54545454545455,
+            "athlete_count": 10
+        },
+        {
+            "Sport": "Wrestling",
+            "avg_age": 24.0,
+            "avg_height": null,
+            "avg_weight": null,
+            "athlete_count": 1
+        }
+    ]
+}
