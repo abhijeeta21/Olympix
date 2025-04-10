@@ -37,21 +37,37 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-blue-100 p-4">
-      <div className="w-full max-w-4xl mx-auto space-y-10">
+    <main className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden">
+      {/* Video Background */}
+      <div className="absolute top-0 left-0 w-full h-full z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+          style={{ filter: 'brightness(0.7)' }} // Darken the video slightly to improve text visibility
+        >
+          <source src="/project_video.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      
+      {/* Content Overlay */}
+      <div className="w-full max-w-4xl mx-auto space-y-10 relative z-10">
         {/* Hero Section */}
         <div className="text-center space-y-6">
-          <h1 className="text-5xl md:text-7xl font-bold text-blue-900 tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight drop-shadow-lg">
             Olympics Data Analysis
           </h1>
           
-          <p className="text-xl text-blue-700 max-w-2xl mx-auto">
+          <p className="text-xl text-white max-w-2xl mx-auto drop-shadow-md">
             Explore historical Olympic Games data across countries and sports
           </p>
         </div>
         
         {/* Search Section */}
-        <div className="w-full">
+        <div className="w-full backdrop-blur-sm bg-white/20 p-6 rounded-xl">
           <form onSubmit={handleSearch} className="relative">
             <input
               type="text"
@@ -74,7 +90,7 @@ export default function Home() {
           <div className="mt-2">
             <button
               onClick={() => setShowHistory(!showHistory)}
-              className="text-blue-600 hover:text-blue-800 flex items-center text-sm"
+              className="text-white hover:text-blue-200 flex items-center text-sm"
             >
               <span>Search History</span>
               <svg
@@ -89,7 +105,7 @@ export default function Home() {
             </button>
             
             {showHistory && (
-              <div className="mt-2 p-4 bg-white rounded-lg shadow-md">
+              <div className="mt-2 p-4 bg-white/80 backdrop-blur-md rounded-lg shadow-md">
                 {searchHistory.length > 0 ? (
                   <>
                     <div className="flex justify-between items-center mb-2">
@@ -119,7 +135,7 @@ export default function Home() {
         
         {/* Browse Section */}
         <div className="text-center">
-          <p className="text-lg text-gray-600 mb-4">browse by country or sport</p>
+          <p className="text-lg text-white mb-4 drop-shadow-md">browse by country or sport</p>
           <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto">
             <Link href="/countries" className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md text-center">
               Browse Countries
@@ -131,7 +147,7 @@ export default function Home() {
         </div>
         
         {/* Footer */}
-        <footer className="text-center text-gray-500 text-sm mt-12">
+        <footer className="text-center text-white text-sm mt-12 drop-shadow-md">
           &copy; {new Date().getFullYear()} Olympics Data Analysis Project
         </footer>
       </div>
