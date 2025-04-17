@@ -8,6 +8,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchHistory, setSearchHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Load search history from localStorage on component mount
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden">
+    <main className="min-h-screen relative flex flex-col items-center justify-start p-4 overflow-hidden">
       {/* Video Background */}
       <div className="absolute top-0 left-0 w-full h-full z-0">
         <video
@@ -53,8 +54,96 @@ export default function Home() {
         </video>
       </div>
       
-      {/* Content Overlay */}
-      <div className="w-full max-w-4xl mx-auto space-y-10 relative z-10">
+      {/* Navigation Bar */}
+      <nav className="w-full bg-black/50 backdrop-blur-sm fixed top-0 left-0 z-20 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo/Brand */}
+            <div className="flex-shrink-0">
+              <Link href="/" className="text-white font-bold text-xl">
+                Olympics Data
+              </Link>
+            </div>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:block">
+              <div className="ml-10 flex items-center space-x-4">
+                <Link href="/medal-dashboard" className="text-gray-200 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  Medal Dashboard
+                </Link>
+                <Link href="/age-performance" className="text-gray-200 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  Age vs Performance
+                </Link>
+                <Link href="/gender-participation" className="text-gray-200 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  Gender Participation
+                </Link>
+                <Link href="/sports-analysis" className="text-gray-200 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  Sports Analysis
+                </Link>
+                <Link href="/country-analysis" className="text-gray-200 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  Country Analysis
+                </Link>
+              </div>
+            </div>
+            
+            {/* Mobile menu button */}
+            <div className="md:hidden flex items-center">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-blue-700 focus:outline-none"
+              >
+                <svg
+                  className={`${mobileMenuOpen ? 'hidden' : 'block'} h-6 w-6`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <svg
+                  className={`${mobileMenuOpen ? 'block' : 'hidden'} h-6 w-6`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile menu, show/hide based on menu state */}
+        <div className={`${mobileMenuOpen ? 'block' : 'hidden'} md:hidden`}>
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black/70">
+            <Link href="/medal-dashboard" className="text-gray-200 hover:bg-blue-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+              Medal Dashboard
+            </Link>
+            <Link href="/age-performance" className="text-gray-200 hover:bg-blue-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+              Age vs Performance
+            </Link>
+            <Link href="/gender-participation" className="text-gray-200 hover:bg-blue-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+              Gender Participation
+            </Link>
+            <Link href="/sports-analysis" className="text-gray-200 hover:bg-blue-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+              Sports Analysis
+            </Link>
+            <Link href="/country-analysis" className="text-gray-200 hover:bg-blue-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+              Country Analysis
+            </Link>
+            <Link href="/miscellaneous" className="text-gray-200 hover:bg-blue-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+              Miscellaneous
+            </Link>
+          </div>
+        </div>
+      </nav>
+      
+      {/* Content Overlay - adjusted with top padding to account for navbar */}
+      <div className="w-full max-w-4xl mx-auto space-y-10 relative z-10 pt-20">
         {/* Hero Section */}
         <div className="text-center space-y-6">
           <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight drop-shadow-lg">
@@ -133,9 +222,25 @@ export default function Home() {
           </div>
         </div>
         
+        {/* Featured Visualizations Section */}
+        <div className="text-center">
+          <p className="text-lg text-white mb-4 drop-shadow-md">Featured Visualizations</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+            <Link href="/medal-dashboard" className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md text-center text-sm">
+              Medal Dashboard
+            </Link>
+            <Link href="/age-performance" className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md text-center text-sm">
+              Age Analysis
+            </Link>
+            <Link href="/gender-participation" className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md text-center text-sm">
+              Gender Stats
+            </Link>
+          </div>
+        </div>
+        
         {/* Browse Section */}
         <div className="text-center">
-          <p className="text-lg text-white mb-4 drop-shadow-md">browse by country or sport</p>
+          <p className="text-lg text-white mb-4 drop-shadow-md">Browse by category</p>
           <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto">
             <Link href="/countries" className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-md text-center">
               Browse Countries

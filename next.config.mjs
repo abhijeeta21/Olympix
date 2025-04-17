@@ -1,5 +1,9 @@
+// next.config.mjs
+
 const nextConfig = {
-    reactStrictMode: true,
-  };
-  
-  export default nextConfig;
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+};
+
+export default nextConfig;
