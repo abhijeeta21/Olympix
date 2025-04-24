@@ -24,3 +24,7 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.__react_component_tooltip {
+  z-index: 9999 !important;
+}
