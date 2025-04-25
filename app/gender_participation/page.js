@@ -18,7 +18,7 @@ import {
 } from 'recharts';
 import { ComposableMap, Geographies, Geography, ZoomableGroup, Sphere, Graticule } from "react-simple-maps";
 import { scaleLinear } from "d3-scale";
-import { Tooltip as ReactTooltip } from 'react-tooltip'; // Use named import
+import Papa from 'papaparse';
 
 export default function GenderParticipation() {
   const [timelineData, setTimelineData] = useState([]);
@@ -26,215 +26,229 @@ export default function GenderParticipation() {
   const [filteredSportData, setFilteredSportData] = useState([]);
   const [sportSearchTerm, setSportSearchTerm] = useState('');
   const [countryGenderData, setCountryGenderData] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState('all');
   const [selectedYear, setSelectedYear] = useState('2016');
   const [isLoading, setIsLoading] = useState(true);
   const [years, setYears] = useState([]);
-  const [countries, setCountries] = useState([]);
   const [activeVisualization, setActiveVisualization] = useState('timeline');
-  const [ageDistributionData, setAgeDistributionData] = useState([]);
-  const [medalGenderData, setMedalGenderData] = useState([]);
-  const [continentGenderData, setContinentGenderData] = useState([]);
   const [timelineStartYear, setTimelineStartYear] = useState(null);
   const [timelineEndYear, setTimelineEndYear] = useState(null);
   const [availableTimelineYears, setAvailableTimelineYears] = useState([]);
-  const [countryDataByYear, setCountryDataByYear] = useState({}); // <-- Add this state
+  const [countryDataByYear, setCountryDataByYear] = useState({});
+  const [nocMap, setNocMap] = useState({});
+  const [colorDomain, setColorDomain] = useState([0, 1, 2]);
+  const [processedAthletes, setProcessedAthletes] = useState([]);
+  const [selectedTimelineCountry, setSelectedTimelineCountry] = useState('all');
+  const [selectedTimelineSport, setSelectedTimelineSport] = useState('all');
+  const [availableCountries, setAvailableCountries] = useState([]);
+  const [availableSports, setAvailableSports] = useState([]);
 
   const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
   const colorScale = useMemo(() => scaleLinear()
-    // Adjust domain based on expected range of female COUNTS
-    // Example using mock data range (approx 35 to 55)
-    .domain([35, 45, 55]) 
-    .range(["#FFEDA0", "#FEB24C", "#F03b20"]), // Keep the color range or change as desired
-    []
+    .domain(colorDomain)
+    .range(["#FFEDA0", "#FEB24C", "#F03b20"]),
+    [colorDomain]
   );
 
   useEffect(() => {
-    fetchMockData();
+    fetchData();
   }, []);
 
-  const fetchMockData = () => {
+  const fetchData = async () => {
     setIsLoading(true);
+    try {
+      const athleteCsvPath = '/data/athlete_events.csv';
+      const athleteResponse = await fetch(athleteCsvPath);
+      if (!athleteResponse.ok) throw new Error(`Failed to fetch ${athleteCsvPath}`);
+      const athleteCsvText = await athleteResponse.text();
+      const athleteParseResult = Papa.parse(athleteCsvText, {
+        header: true,
+        skipEmptyLines: true,
+        dynamicTyping: true,
+      });
+      const athleteData = athleteParseResult.data.filter(row => row.ID && row.NOC);
+      setProcessedAthletes(athleteData);
 
-    const mockTimelineData = [
-      { year: 1896, male: 241, female: 0, total: 241, femalePercentage: 0 },
-      { year: 1900, male: 975, female: 22, total: 997, femalePercentage: 2.2 },
-      { year: 1904, male: 645, female: 6, total: 651, femalePercentage: 0.9 },
-      { year: 1908, male: 1971, female: 37, total: 2008, femalePercentage: 1.8 },
-      { year: 1912, male: 2359, female: 48, total: 2407, femalePercentage: 2.0 },
-      { year: 1920, male: 2561, female: 65, total: 2626, femalePercentage: 2.5 },
-      { year: 1924, male: 2954, female: 135, total: 3089, femalePercentage: 4.4 },
-      { year: 1928, male: 2606, female: 277, total: 2883, femalePercentage: 9.6 },
-      { year: 1932, male: 1206, female: 126, total: 1332, femalePercentage: 9.5 },
-      { year: 1936, male: 3632, female: 331, total: 3963, femalePercentage: 8.3 },
-      { year: 1948, male: 3714, female: 390, total: 4104, femalePercentage: 9.5 },
-      { year: 1952, male: 4436, female: 519, total: 4955, femalePercentage: 10.5 },
-      { year: 1956, male: 2938, female: 376, total: 3314, femalePercentage: 11.3 },
-      { year: 1960, male: 4727, female: 611, total: 5338, femalePercentage: 11.4 },
-      { year: 1964, male: 4473, female: 678, total: 5151, femalePercentage: 13.2 },
-      { year: 1968, male: 4735, female: 781, total: 5516, femalePercentage: 14.2 },
-      { year: 1972, male: 6075, female: 1059, total: 7134, femalePercentage: 14.8 },
-      { year: 1976, male: 4824, female: 1260, total: 6084, femalePercentage: 20.7 },
-      { year: 1980, male: 4064, female: 1115, total: 5179, femalePercentage: 21.5 },
-      { year: 1984, male: 5263, female: 1566, total: 6829, femalePercentage: 22.9 },
-      { year: 1988, male: 6197, female: 2194, total: 8391, femalePercentage: 26.1 },
-      { year: 1992, male: 6652, female: 2704, total: 9356, femalePercentage: 28.9 },
-      { year: 1996, male: 6806, female: 3512, total: 10318, femalePercentage: 34.0 },
-      { year: 2000, male: 6582, female: 4069, total: 10651, femalePercentage: 38.2 },
-      { year: 2004, male: 6296, female: 4329, total: 10625, femalePercentage: 40.7 },
-      { year: 2008, male: 6305, female: 4746, total: 11051, femalePercentage: 42.9 },
-      { year: 2012, male: 5992, female: 4776, total: 10768, femalePercentage: 44.4 },
-      { year: 2016, male: 6178, female: 5059, total: 11237, femalePercentage: 45.0 },
-      { year: 2020, male: 5982, female: 5494, total: 11476, femalePercentage: 47.9 }
-    ];
+      const nocCsvPath = '/data/noc_regions.csv';
+      const nocResponse = await fetch(nocCsvPath);
+      if (!nocResponse.ok) throw new Error(`Failed to fetch ${nocCsvPath}`);
+      const nocCsvText = await nocResponse.text();
+      const nocParseResult = Papa.parse(nocCsvText, {
+        header: true,
+        skipEmptyLines: true,
+      });
 
-    const yearsInData = mockTimelineData.map(d => d.year).sort((a, b) => a - b);
-    setAvailableTimelineYears(yearsInData);
-    setTimelineStartYear(yearsInData[0]);
-    setTimelineEndYear(yearsInData[yearsInData.length - 1]);
+      const regionMap = nocParseResult.data.reduce((map, row) => {
+        if (row.NOC && row.region) {
+          map[row.NOC] = row.region;
+        }
+        return map;
+      }, {});
+      setNocMap(regionMap);
 
-    const mockSportGenderData = [
-      { sport: 'Gymnastics', male: 45, female: 55, total: 100, femalePercentage: 55 },
-      { sport: 'Swimming', male: 51, female: 49, total: 100, femalePercentage: 49 },
-      { sport: 'Athletics', male: 52, female: 48, total: 100, femalePercentage: 48 },
-      { sport: 'Volleyball', male: 50, female: 50, total: 100, femalePercentage: 50 },
-      { sport: 'Tennis', male: 50, female: 50, total: 100, femalePercentage: 50 },
-      { sport: 'Basketball', male: 54, female: 46, total: 100, femalePercentage: 46 },
-      { sport: 'Hockey', male: 55, female: 45, total: 100, femalePercentage: 45 },
-      { sport: 'Rowing', male: 60, female: 40, total: 100, femalePercentage: 40 },
-      { sport: 'Cycling', male: 65, female: 35, total: 100, femalePercentage: 35 },
-      { sport: 'Football', male: 68, female: 32, total: 100, femalePercentage: 32 },
-      { sport: 'Boxing', male: 75, female: 25, total: 100, femalePercentage: 25 },
-      { sport: 'Wrestling', male: 80, female: 20, total: 100, femalePercentage: 20 },
-      { sport: 'Weightlifting', male: 82, female: 18, total: 100, femalePercentage: 18 }
-    ].sort((a, b) => b.femalePercentage - a.femalePercentage);
-
-    const mockCountryGenderDataByYear = {
-      all: [
-        { country: 'USA', male: 48, female: 52, total: 100, femalePercentage: 52 },
-        { country: 'Australia', male: 46, female: 54, total: 100, femalePercentage: 54 },
-        { country: 'Canada', male: 47, female: 53, total: 100, femalePercentage: 53 },
-        { country: 'Great Britain', male: 52, female: 48, total: 100, femalePercentage: 48 },
-        { country: 'France', male: 55, female: 45, total: 100, femalePercentage: 45 },
-        { country: 'Germany', male: 56, female: 44, total: 100, femalePercentage: 44 },
-        { country: 'Japan', male: 57, female: 43, total: 100, femalePercentage: 43 },
-        { country: 'China', male: 53, female: 47, total: 100, femalePercentage: 47 },
-        { country: 'Russia', male: 55, female: 45, total: 100, femalePercentage: 45 },
-        { country: 'Brazil', male: 60, female: 40, total: 100, femalePercentage: 40 }
-      ],
-      '2016': [
-        { country: 'USA', male: 45, female: 55, total: 100, femalePercentage: 55 },
-        { country: 'Australia', male: 45, female: 55, total: 100, femalePercentage: 55 },
-        { country: 'Canada', male: 46, female: 54, total: 100, femalePercentage: 54 },
-        { country: 'Great Britain', male: 51, female: 49, total: 100, femalePercentage: 49 },
-        { country: 'France', male: 54, female: 46, total: 100, femalePercentage: 46 },
-        { country: 'Germany', male: 55, female: 45, total: 100, femalePercentage: 45 },
-        { country: 'Japan', male: 56, female: 44, total: 100, femalePercentage: 44 },
-        { country: 'China', male: 52, female: 48, total: 100, femalePercentage: 48 },
-        { country: 'Russia', male: 54, female: 46, total: 100, femalePercentage: 46 },
-        { country: 'Brazil', male: 58, female: 42, total: 100, femalePercentage: 42 }
-      ],
-      '2012': [
-        { country: 'USA', male: 47, female: 53, total: 100, femalePercentage: 53 },
-        { country: 'Australia', male: 47, female: 53, total: 100, femalePercentage: 53 },
-        { country: 'Canada', male: 48, female: 52, total: 100, femalePercentage: 52 },
-        { country: 'Great Britain', male: 52, female: 48, total: 100, femalePercentage: 48 },
-        { country: 'France', male: 56, female: 44, total: 100, femalePercentage: 44 },
-        { country: 'Germany', male: 57, female: 43, total: 100, femalePercentage: 43 },
-        { country: 'Japan', male: 58, female: 42, total: 100, femalePercentage: 42 },
-        { country: 'China', male: 54, female: 46, total: 100, femalePercentage: 46 },
-        { country: 'Russia', male: 56, female: 44, total: 100, femalePercentage: 44 },
-        { country: 'Brazil', male: 62, female: 38, total: 100, femalePercentage: 38 }
-      ],
-      '2008': [
-        { country: 'USA', male: 48, female: 52, total: 100, femalePercentage: 52 },
-        { country: 'Australia', male: 48, female: 52, total: 100, femalePercentage: 52 },
-        { country: 'Canada', male: 49, female: 51, total: 100, femalePercentage: 51 },
-        { country: 'Great Britain', male: 53, female: 47, total: 100, femalePercentage: 47 },
-        { country: 'France', male: 57, female: 43, total: 100, femalePercentage: 43 },
-        { country: 'Germany', male: 58, female: 42, total: 100, femalePercentage: 42 },
-        { country: 'Japan', male: 59, female: 41, total: 100, femalePercentage: 41 },
-        { country: 'China', male: 55, female: 45, total: 100, femalePercentage: 45 },
-        { country: 'Russia', male: 57, female: 43, total: 100, femalePercentage: 43 },
-        { country: 'Brazil', male: 64, female: 36, total: 100, femalePercentage: 36 }
-      ]
-    };
-
-    const mockAgeData = [
-      { ageBracket: '15-19', male: 850, female: 950 },
-      { ageBracket: '20-24', male: 2500, female: 2600 },
-      { ageBracket: '25-29', male: 2200, female: 1800 },
-      { ageBracket: '30-34', male: 900, female: 600 },
-      { ageBracket: '35+', male: 350, female: 200 }
-    ];
-
-    const mockMedalData = [
-      { gender: 'Male', gold: 1500, silver: 1450, bronze: 1600 },
-      { gender: 'Female', gold: 1200, silver: 1250, bronze: 1300 }
-    ];
-
-    const continentMapping = {
-      'USA': 'North America',
-      'Canada': 'North America',
-      'Brazil': 'South America',
-      'Great Britain': 'Europe',
-      'France': 'Europe',
-      'Germany': 'Europe',
-      'Russia': 'Europe',
-      'China': 'Asia',
-      'Japan': 'Asia',
-      'Australia': 'Oceania'
-    };
-
-    const continentDataAggregated = mockCountryGenderDataByYear.all.reduce((acc, countryData) => {
-      const continent = continentMapping[countryData.country] || 'Other';
-      if (!acc[continent]) {
-        acc[continent] = { continent: continent, male: 0, female: 0, total: 0 };
+      if (athleteData.length > 0 && Object.keys(regionMap).length > 0) {
+        processRawData(athleteData, regionMap);
+      } else {
+        console.error("Data or NOC map missing.");
       }
-      acc[continent].male += countryData.male;
-      acc[continent].female += countryData.female;
-      acc[continent].total += countryData.male + countryData.female;
+
+    } catch (error) {
+      console.error("Error fetching or processing data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const processRawData = (data, regionMap) => {
+    console.log("Processing raw data:", data.length, "rows with NOC map");
+
+    // --- Unique Athletes per Games Year ---
+    const uniqueEntries = new Map();
+    data.forEach(row => {
+      if (!row || !row.ID || !row.Year || !row.Sex || !row.NOC || !row.Sport) return;
+      const regionName = regionMap[row.NOC] || row.NOC;
+      const key = `${row.ID}-${row.Year}`;
+      if (!uniqueEntries.has(key)) {
+        uniqueEntries.set(key, {
+          id: row.ID,
+          sex: row.Sex,
+          age: row.Age,
+          noc: row.NOC,
+          country: regionName, // Mapped region name
+          year: row.Year,
+          sport: row.Sport,
+        });
+      }
+    });
+    const uniqueAthletesPerGames = Array.from(uniqueEntries.values());
+    setProcessedAthletes(uniqueAthletesPerGames); // Store processed athletes
+    console.log("Unique athletes per Games:", uniqueAthletesPerGames.length);
+
+    // --- Extract Years, Countries, Sports for Filters/Sliders ---
+    const allYears = new Set();
+    const allCountries = new Set();
+    const allSports = new Set();
+    uniqueAthletesPerGames.forEach(athlete => {
+        if (athlete.year && !isNaN(athlete.year)) allYears.add(athlete.year);
+        if (athlete.country) allCountries.add(athlete.country);
+        if (athlete.sport) allSports.add(athlete.sport);
+    });
+
+    const sortedYears = Array.from(allYears).sort((a, b) => a - b);
+    setAvailableTimelineYears(sortedYears); // Set full range for sliders
+    if (sortedYears.length > 0) {
+      setTimelineStartYear(sortedYears[0]); // Set initial slider range
+      setTimelineEndYear(sortedYears[sortedYears.length - 1]);
+    } else {
+      setTimelineStartYear(null);
+      setTimelineEndYear(null);
+    }
+
+    const sortedCountries = [{ id: 'all', name: 'All Countries' }, ...Array.from(allCountries).sort().map(c => ({ id: c, name: c }))];
+    setAvailableCountries(sortedCountries); // Set countries for timeline filter
+
+    const sortedSports = [{ id: 'all', name: 'All Sports' }, ...Array.from(allSports).sort().map(s => ({ id: s, name: s }))];
+    setAvailableSports(sortedSports); // Set sports for timeline filter
+
+    // --- Sport Data (remains the same) ---
+    const sportAgg = uniqueAthletesPerGames.reduce((acc, row) => {
+      const sport = row.sport;
+      if (!sport || !row.sex) return acc;
+
+      if (!acc[sport]) {
+        acc[sport] = { sport: sport, male: 0, female: 0, total: 0 };
+      }
+      acc[sport].total++;
+      if (row.sex === 'M') acc[sport].male++;
+      else if (row.sex === 'F') acc[sport].female++;
       return acc;
     }, {});
-
-    const mockContinentData = Object.values(continentDataAggregated).map(continent => ({
-      ...continent,
-      malePercentage: continent.total > 0 ? parseFloat(((continent.male / continent.total) * 100).toFixed(1)) : 0,
-      femalePercentage: continent.total > 0 ? parseFloat(((continent.female / continent.total) * 100).toFixed(1)) : 0
+    const processedSportData = Object.values(sportAgg).map(d => ({
+      ...d,
+      femalePercentage: d.total > 0 ? parseFloat(((d.female / d.total) * 100).toFixed(1)) : 0,
+      malePercentage: d.total > 0 ? parseFloat(((d.male / d.total) * 100).toFixed(1)) : 0,
     })).sort((a, b) => b.femalePercentage - a.femalePercentage);
+    setAllSportGenderData(processedSportData);
+    setFilteredSportData(processedSportData);
+    console.log("Processed Sport Data:", processedSportData.length, "sports");
 
-    setTimelineData(mockTimelineData);
-    setAvailableTimelineYears(yearsInData);
-    setTimelineStartYear(yearsInData[0]);
-    setTimelineEndYear(yearsInData[yearsInData.length - 1]);
-    setAllSportGenderData(mockSportGenderData);
-    setFilteredSportData(mockSportGenderData);
-    setCountryDataByYear(mockCountryGenderDataByYear); // <-- Set the state with the full object
-    // Set initial countryGenderData based on default selectedYear
-    setCountryGenderData(mockCountryGenderDataByYear[selectedYear] || mockCountryGenderDataByYear.all || []);
-    setAgeDistributionData(mockAgeData);
-    setMedalGenderData(mockMedalData);
-    setContinentGenderData(mockContinentData);
+    // --- Country Data By Year (for Map - remains the same) ---
+    const countryYears = ['all', 2016, 2012, 2008];
+    const processedCountryDataByYear = {};
+    const allCountryAgg = {};
 
-    const yearOptions = ['all', '2016', '2012', '2008'];
-    setYears(yearOptions);
+    uniqueAthletesPerGames.forEach(row => {
+      const year = row.year;
+      const countryName = row.country;
+      if (!countryName || !year || isNaN(year) || !row.sex) return;
 
-    setCountries([
-      { id: 'all', name: 'All Countries' },
-      { id: 'USA', name: 'United States' },
-      { id: 'Australia', name: 'Australia' },
-      { id: 'Canada', name: 'Canada' },
-      { id: 'Great Britain', name: 'Great Britain' },
-      { id: 'France', name: 'France' },
-      { id: 'Germany', name: 'Germany' },
-      { id: 'Japan', name: 'Japan' },
-      { id: 'China', name: 'China' },
-      { id: 'Russia', name: 'Russia' },
-      { id: 'Brazil', name: 'Brazil' }
-    ]);
+      if (!allCountryAgg[countryName]) {
+        allCountryAgg[countryName] = { country: countryName, male: 0, female: 0, total: 0 };
+      }
+      allCountryAgg[countryName].total++;
+      if (row.sex === 'M') allCountryAgg[countryName].male++;
+      else if (row.sex === 'F') allCountryAgg[countryName].female++;
 
-    setIsLoading(false);
+      if (countryYears.includes(year)) {
+        const yearStr = String(year);
+        if (!processedCountryDataByYear[yearStr]) {
+          processedCountryDataByYear[yearStr] = {};
+        }
+        if (!processedCountryDataByYear[yearStr][countryName]) {
+          processedCountryDataByYear[yearStr][countryName] = { country: countryName, male: 0, female: 0, total: 0 };
+        }
+        processedCountryDataByYear[yearStr][countryName].total++;
+        if (row.sex === 'M') processedCountryDataByYear[yearStr][countryName].male++;
+        else if (row.sex === 'F') processedCountryDataByYear[yearStr][countryName].female++;
+      }
+    });
+
+    processedCountryDataByYear.all = Object.values(allCountryAgg);
+
+    countryYears.forEach(year => {
+      if (year === 'all') return;
+      const yearStr = String(year);
+      processedCountryDataByYear[yearStr] = processedCountryDataByYear[yearStr]
+        ? Object.values(processedCountryDataByYear[yearStr])
+        : [];
+    });
+
+    setCountryDataByYear(processedCountryDataByYear);
+    const initialCountryData = processedCountryDataByYear[selectedYear] || processedCountryDataByYear.all || [];
+    setCountryGenderData(initialCountryData);
+    console.log("Processed Country Data By Year. Initial data for", selectedYear, ":", initialCountryData.length, "countries");
+
+    let maxFemaleCount = 0;
+    processedCountryDataByYear.all.forEach(d => {
+      if (d.female > maxFemaleCount) maxFemaleCount = d.female;
+    });
+    const allFemaleCounts = processedCountryDataByYear.all.map(d => d.female).filter(c => c > 0).sort((a, b) => a - b);
+    if (allFemaleCounts.length > 2) {
+      const minCount = allFemaleCounts[0];
+      const medianCount = allFemaleCounts[Math.floor(allFemaleCounts.length / 2)];
+      const maxCount = allFemaleCounts[allFemaleCounts.length - 1];
+      const newDomain = [
+        minCount,
+        Math.max(minCount + 1, Math.floor(medianCount)),
+        Math.max(medianCount + 1, maxCount)
+      ].filter((v, i, a) => a.indexOf(v) === i);
+      if (newDomain.length < 2) newDomain.push(newDomain[0] + 1);
+      if (newDomain.length < 3) newDomain.push(newDomain[1] + 1);
+      console.log("Updating color scale domain:", newDomain.slice(0, 3));
+      setColorDomain(newDomain.slice(0, 3));
+    } else if (allFemaleCounts.length > 0) {
+      const fallbackDomain = [0, allFemaleCounts[0], Math.max(1, allFemaleCounts[0] * 2)];
+      console.log("Updating color scale domain (fallback):", fallbackDomain);
+      setColorDomain(fallbackDomain);
+    } else {
+      console.log("No female counts found for color scale domain, using default.");
+      setColorDomain([0, 1, 2]);
+    }
+
+    const mapYearOptions = ['all', ...countryYears.filter(y => y !== 'all').sort((a, b) => b - a)];
+    setYears(mapYearOptions); // Keep this for the map dropdown
+
+    console.log("Data processing complete (Timeline aggregation moved to useMemo).");
   };
 
   useEffect(() => {
@@ -248,36 +262,78 @@ export default function GenderParticipation() {
   }, [sportSearchTerm, allSportGenderData]);
 
   useEffect(() => {
-    // Check if data is loaded and countryDataByYear has keys
-    if (isLoading || Object.keys(countryDataByYear).length === 0) return;
+    if (isLoading || Object.keys(countryDataByYear).length === 0 || Object.keys(nocMap).length === 0) return;
 
-    // Read from the state variable
     const newData = countryDataByYear[selectedYear] || countryDataByYear.all || [];
     setCountryGenderData(newData);
 
-  }, [selectedYear, isLoading, countryDataByYear]); // <-- Add countryDataByYear dependency
+  }, [selectedYear, isLoading, countryDataByYear, nocMap]);
 
-  const countryDataMap = useMemo(() => {
-    console.log("Recalculating countryDataMap (Female Count) for year:", selectedYear);
-    const map = {};
-    countryGenderData.forEach(item => {
-      let mapKey = item.country;
-      if (mapKey === 'USA') mapKey = 'United States of America';
-      if (mapKey === 'Great Britain') mapKey = 'United Kingdom';
-      map[mapKey] = item.female; 
+  // --- useMemo for Filtered and Aggregated Timeline Data ---
+  const processedTimelineDataFiltered = useMemo(() => {
+    if (!processedAthletes || processedAthletes.length === 0) {
+      return [];
+    }
+    console.log(`Filtering timeline for Country: ${selectedTimelineCountry}, Sport: ${selectedTimelineSport}`);
+
+    // Filter by country and sport
+    const filteredAthletes = processedAthletes.filter(athlete => {
+      const countryMatch = selectedTimelineCountry === 'all' || athlete.country === selectedTimelineCountry;
+      const sportMatch = selectedTimelineSport === 'all' || athlete.sport === selectedTimelineSport;
+      return countryMatch && sportMatch;
     });
-    console.log("Generated countryDataMap (Female Count):", map);
+
+    // Aggregate the filtered data by year
+    const timelineAgg = filteredAthletes.reduce((acc, row) => {
+      const year = row.year;
+      if (!year || isNaN(year) || !row.sex) return acc;
+
+      if (!acc[year]) {
+        acc[year] = { year: year, male: 0, female: 0, total: 0 };
+      }
+      acc[year].total++;
+      if (row.sex === 'M') acc[year].male++;
+      else if (row.sex === 'F') acc[year].female++;
+      return acc;
+    }, {});
+
+    // Format and sort
+    const aggregatedData = Object.values(timelineAgg).map(d => ({
+      ...d,
+      femalePercentage: d.total > 0 ? parseFloat(((d.female / d.total) * 100).toFixed(1)) : 0
+    })).sort((a, b) => a.year - b.year);
+
+    console.log("Aggregated Timeline Data (Filtered):", aggregatedData.length, "years");
+    return aggregatedData;
+
+  }, [processedAthletes, selectedTimelineCountry, selectedTimelineSport]); // Dependencies
+
+  // --- useMemo for Map Data (remains the same) ---
+  const countryDataMap = useMemo(() => {
+    const map = {};
+    if (Array.isArray(countryGenderData)) {
+      countryGenderData.forEach(item => {
+        let mapKey = item.country;
+        if (mapKey === 'USA') mapKey = 'United States of America';
+        if (mapKey === 'UK') mapKey = 'United Kingdom';
+        if (mapKey === 'Czech Republic') mapKey = 'Czechia';
+        map[mapKey] = item.female;
+      });
+    }
     return map;
   }, [countryGenderData, selectedYear]);
 
+  // --- Update useMemo for Timeline YEAR RANGE Filtering ---
   const filteredTimelineData = useMemo(() => {
-    if (!timelineData || timelineStartYear === null || timelineEndYear === null) {
+    // Now uses the already filtered/aggregated data
+    if (!processedTimelineDataFiltered || timelineStartYear === null || timelineEndYear === null) {
       return [];
     }
     const start = Math.min(timelineStartYear, timelineEndYear);
     const end = Math.max(timelineStartYear, timelineEndYear);
-    return timelineData.filter(d => d.year >= start && d.year <= end);
-  }, [timelineData, timelineStartYear, timelineEndYear]);
+    // Filter the aggregated data by the selected year range
+    return processedTimelineDataFiltered.filter(d => d.year >= start && d.year <= end);
+  }, [processedTimelineDataFiltered, timelineStartYear, timelineEndYear]); // Use processedTimelineDataFiltered
 
   if (isLoading) {
     return (
@@ -325,35 +381,44 @@ export default function GenderParticipation() {
           >
             By Country
           </button>
-          <button
-            className={`px-4 py-2 rounded-lg ${activeVisualization === 'age' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-            onClick={() => setActiveVisualization('age')}
-          >
-            By Age
-          </button>
-          <button
-            className={`px-4 py-2 rounded-lg ${activeVisualization === 'medals' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-            onClick={() => setActiveVisualization('medals')}
-          >
-            By Medals
-          </button>
-          <button
-            className={`px-4 py-2 rounded-lg ${activeVisualization === 'continents' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-            onClick={() => setActiveVisualization('continents')}
-          >
-            By Continent
-          </button>
         </div>
 
         {activeVisualization === 'timeline' && (
           <div className="bg-gray-800 p-6 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold text-gray-100 mb-4">Evolution of Gender Participation</h2>
 
+            <div className="flex flex-wrap justify-center gap-4 mb-4 items-center">
+              <div className="flex items-center gap-2">
+                <label htmlFor="timeline-country-select" className="text-sm font-medium text-gray-300">Country:</label>
+                <select
+                  id="timeline-country-select"
+                  value={selectedTimelineCountry}
+                  onChange={(e) => setSelectedTimelineCountry(e.target.value)}
+                  className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5 max-w-[200px]"
+                >
+                  {availableCountries.map(country => (
+                    <option key={country.id} value={country.id}>{country.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                <label htmlFor="timeline-sport-select" className="text-sm font-medium text-gray-300">Sport:</label>
+                <select
+                  id="timeline-sport-select"
+                  value={selectedTimelineSport}
+                  onChange={(e) => setSelectedTimelineSport(e.target.value)}
+                  className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5 max-w-[200px]"
+                >
+                  {availableSports.map(sport => (
+                    <option key={sport.id} value={sport.id}>{sport.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className="flex flex-wrap justify-center gap-4 mb-6 items-center">
               <div className="flex items-center gap-2">
-                <label htmlFor="start-year-select" className="text-sm font-medium text-gray-300">
-                  From:
-                </label>
+                <label htmlFor="start-year-select" className="text-sm font-medium text-gray-300">From:</label>
                 <select
                   id="start-year-select"
                   value={timelineStartYear ?? ''}
@@ -361,15 +426,11 @@ export default function GenderParticipation() {
                   className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5"
                   disabled={!availableTimelineYears.length}
                 >
-                  {availableTimelineYears.map(year => (
-                    <option key={year} value={year}>{year}</option>
-                  ))}
+                  {availableTimelineYears.map(year => (<option key={year} value={year}>{year}</option>))}
                 </select>
               </div>
               <div className="flex items-center gap-2">
-                <label htmlFor="end-year-select" className="text-sm font-medium text-gray-300">
-                  To:
-                </label>
+                <label htmlFor="end-year-select" className="text-sm font-medium text-gray-300">To:</label>
                 <select
                   id="end-year-select"
                   value={timelineEndYear ?? ''}
@@ -377,24 +438,14 @@ export default function GenderParticipation() {
                   className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5"
                   disabled={!availableTimelineYears.length}
                 >
-                  {availableTimelineYears.map(year => (
-                    <option key={year} value={year}>{year}</option>
-                  ))}
+                  {availableTimelineYears.map(year => (<option key={year} value={year}>{year}</option>))}
                 </select>
               </div>
             </div>
 
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={filteredTimelineData}
-                  margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0,
-                  }}
-                >
+                <AreaChart data={filteredTimelineData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#444" />
                   <XAxis dataKey="year" stroke="#ccc" />
                   <YAxis stroke="#ccc" />
@@ -417,22 +468,8 @@ export default function GenderParticipation() {
                     }}
                   />
                   <Legend wrapperStyle={{ color: "#ccc" }} />
-                  <Area 
-                    type="monotone" 
-                    dataKey="male" 
-                    name="Male Athletes"
-                    stackId="1" 
-                    stroke="#8884d8" 
-                    fill="#8884d8" 
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="female" 
-                    name="Female Athletes"
-                    stackId="1" 
-                    stroke="#82ca9d" 
-                    fill="#82ca9d" 
-                  />
+                  <Area type="monotone" dataKey="male" name="Male Athletes" stackId="1" stroke="#8884d8" fill="#8884d8" />
+                  <Area type="monotone" dataKey="female" name="Female Athletes" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -456,7 +493,7 @@ export default function GenderParticipation() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#444" />
                   <XAxis dataKey="year" stroke="#ccc" />
                   <YAxis domain={[0, 100]} stroke="#ccc" />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }}
                     formatter={(value) => [`${value.toFixed(1)}%`, 'Female Athletes']}
                     labelFormatter={(value) => `Year: ${value}`}
@@ -567,10 +604,11 @@ export default function GenderParticipation() {
                 onChange={(e) => setSelectedYear(e.target.value)}
                 className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-1/3 p-2.5"
               >
-                <option value="all">All Years (Avg)</option>
-                <option value="2016">Rio 2016</option>
-                <option value="2012">London 2012</option>
-                <option value="2008">Beijing 2008</option>
+                {years.map(year => (
+                  <option key={year} value={year}>
+                    {year === 'all' ? 'All Years (Total)' : year}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -590,7 +628,7 @@ export default function GenderParticipation() {
                         const femaleCount = countryDataMap[countryName];
                         const displayCount = femaleCount !== undefined ? femaleCount : 'N/A';
                         const tooltipText = `${countryName} — Female Athletes: ${displayCount}`;
-                        
+
                         const fillColor = femaleCount !== undefined ? colorScale(femaleCount) : "#4B5563";
 
                         return (
@@ -625,7 +663,6 @@ export default function GenderParticipation() {
                   </Geographies>
                 </ZoomableGroup>
               </ComposableMap>
-              <Tooltip id="country-tooltip" />
             </div>
             <div className="flex justify-center items-center space-x-4 mt-4 text-xs text-gray-400">
               <span>Low Count</span>
@@ -639,86 +676,8 @@ export default function GenderParticipation() {
           </div>
         )}
 
-        {activeVisualization === 'age' && (
-          <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-gray-100 mb-6">Athlete Age Distribution by Gender (Mock Data)</h2>
-            <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={ageDistributionData}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                  <XAxis dataKey="ageBracket" stroke="#ccc" />
-                  <YAxis stroke="#ccc" />
-                  <Tooltip
-                     contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }}
-                     formatter={(value, name) => [value, name === 'male' ? 'Male Athletes' : 'Female Athletes']}
-                  />
-                  <Legend wrapperStyle={{ color: "#ccc" }} />
-                  <Bar dataKey="male" name="Male Athletes" fill="#8884d8" />
-                  <Bar dataKey="female" name="Female Athletes" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        )}
-
-        {activeVisualization === 'medals' && (
-          <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-gray-100 mb-6">Total Medals Won by Gender (Mock Data)</h2>
-             <div className="h-[400px]">
-               <ResponsiveContainer width="100%" height="100%">
-                 <BarChart
-                   data={medalGenderData}
-                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                 >
-                   <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                   <XAxis dataKey="gender" stroke="#ccc" />
-                   <YAxis stroke="#ccc" />
-                   <Tooltip contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }}/>
-                   <Legend wrapperStyle={{ color: "#ccc" }} />
-                   <Bar dataKey="gold" name="Gold" fill="#FFD700" />
-                   <Bar dataKey="silver" name="Silver" fill="#C0C0C0" />
-                   <Bar dataKey="bronze" name="Bronze" fill="#CD7F32" />
-                 </BarChart>
-               </ResponsiveContainer>
-             </div>
-          </div>
-        )}
-
-        {activeVisualization === 'continents' && (
-          <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-gray-100 mb-6">Gender Distribution by Continent (% - Mock Data)</h2>
-            <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={continentGenderData}
-                  layout="vertical"
-                  margin={{ top: 5, right: 50, left: 100, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                  <XAxis type="number" domain={[0, 100]} stroke="#ccc" tickFormatter={(tick) => `${tick}%`} />
-                  <YAxis type="category" dataKey="continent" stroke="#ccc" width={90} tick={{ fontSize: 12 }}/>
-                  <Tooltip
-                     contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }}
-                     formatter={(value, name) => [`${value.toFixed(1)}%`, name === 'malePercentage' ? 'Male %' : 'Female %']}
-                  />
-                  <Legend wrapperStyle={{ color: "#ccc" }} />
-                  <Bar dataKey="femalePercentage" name="Female %" stackId="a" fill="#82ca9d">
-                    <LabelList dataKey="femalePercentage" position="center" formatter={(value) => `${value}%`} style={{ fill: '#1a202c', fontSize: '10px', fontWeight: 'bold' }}/>
-                  </Bar>
-                  <Bar dataKey="malePercentage" name="Male %" stackId="a" fill="#8884d8">
-                     <LabelList dataKey="malePercentage" position="center" formatter={(value) => `${value}%`} style={{ fill: 'white', fontSize: '10px', fontWeight: 'bold' }}/>
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        )}
-
         <div className="text-center text-sm text-gray-500 mt-12">
-          <p>Note: This page uses simulated/mock gender distribution, age, medal, and continental data for visualization purposes.</p>
+          <p>Data sourced from Kaggle Olympics dataset (athlete_events.csv and noc_regions.csv). Counts represent unique athletes per Games/Sport/Country as applicable.</p>
         </div>
       </div>
     </main>
