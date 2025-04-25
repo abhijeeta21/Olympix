@@ -41,7 +41,7 @@ export default function CountryDetails() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen bg-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -49,11 +49,13 @@ export default function CountryDetails() {
 
   if (!data) {
     return (
-      <div className="text-center mt-10">
-        <h2 className="text-xl text-red-500">No data found for this country.</h2>
-        <Link href="/countries" className="text-blue-600 underline mt-4 inline-block">
-          &larr; Back to Countries
-        </Link>
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4">
+        <div className="text-center mt-10">
+          <h2 className="text-xl text-red-400">No data found for this country.</h2>
+          <Link href="/countries" className="text-blue-400 hover:text-blue-300 mt-4 inline-block">
+            &larr; Back to Countries
+          </Link>
+        </div>
       </div>
     );
   }
@@ -119,10 +121,10 @@ export default function CountryDetails() {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-3 border border-gray-200 shadow-md rounded">
+        <div className="bg-gray-800 p-3 border border-gray-700 shadow-md rounded text-white">
           <p className="font-semibold">{`Year: ${label}`}</p>
           <p>{`Athletes: ${payload[0].value}`}</p>
-          {/* <p>{`Total Medals: ${payload[0].payload.medals}`}</p> */}
+          <p>{`Total Medals: ${payload[0].payload.medals}`}</p>
         </div>
       );
     }
@@ -130,19 +132,32 @@ export default function CountryDetails() {
   };
 
   return (
-    <main className="min-h-screen bg-white text-gray-800 p-6">
-      <div className="max-w-6xl mx-auto space-y-10">
-        <Link href="/countries" className="text-blue-600 hover:text-blue-800">
-          &larr; Back to Countries
-        </Link>
+    <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4">
+      <div className="w-full max-w-6xl mx-auto space-y-8 py-8">
+        {/* Navigation */}
+        <nav className="flex justify-between items-center">
+          <Link href="/countries" className="text-blue-400 hover:text-blue-300 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+            </svg>
+            Back to Countries
+          </Link>
+          <div className="text-sm font-medium py-1 px-3 bg-blue-800 rounded-full">Country Details</div>
+        </nav>
 
-        <h1 className="text-4xl font-bold text-gray-900">
-          {data.country} – Olympic Details
-        </h1>
+        {/* Header */}
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+            {data.country}
+          </h1>
+          <p className="text-xl text-blue-300 max-w-2xl mx-auto">
+            Olympic Performance Analysis
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg p-4 shadow-md border border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Medal Count</h2>
+          <div className="bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-700">
+            <h2 className="text-2xl font-bold text-blue-300 mb-4">Medal Count</h2>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
@@ -161,19 +176,19 @@ export default function CountryDetails() {
                     <Cell key={`cell-${index}`} fill={medalColors[entry.name]} />
                   ))}
                 </Pie>
-                <ReTooltip />
-                <ReLegend />
+                <ReTooltip contentStyle={{ backgroundColor: '#1f2937', color: '#fff', border: '1px solid #374151' }} />
+                <ReLegend formatter={(value) => <span style={{ color: '#e2e8f0' }}>{value}</span>} />
               </PieChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-lg p-4 shadow-md border border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Top 10 Sports by Athlete Count</h2>
+          <div className="bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-700">
+            <h2 className="text-2xl font-bold text-blue-300 mb-4">Top 10 Sports by Athlete Count</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={topSports} layout="vertical" margin={{ top: 10, right: 20, left: 20, bottom: 5 }}>
-                <XAxis type="number" stroke="#666" />
-                <YAxis dataKey="Sport" type="category" width={120} stroke="#666" />
-                <ReTooltip />
+                <XAxis type="number" stroke="#e2e8f0" />
+                <YAxis dataKey="Sport" type="category" width={120} stroke="#e2e8f0" />
+                <ReTooltip contentStyle={{ backgroundColor: '#1f2937', color: '#fff', border: '1px solid #374151' }} />
                 <Bar dataKey="AthleteCount">
                   {topSports.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -184,16 +199,16 @@ export default function CountryDetails() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 shadow-md border border-gray-200">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Olympic Participation Over the Years</h2>
+        <div className="bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-700">
+          <h2 className="text-2xl font-bold text-blue-300 mb-6">Olympic Participation Over the Years</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-xl font-medium text-gray-700 mb-2">Summer Olympics</h3>
+              <h3 className="text-xl font-medium text-blue-200 mb-4">Summer Olympics</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={summerData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="year" stroke="#666" />
-                  <YAxis stroke="#666" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
+                  <XAxis dataKey="year" stroke="#e2e8f0" />
+                  <YAxis stroke="#e2e8f0" />
                   <ReTooltip content={<CustomTooltip />} />
                   <Line 
                     type="monotone" 
@@ -207,12 +222,12 @@ export default function CountryDetails() {
               </ResponsiveContainer>
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-700 mb-2">Winter Olympics</h3>
+              <h3 className="text-xl font-medium text-blue-200 mb-4">Winter Olympics</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={winterData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="year" stroke="#666" />
-                  <YAxis stroke="#666" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
+                  <XAxis dataKey="year" stroke="#e2e8f0" />
+                  <YAxis stroke="#e2e8f0" />
                   <ReTooltip content={<CustomTooltip />} />
                   <Line 
                     type="monotone" 
@@ -228,8 +243,10 @@ export default function CountryDetails() {
           </div>
         </div>
 
-        <footer className="text-center text-sm text-gray-600 mt-12 border-t pt-4">
-          &copy; {new Date().getFullYear()} Olympic Insights
+        {/* Footer */}
+        <footer className="text-center text-gray-500 text-sm mt-12 pt-6 border-t border-gray-700">
+          <p>Olympic Data Analysis Project - {new Date().getFullYear()}</p>
+          <p className="mt-2">Built with D3.js and React</p>
         </footer>
       </div>
     </main>
