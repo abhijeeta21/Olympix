@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import {
   LineChart,
@@ -32,9 +32,26 @@ export default function GenderParticipation() {
   const [sportCheckboxList, setSportCheckboxList] = useState([]);
   const [timelineSportCheckboxList, setTimelineSportCheckboxList] = useState([]);
 
+  const [timelineSearchQuery, setTimelineSearchQuery] = useState('All Countries');
+  const [timelineSearchSuggestions, setTimelineSearchSuggestions] = useState([]);
+  const [showTimelineSuggestions, setShowTimelineSuggestions] = useState(false);
+  const timelineSearchContainerRef = useRef(null);
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (timelineSearchContainerRef.current && !timelineSearchContainerRef.current.contains(event.target)) {
+        setShowTimelineSuggestions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [timelineSearchContainerRef]);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -83,7 +100,7 @@ export default function GenderParticipation() {
 
     const uniqueEntries = new Map();
     data.forEach(row => {
-      if (!row || !row.ID || !row.Year || !row.Sex || !row.NOC || !row.Sport) return;
+      if (!row || !row.ID || !row.Year || !row.Sex || !row.NOC || !row.Sport || !row.Season) return;
       const regionName = regionMap[row.NOC] || row.NOC;
       const key = `${row.ID}-${row.Year}`;
       if (!uniqueEntries.has(key)) {
@@ -94,6 +111,7 @@ export default function GenderParticipation() {
           country: regionName,
           year: row.Year,
           sport: row.Sport,
+          season: row.Season // Add season field
         });
       }
     });
@@ -137,7 +155,7 @@ export default function GenderParticipation() {
     if (checkedTimelineSports.size === 0) {
         return [];
     }
-    console.log(`Filtering timeline for Country: ${selectedTimelineCountry}, ${checkedTimelineSports.size} Sports`);
+    console.log(`Filtering timeline for Country ID: ${selectedTimelineCountry}, ${checkedTimelineSports.size} Sports`);
     const filteredAthletes = processedAthletes.filter(athlete => {
       const countryMatch = selectedTimelineCountry === 'all' || athlete.country === selectedTimelineCountry;
       const sportMatch = checkedTimelineSports.has(athlete.sport);
@@ -146,12 +164,24 @@ export default function GenderParticipation() {
     const timelineAgg = filteredAthletes.reduce((acc, row) => {
       const year = row.year;
       if (!year || isNaN(year) || !row.sex) return acc;
-      if (!acc[year]) {
-        acc[year] = { year: year, male: 0, female: 0, total: 0 };
+      
+      // Use year-season as the key to separate Summer and Winter Olympics in the same year
+      const seasonKey = row.season || "Summer"; // Default to Summer if not available
+      const key = `${year}-${seasonKey}`;
+      
+      if (!acc[key]) {
+        acc[key] = { 
+          year: year, 
+          season: seasonKey, 
+          male: 0, 
+          female: 0, 
+          total: 0 
+        };
       }
-      acc[year].total++;
-      if (row.sex === 'M') acc[year].male++;
-      else if (row.sex === 'F') acc[year].female++;
+      
+      acc[key].total++;
+      if (row.sex === 'M') acc[key].male++;
+      else if (row.sex === 'F') acc[key].female++;
       return acc;
     }, {});
     const aggregatedData = Object.values(timelineAgg).map(d => ({
@@ -204,7 +234,6 @@ export default function GenderParticipation() {
     return processedTimelineDataFiltered.filter(d => d.year >= start && d.year <= end);
   }, [processedTimelineDataFiltered, timelineStartYear, timelineEndYear]);
 
-  // --- useEffect to Update Sport Checkboxes based on Selected Year (By Sport Section) ---
   useEffect(() => {
     if (!processedAthletes || processedAthletes.length === 0 || !availableSports.length) {
       setSportCheckboxList([]);
@@ -221,20 +250,18 @@ export default function GenderParticipation() {
         if (athlete.sport) sportsInSelectedYearSet.add(athlete.sport);
       });
     }
-    // Update checkbox list: Check all available sports by default
     setSportCheckboxList(sortedAllSports.map(sport => {
         const isAvailable = sportsInSelectedYearSet.has(sport);
         return {
           id: sport,
           name: sport,
-          checked: isAvailable, // Check if available
+          checked: isAvailable,
           disabled: !isAvailable
         };
       })
     );
-  }, [processedAthletes, selectedSportYear, availableSports]); // Removed prevList dependency
+  }, [processedAthletes, selectedSportYear, availableSports]);
 
-  // --- useEffect to Update Timeline Sport Checkboxes based on Selected Year Range ---
   useEffect(() => {
     if (!processedAthletes || processedAthletes.length === 0 || timelineStartYear === null || timelineEndYear === null || !availableSports.length) {
       setTimelineSportCheckboxList([]);
@@ -249,20 +276,18 @@ export default function GenderParticipation() {
     rangeFilteredAthletes.forEach(athlete => {
       if (athlete.sport) sportsInRangeSet.add(athlete.sport);
     });
-    // Update checkbox list: Check all available sports by default
     setTimelineSportCheckboxList(sortedAllSports.map(sport => {
         const isAvailable = sportsInRangeSet.has(sport);
         return {
           id: sport,
           name: sport,
-          checked: isAvailable, // Check if available
+          checked: isAvailable,
           disabled: !isAvailable
         };
       })
     );
-  }, [processedAthletes, timelineStartYear, timelineEndYear, availableSports]); // Removed prevList dependency
+  }, [processedAthletes, timelineStartYear, timelineEndYear, availableSports]);
 
-  // --- Handlers ---
   const handleSportCheckboxChange = (sportId) => {
     setSportCheckboxList(prevList =>
       prevList.map(sport =>
@@ -300,6 +325,48 @@ export default function GenderParticipation() {
     setTimelineSportCheckboxList(prevList =>
       prevList.map(sport => ({ ...sport, checked: false }))
     );
+  };
+
+  const handleTimelineSearchChange = (event) => {
+    const query = event.target.value;
+    setTimelineSearchQuery(query);
+
+    if (!query) {
+      setTimelineSearchSuggestions([]);
+      setShowTimelineSuggestions(false);
+      return;
+    }
+
+    const queryLower = query.toLowerCase();
+    const filtered = availableCountries
+      .filter(country => country.name.toLowerCase().startsWith(queryLower))
+      .slice(0, 10);
+
+    setTimelineSearchSuggestions(filtered);
+    setShowTimelineSuggestions(filtered.length > 0);
+  };
+
+  const handleTimelineSuggestionClick = (country) => {
+    setTimelineSearchQuery(country.name);
+    setSelectedTimelineCountry(country.id);
+    setShowTimelineSuggestions(false);
+  };
+
+  const handleTimelineSearchSubmit = (event) => {
+    event.preventDefault();
+    const queryLower = timelineSearchQuery.toLowerCase();
+    const matchedCountry = availableCountries.find(c => c.name.toLowerCase() === queryLower);
+
+    if (matchedCountry) {
+      setSelectedTimelineCountry(matchedCountry.id);
+    } else {
+      const allCountriesOption = availableCountries.find(c => c.id === 'all');
+      if (allCountriesOption) {
+          setTimelineSearchQuery(allCountriesOption.name);
+          setSelectedTimelineCountry(allCountriesOption.id);
+      }
+    }
+    setShowTimelineSuggestions(false);
   };
 
   if (isLoading) {
@@ -343,25 +410,63 @@ export default function GenderParticipation() {
             <div>
               <h2 className="text-2xl font-bold text-gray-100 mb-4">Filters</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 items-start">
-                <div className="md:col-span-1 flex flex-col">
-                  <label htmlFor="timeline-country-select" className="text-sm font-medium text-gray-300 mb-1">Country:</label>
-                  <select
-                    id="timeline-country-select"
-                    value={selectedTimelineCountry}
-                    onChange={(e) => setSelectedTimelineCountry(e.target.value)}
-                    className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-                  >
-                    {availableCountries.map(country => (
-                      <option key={country.id} value={country.id}>{country.name}</option>
-                    ))}
-                  </select>
+                <div className="md:col-span-1 flex flex-col relative" ref={timelineSearchContainerRef}>
+                  <label htmlFor="timeline-country-search" className="text-sm font-medium text-gray-300 mb-1">Country:</label>
+                  <div className="flex flex-col gap-2">
+                    <form onSubmit={handleTimelineSearchSubmit} className="flex gap-2">
+                      <div className="flex-grow">
+                        <input
+                          id="timeline-country-search"
+                          type="text"
+                          value={timelineSearchQuery}
+                          onChange={handleTimelineSearchChange}
+                          onFocus={() => setShowTimelineSuggestions(timelineSearchSuggestions.length > 0)}
+                          placeholder="Search Country..."
+                          className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+                          autoComplete="off"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm whitespace-nowrap"
+                      >
+                        Search
+                      </button>
+                    </form>
+                    
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        setTimelineSearchQuery('All Countries');
+                        setSelectedTimelineCountry('all');
+                        setShowTimelineSuggestions(false);
+                      }}
+                      className="py-2 px-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm w-full"
+                    >
+                      All Countries
+                    </button>
+                  </div>
+                  
+                  {showTimelineSuggestions && timelineSearchSuggestions.length > 0 && (
+                    <ul className="absolute z-10 w-full mt-20 bg-gray-600 border border-gray-500 rounded-md shadow-lg max-h-60 overflow-auto">
+                      {timelineSearchSuggestions.map((country) => (
+                        <li
+                          key={country.id}
+                          className="px-4 py-2 text-white hover:bg-gray-500 cursor-pointer"
+                          onClick={() => handleTimelineSuggestionClick(country)}
+                        >
+                          {country.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
                 <div className="md:col-span-2">
                    <div className="flex justify-between items-center mb-1">
                      <label className="block text-sm font-medium text-gray-300">Select Sports (Available in Range):</label>
                      <div className="space-x-2">
                        <button onClick={handleTimelineSelectAllSports} className="text-xs px-2 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50">Select All</button>
-                       <button onClick={handleTimelineDeselectAllSports} className="text-xs px-2 py-0.5 bg-gray-600 hover:bg-gray-700 text-white rounded disabled:opacity-50">Deselect All</button>
+                       <button onClick={handleTimelineDeselectAllSports} className="text-xs px-2 py-0..5 bg-gray-600 hover:bg-gray-700 text-white rounded disabled:opacity-50">Deselect All</button>
                      </div>
                    </div>
                    <div className="h-32 overflow-y-auto border border-gray-600 rounded-lg p-2 bg-gray-700 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-1">
@@ -377,14 +482,39 @@ export default function GenderParticipation() {
               <div className="flex flex-wrap justify-center gap-4 items-center">
                 <div className="flex items-center gap-2">
                   <label htmlFor="start-year-select" className="text-sm font-medium text-gray-300">From:</label>
-                  <select id="start-year-select" value={timelineStartYear ?? ''} onChange={(e) => setTimelineStartYear(parseInt(e.target.value, 10))} className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5" disabled={!availableTimelineYears.length}>
-                    {availableTimelineYears.map(year => (<option key={year} value={year}>{year}</option>))}
+                  <select 
+                    id="start-year-select" 
+                    value={timelineStartYear ?? ''} 
+                    onChange={(e) => {
+                      const newStartYear = parseInt(e.target.value, 10);
+                      setTimelineStartYear(newStartYear);
+                      // If end year is smaller than start year, update end year to match start year
+                      if (timelineEndYear < newStartYear) {
+                        setTimelineEndYear(newStartYear);
+                      }
+                    }} 
+                    className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5" 
+                    disabled={!availableTimelineYears.length}
+                  >
+                    {availableTimelineYears.map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="flex items-center gap-2">
                   <label htmlFor="end-year-select" className="text-sm font-medium text-gray-300">To:</label>
-                  <select id="end-year-select" value={timelineEndYear ?? ''} onChange={(e) => setTimelineEndYear(parseInt(e.target.value, 10))} className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5" disabled={!availableTimelineYears.length}>
-                    {availableTimelineYears.map(year => (<option key={year} value={year}>{year}</option>))}
+                  <select 
+                    id="end-year-select" 
+                    value={timelineEndYear ?? ''} 
+                    onChange={(e) => setTimelineEndYear(parseInt(e.target.value, 10))} 
+                    className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5" 
+                    disabled={!availableTimelineYears.length}
+                  >
+                    {availableTimelineYears
+                      .filter(year => year >= timelineStartYear) // Only show years >= start year
+                      .map(year => (
+                        <option key={year} value={year}>{year}</option>
+                      ))}
                   </select>
                 </div>
               </div>
@@ -401,9 +531,10 @@ export default function GenderParticipation() {
                     <Tooltip contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }} content={({ active, payload, label }) => {
                        if (active && payload && payload.length) {
                         const data = payload[0].payload;
+                        const season = data.season || "Summer"; // Default to Summer if not specified
                         return (
                           <div className="p-2 bg-gray-700 border border-gray-600 rounded shadow-lg text-sm text-gray-200">
-                            <p className="label font-bold mb-1">{`Year: ${label}`}</p>
+                            <p className="label font-bold mb-1">{`${label} ${season} Olympics`}</p>
                             <p className="intro" style={{ color: '#8884d8' }}>{`Male Athletes: ${data.male}`}</p>
                             <p className="intro" style={{ color: '#82ca9d' }}>{`Female Athletes: ${data.female}`}</p>
                             <p className="intro" style={{ color: '#FFB74D' }}>{`Total Athletes: ${data.total}`}</p>
@@ -432,7 +563,11 @@ export default function GenderParticipation() {
                     <Tooltip
                       contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }}
                       formatter={(value) => [`${value.toFixed(1)}%`, 'Female Athletes']}
-                      labelFormatter={(value) => `Year: ${value}`}
+                      labelFormatter={(value) => {
+                        const dataPoint = filteredTimelineDataForDisplay.find(item => item.year === value);
+                        const season = dataPoint?.season || "Summer"; // Default to Summer if not found
+                        return `${value} ${season} Olympics`;
+                      }}
                     />
                     <Legend wrapperStyle={{ color: "#ccc" }} />
                     <Line type="monotone" dataKey="femalePercentage" name="Female Athletes (%)" stroke="#FF6B6B" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 8 }} />
@@ -479,7 +614,20 @@ export default function GenderParticipation() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#444" />
                   <XAxis type="number" domain={[0, 100]} stroke="#ccc" tickFormatter={(tick) => `${tick}%`} />
                   <YAxis type="category" dataKey="sport" stroke="#ccc" width={80} tick={{ fontSize: 12 }} />
-                  <Tooltip contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }} content={({ active, payload, label }) => { /* ... */ }} />
+                  <Tooltip contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }} content={({ active, payload, label }) => {
+                     if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="p-2 bg-gray-700 border border-gray-600 rounded shadow-lg text-sm text-gray-200">
+                            <p className="label font-bold mb-1">{`${label}`}</p>
+                            <p className="intro" style={{ color: '#82ca9d' }}>{`Female: ${data.female} (${data.femalePercentage.toFixed(1)}%)`}</p>
+                            <p className="intro" style={{ color: '#8884d8' }}>{`Male: ${data.male} (${data.malePercentage.toFixed(1)}%)`}</p>
+                            <p className="intro" style={{ color: '#FFB74D' }}>{`Total: ${data.total}`}</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                  }} />
                   <Legend wrapperStyle={{ color: "#ccc" }} />
                   <Bar dataKey="femalePercentage" name="Female Athletes %" stackId="a" fill="#82ca9d">
                     <LabelList dataKey="femalePercentage" position="center" formatter={(value) => value > 5 ? `${value.toFixed(0)}%` : ''} style={{ fill: '#1a202c', fontSize: '10px', fontWeight: 'bold' }} />
