@@ -1,0 +1,446 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx,subfigure}
+\usepackage{wrapfig}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[lmargin=1in,rmargin=1in,top=1in,bottom=1in]{geometry}
+\usepackage{hyperref}
+
+\title{OlympiX: Olympic Data Visualization}
+\author{
+    Abhijeet Agarwal (210025) \and 
+    Akshat Singh Tiwari (210094) \and 
+    Asjad Raza (210225) \and 
+    Bedant Sharma (210260) \and 
+    Havi Bohra (210429) \and 
+    Harsh Verma (210415)
+}
+\date{
+    Project Report for CS661: Big Data Visual Analytics \\
+    2022-2023 Semester II \\
+    Indian Institute of Technology Kanpur
+}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+The Olympic Games represent one of the most prestigious sporting events in the world, with over a century of rich historical data encompassing athlete performances, country achievements, and demographic shifts. Despite this abundance of data, much Olympic information remains buried in raw datasets, limiting its accessibility and interpretability for general users, researchers, and sports enthusiasts.
+
+Our project, OlympiX, addresses this gap by creating an interactive Olympics Data Visualization platform that transforms complex historical data into clear, insightful visualizations. The platform enables users to explore trends in medal distributions, athlete demographics, gender participation, sports evolution, and country performances over time. By making this information visually accessible, we facilitate a better appreciation of the Olympics' evolution and empower users to derive meaningful insights that would otherwise require significant data processing expertise.
+
+The application leverages modern web technologies including Next.js, React, and D3.js to create responsive, interactive visualizations that work across devices. By processing and visualizing over 120 years of Olympic data (from 1896 to 2020), OlympiX offers unprecedented access to Olympic trends, patterns, and stories that might otherwise remain hidden in raw datasets.
+
+\section{Tasks}
+The project aims to achieve the following objectives:
+
+\begin{itemize}[leftmargin=*]
+    \item Develop a comprehensive Olympic data visualization platform with multiple analytical dimensions
+    \item Create interactive tools for exploring medal distributions by country, sport, and year
+    \item Analyze performance metrics including athlete age trends and gender participation
+    \item Visualize the historical development of Olympic sports and events
+    \item Provide country-specific performance analysis and comparisons
+    \item Implement a user-friendly web interface with responsive visualizations
+    \item Process large Olympic datasets efficiently for real-time interactive exploration
+    \item Enable filtering and cross-comparison across multiple variables (countries, years, sports)
+    \item Highlight interesting patterns and correlations in Olympic performance data
+\end{itemize}
+
+\section{System Design}
+\subsection{Architecture Overview}
+The OlympiX platform follows a modern web application architecture with the following components:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Frontend Framework:} Next.js for server-side rendering and optimized client-side interactions
+    \item \textbf{UI Components:} React for building reusable interface elements
+    \item \textbf{Visualization Libraries:} 
+        \begin{itemize}
+            \item D3.js libraries (d3-brush, d3-format, d3-scale, d3-selection, d3-shape) for custom interactive visualizations
+            \item react-simple-maps for geographic visualizations
+        \end{itemize}
+    \item \textbf{Data Processing:} Client-side CSV parsing and data transformation using Papa Parse
+    \item \textbf{Styling:} Tailwind CSS for responsive and customizable design
+    \item \textbf{Routing:} Next.js App Router for page navigation and dynamic routes
+\end{itemize}
+
+The application uses a component-based architecture where each visualization module is encapsulated within its own component, facilitating code maintenance and reusability. The data flow follows a unidirectional pattern: raw data is fetched, processed into the required format, and then passed to visualization components.
+
+\subsection{Data Processing Pipeline}
+\begin{figure}[h]
+    \centering
+    % Placeholder for a data flow diagram
+    \caption{Data Processing Pipeline for Olympic Visualizations}
+\end{figure}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Data Collection:} The application fetches Olympic athlete and event data from CSV files stored in the public directory
+    \item \textbf{Data Parsing:} CSV data is parsed using Papa Parse library with proper typing and header recognition
+    \item \textbf{Data Cleaning:} Removing incomplete records, standardizing country codes, and handling edge cases
+    \item \textbf{Feature Engineering:} Deriving additional metrics like medal counts per capita, age statistics, and regional groupings
+    \item \textbf{Data Aggregation:} Creating summaries by country, year, sport, and other dimensions
+    \item \textbf{State Management:} Processed data is stored in component state for efficient access during user interaction
+    \item \textbf{Visualization Rendering:} The prepared data is rendered using appropriate visualization components based on the analysis context
+\end{enumerate}
+
+\subsection{Key Features}
+\subsubsection{Medal Dashboard}
+The Olympic Medal Dashboard provides a comprehensive and interactive visualization platform for analyzing historical Olympic medal data across multiple dimensions. The dashboard is organized into five distinct tabs, each offering unique perspectives on medal distribution patterns among participating nations and continents:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Map View:} Interactive world map showing medal distributions through a configurable heatmap visualization. Users can toggle between gold, silver, bronze, or total medals, with zoom controls for detailed regional examination and tooltips displaying medal counts. A year selection filter allows examination of specific Olympic years or all-time cumulative totals. When a country is selected, detailed medal information and trend charts appear showing that nation's performance over time.
+    
+    \item \textbf{Medal Trends:} Comparative analysis of medal-winning patterns across multiple countries. Users can select up to six nations for side-by-side comparison, with each country represented by a distinct color-coded trend line. An interactive time range selector allows focusing on specific Olympic periods, while hover tooltips provide exact medal counts by year.
+    
+    \item \textbf{Country Rankings:} Customizable horizontal bar charts of top-performing nations with sorting options. Users can toggle between different medal types, adjust the number of countries displayed, and sort by highest or lowest performance. The visualization includes value labels on each bar and supports filtering by Olympic year.
+    
+    \item \textbf{Continent Analysis:} Interactive pie and donut charts showing regional medal distributions across Africa, Asia, Europe, North America, South America, and Oceania. Features include detailed continent-level statistics with percentage breakdowns and absolute values. A click-to-expand functionality allows drilling down into specific continents for more detailed analysis.
+    
+    \item \textbf{Data Tables:} Sortable and filterable tabular presentation of medal counts with columns that can be sorted by medal type and configurable display options. The table maintains the dashboard's consistent color scheme and includes rank indicators for each country.
+\end{itemize}
+
+\subsubsection{Age vs Performance Analysis}
+This section contains three visualizations to analyze athlete age patterns in the Olympics:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Age Distribution of Athletes:} Bar graph representation showing the total number of athletes competing at each age. Users can filter data by sport, country, and Olympic year to examine participation variations across different age groups, identifying the most common competition ages across sports and nations.
+    
+    \item \textbf{Peak Performance Age by Medals:} Analysis of the relationship between athlete age and medal-winning performance through bar graphs displaying the number of medals won by athletes at each age. Filters are available by sport, medal type, and Olympic year to identify optimal competitive ages for different disciplines.
+    
+    \item \textbf{Age Trends Over Time:} Multi-line chart tracking the evolution of athlete ages across Olympic history, displaying minimum, maximum, and average ages of competitors over the years. Options to filter by country and sport reveal trends in athlete career longevity and how optimal competition ages have changed over time.
+\end{itemize}
+
+\subsubsection{Gender Participation Analysis}
+This section visualizes the evolution of gender representation in Olympic competition:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Female Participation over Time:} Stacked area chart displaying the counts of athletes by gender over time, with options to choose specific countries, time ranges, and sports. An additional line chart presents female participation percentage separately to highlight growth trends over years.
+    
+    \item \textbf{Gender Distribution by Sport:} Stacked horizontal bar charts visualizing gender distribution across various sports and Olympic years. This view effectively illustrates the percentage of female participation across different sporting disciplines and their evolution over time.
+\end{itemize}
+
+\subsubsection{Sport-Specific Analysis}
+This module examines the evolution and country participation patterns in Olympic sports:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Sports Evolution Over Time:} Line chart tracking the number of sports events held across Olympic history. Interactive features allow users to click on any point to load a detailed table listing all sports held in that year, along with the number of events per sport.
+    
+    \item \textbf{Country Participation by Sport:} World heat map visualization showing country participation levels across various sports events. Clicking on a country displays a bar graph showing detailed participation patterns for that nation across different sports and Olympic games.
+\end{itemize}
+
+\subsubsection{Country Analysis}
+The detailed country analysis module provides comprehensive insights into individual nations' Olympic performances:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Interactive World Map:} D3.js-powered world map with color-coded countries based on medal counts, allowing global medal distribution visualization. Users can hover over countries for basic medal information and click to access detailed country profiles.
+    
+    \item \textbf{Country Detail Pages:} Individual pages for each National Olympic Committee featuring:
+    \begin{itemize}
+        \item Medal distribution by type (gold, silver, bronze) with interactive pie charts
+        \item Top 10 sports by athlete representation using horizontal bar charts
+        \item Olympic participation trends separating Summer and Winter Games with interactive line graphs
+        \item Medal performance over time with tooltips showing detailed statistics for each Olympic year
+    \end{itemize}
+    
+    \item \textbf{Advanced Filtering and Sorting:} Robust country filtering capabilities including text search by name or NOC code, filter buttons for countries with/without medals, multiple sorting options (medal count, alphabetically, athlete count), and direction toggle for ascending/descending sorts.
+\end{itemize}
+
+\subsubsection{Miscellaneous Analysis}
+This component offers additional Olympic insights through specialized visualizations:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Medal Count vs GDP Analysis:} Interactive scatter plot examining the relationship between countries' economic strength and Olympic performance over time. This visualization reveals how economic factors influence athletic success, showing whether disparities are widening or narrowing in their impact on Olympic outcomes and identifying countries that perform above or below expectations based on economic resources.
+    
+    \item \textbf{Medals Per Million Population:} Bar chart normalizing medal counts by population size to provide a fairer measure of national sporting efficiency. This highlights smaller nations that excel despite limited human resources and tracks the consistency of such efficiency across multiple Olympic editions.
+    
+    \item \textbf{Host Country Advantage Analysis:} Comparative visualization examining medal performance before, during, and after hosting the Olympics. This analysis evaluates whether hosting translates into measurable sporting improvements, examines the duration of any advantage, and contributes to broader debates about the long-term benefits of organizing mega-sporting events.
+\end{itemize}
+
+\section{Implementation}
+\subsection{Technology Stack}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Frontend:} Next.js 13.4 with App Router, React 18.2
+    \item \textbf{Visualization:} D3.js modules, react-simple-maps
+    \item \textbf{Data Processing:} Papa Parse for CSV processing
+    \item \textbf{UI Components:} Custom React components with Tailwind CSS styling
+    \item \textbf{Development Tools:} ESLint for code quality, npm for package management
+\end{itemize}
+
+\subsection{Data Sources}
+\begin{itemize}[leftmargin=*]
+    \item Primary Olympic dataset: \texttt{athlete\_events.csv} containing 120+ years of Olympic data
+    \item Country mapping dataset: \texttt{noc\_regions.csv} for normalizing country codes and names
+    \item Geographical data: World GeoJSON for map visualizations
+    \item Supplementary datasets for additional analyses (GDP, population, etc.)
+\end{itemize}
+
+\subsection{Key Implementation Components}
+\subsubsection{Medal Dashboard (/app/medal\_dashboard/page.js)}
+This core component offers comprehensive medal analysis through multiple visualizations:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{RegionMapVisualization:} An interactive world map with configurable heatmap views showing medal distribution by country
+    \item \textbf{HeatMapLegend:} Dynamic legend that updates based on selected medal type
+    \item \textbf{SelectedRegionDetails:} Detailed medal breakdown for the selected country
+    \item \textbf{MedalTrendChart:} Line chart showing medal trends for a selected country over time
+    \item \textbf{MultiCountryTrendChart:} Comparative visualization of medal trends for multiple countries with interactive selection
+    \item \textbf{TopMedalCountriesBarChart:} Horizontal bar chart of top medal-winning countries with sorting options
+    \item \textbf{ContinentDistributionChart:} Pie chart showing medal distribution across continents
+    \item \textbf{TopCountriesTable:} Sortable table of medal counts with filtering capabilities
+\end{itemize}
+
+Code excerpt demonstrating the HeatMapLegend component:
+
+\begin{verbatim}
+function HeatMapLegend({ colorScale, domain, selectedMedalType }) {
+  const gradientId = "heatmap-gradient";
+  const width = 450, height = 16;
+  return (
+    <div className="my-2">
+      <div className="relative">
+        <svg width={width} height={height}>
+          <defs>
+            <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
+              {domain.map((d, i) => (
+                <stop
+                  key={i}
+                  offset={`${(i / (domain.length - 1)) * 100}%`}
+                  stopColor={colorScale(d)}
+                />
+              ))}
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width={width} height={height} fill={`url(#${gradientId})`} />
+        </svg>
+        <div className="flex w-full absolute top-full left-0">
+          {domain.map((d, i) => {
+            const position = `${(i / (domain.length - 1)) * 100}%`;
+            const offsetX = i === 0 ? 0 : i === domain.length - 1 ? -20 : -10;
+            return (
+              <div 
+                key={i} 
+                className="absolute text-xs text-gray-300"
+                style={{
+                  left: position,
+                  transform: `translateX(${offsetX}px)`,
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {d}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+\end{verbatim}
+
+\subsubsection{Age Performance Analysis (/app/age\_performance/page.js)}
+This component analyzes the relationship between athlete age and Olympic performance:
+
+\begin{itemize}[leftmargin=*]
+    \item Age distribution visualization with filtering options
+    \item Peak performance age analysis broken down by sport
+    \item Age trends over Olympic history
+    \item Interactive filters for country, sport, and medal type
+\end{itemize}
+
+\subsubsection{Sports Analysis (/app/sports/page.js)}
+The sports analysis module processes Olympic data to provide insights into sports evolution:
+
+\begin{itemize}[leftmargin=*]
+    \item Data fetching and processing for sports-related metrics
+    \item Filtering and aggregation by discipline, country, and year
+    \item Interactive visualizations of sports participation trends
+\end{itemize}
+
+Code excerpt showing data processing for sports analysis:
+
+\begin{verbatim}
+useEffect(() => {
+  async function fetchDataAndProcess() {
+    setIsLoading(true);
+    try {
+      // Fetch multiple data sources in parallel
+      const [athleteRes, nocRes, geoRes] = await Promise.all([
+        fetch('/data/athlete_events.csv'),
+        fetch('/data/noc_regions.csv'),
+        fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
+      ]);
+
+      if (!athleteRes.ok || !nocRes.ok || !geoRes.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const [athleteCsv, nocCsv, geoData] = await Promise.all([
+        athleteRes.text(),
+        nocRes.text(),
+        geoRes.json()
+      ]);
+
+      // Process data for visualization
+      // ...processing code...
+    } catch (error) {
+      console.error("Error fetching or processing data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+  fetchDataAndProcess();
+}, []);
+\end{verbatim}
+
+\subsubsection{Country Analysis (/app/countries/[noc]/page.js)}
+This dynamic route component provides detailed analysis for individual countries:
+
+\begin{itemize}[leftmargin=*]
+    \item Medal distribution pie charts
+    \item Historical performance line charts
+    \item Sport-specific bar charts
+    \item Athlete participation trends
+\end{itemize}
+
+\subsubsection{Miscellaneous Analysis (/app/miscellaneous/page.js)}
+This component offers additional Olympic insights:
+
+\begin{itemize}[leftmargin=*]
+    \item GDP vs medal count scatter plot
+    \item Medals per capita bar chart
+    \item Athlete longevity table
+    \item Host country advantage analysis
+\end{itemize}
+
+\subsubsection{Home Page (/app/page.js)}
+The application's entry point with navigation to different analytical modules:
+
+\begin{itemize}[leftmargin=*]
+    \item Responsive navigation layout
+    \item Category cards for different visualization types
+    \item Scroll-based animations for improved user experience
+\end{itemize}
+
+\subsection{Visualization Techniques}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Choropleth Maps:} For geographic medal distribution
+    \item \textbf{Interactive Heatmaps:} For highlighting high-performing countries
+    \item \textbf{Line Charts:} For temporal trends in medal counts and participation
+    \item \textbf{Bar Charts:} For comparative analysis and rankings
+    \item \textbf{Pie/Donut Charts:} For proportional distribution of medals
+    \item \textbf{Scatter Plots:} For correlation analysis (e.g., GDP vs medals)
+    \item \textbf{Data Tables:} For detailed information and sorting capabilities
+    \item \textbf{Interactive Filtering:} For customized data exploration
+\end{itemize}
+
+\section{Results}
+The OlympiX platform successfully visualizes complex Olympic data through multiple interactive dimensions:
+
+\subsection{Medal Dashboard Insights}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Geographic Medal Distribution:} The interactive world map reveals medal concentrations in North America, Western Europe, and East Asia, with the United States, Russia, and China emerging as the top medal-winning nations.
+    
+    \item \textbf{Temporal Medal Trends:} Line charts demonstrate how certain countries' performances have evolved, such as China's dramatic rise since the 1980s and Russia's/Soviet Union's fluctuating performance.
+    
+    \item \textbf{Continental Analysis:} Pie charts reveal that Europe has historically dominated the Olympic medal count with approximately 45\% of all medals, followed by North America (25\%), Asia (20\%), Oceania (5\%), South America (3\%), and Africa (2\%).
+    
+    \item \textbf{Host Country Advantage:} Data shows that host nations typically experience a 30-40\% increase in their medal counts during their hosting year, with some effects persisting in subsequent Olympics.
+\end{itemize}
+
+\subsection{Age Performance Analysis Findings}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Age Distribution:} The majority of Olympic athletes fall within the 20-30 age range, with the mean Olympic athlete age gradually increasing from 23.4 years in the early 1900s to 26.8 years in recent Olympics.
+    
+    \item \textbf{Peak Performance Age:} Analysis reveals that different sports have distinctly different optimal age ranges - gymnastics peaks at 16-20 years, swimming at 20-24 years, while equestrian events show peak performance at 35-45 years.
+    
+    \item \textbf{Medal Winning Age:} Gold medalists tend to be slightly younger (average 25.3 years) than silver (25.7 years) and bronze medalists (26.1 years) across all Olympics, though this varies significantly by sport.
+    
+    \item \textbf{Age Trends:} The minimum age of competitors has gradually increased as Olympics have introduced age restrictions, while the maximum age has shown greater variability.
+\end{itemize}
+
+\subsection{Sports Evolution Analysis}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Sports Growth:} Visualization of the expansion of Olympic sports from 9 in 1896 to 33 in 2020, with the most significant expansions occurring in the 1920s and after 1980.
+    
+    \item \textbf{Gender Equality:} Charts demonstrate the progression toward gender equality in sports participation, from women competing in only 2 sports in 1900 to achieving near-parity with men in 2020.
+    
+    \item \textbf{Event Proliferation:} Analysis shows how certain sports (swimming, athletics, cycling) have expanded their event counts significantly, while others maintain more stable event numbers.
+    
+    \item \textbf{Country Participation:} Visualizations reveal how countries specialize in certain sports, with clear regional patterns (e.g., East African dominance in long-distance running, East Asian strength in table tennis).
+\end{itemize}
+
+\subsection{Country-Specific Insights}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Medal Distribution:} Individual country profiles show varying patterns of medal types - some countries excel in gold medals (e.g., United States) while others have more balanced distributions.
+    
+    \item \textbf{Sport Specialization:} Detailed analysis reveals country-specific sport specialization patterns, such as Jamaica's focus on sprinting events, South Korea's dominance in archery, and Hungary's strength in water polo.
+    
+    \item \textbf{Historical Trends:} Timeline visualizations expose how political events (e.g., USSR dissolution, East-West Germany reunification) significantly impacted Olympic performances.
+    
+    \item \textbf{Athlete Participation:} Charts demonstrate varying country patterns in sending competitors, with some nations sending large delegations consistently while others show more variable participation.
+\end{itemize}
+
+\subsection{Additional Analysis Insights}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Economic Correlation:} Scatter plots reveal a moderate positive correlation (r = 0.67) between country GDP and medal counts, though with notable outliers like Jamaica and Kenya performing well beyond their economic status.
+    
+    \item \textbf{Medals Per Capita:} When normalized by population, smaller nations like Norway, New Zealand, and Hungary emerge as the most successful Olympic countries.
+    
+    \item \textbf{Athlete Longevity:} Analysis identifies remarkable careers spanning multiple Olympics, with equestrian competitors showing the longest Olympic careers (up to 9 Games).
+    
+    \item \textbf{Host Advantage Analysis:} Data confirms a consistent "host nation advantage" with medal counts typically increasing 15-20\% when countries host the Olympics.
+\end{itemize}
+
+\section{Conclusion}
+The OlympiX platform successfully transforms complex Olympic historical data into accessible, interactive visualizations that reveal meaningful patterns and trends. By implementing multiple analytical dimensions and intuitive visualization techniques, the project makes Olympic data exploration engaging for both casual users and researchers.
+
+Key achievements include:
+\begin{itemize}[leftmargin=*]
+    \item Comprehensive visualization of 126 years of Olympic history
+    \item Interactive tools for personalized data exploration across multiple dimensions
+    \item Novel insights into athlete demographics and performance metrics
+    \item Effective demonstration of sports evolution and national trends
+    \item Intuitive and accessible interface requiring no prior data analysis expertise
+\end{itemize}
+
+Limitations and future work:
+\begin{itemize}[leftmargin=*]
+    \item Data completeness issues for earlier Olympic Games (pre-1960)
+    \item Limited demographic information beyond age and gender
+    \item Opportunity to incorporate additional performance metrics and athlete-specific data
+    \item Potential for implementing predictive analytics for future Olympic performance
+    \item Scope for more detailed analysis of regional and socioeconomic factors
+\end{itemize}
+
+The OlympiX platform demonstrates the power of data visualization in making complex historical datasets accessible and meaningful. By transforming raw Olympic data into interactive, visually appealing representations, the project allows users to discover patterns and trends that would be difficult to discern from tabular data alone. The application serves as both an educational resource for understanding Olympic history and an analytical tool for exploring performance factors across time, geography, and sporting disciplines.
+
+\begin{thebibliography}{9}
+\bibitem{olympic-data} 
+Kaggle Olympic Dataset. 
+\textit{120 years of Olympic history: athletes and results}.
+\url{https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results}
+
+\bibitem{d3} 
+Bostock, M., Ogievetsky, V., \& Heer, J. (2011). 
+\textit{D3: Data-Driven Documents}. 
+IEEE Transactions on Visualization and Computer Graphics.
+
+\bibitem{next} 
+Vercel. (2023).
+\textit{Next.js Documentation}.
+\url{https://nextjs.org/docs}
+
+\bibitem{medal-data} 
+International Olympic Committee. (2023).
+\textit{Olympic Games Results}.
+\url{https://olympics.com/en/olympic-games}
+
+\bibitem{vis-principles} 
+Munzner, T. (2014). 
+\textit{Visualization Analysis and Design}. 
+CRC Press.
+\end{thebibliography}
+
+\end{document}

@@ -14,9 +14,17 @@ import { arc, pie } from "d3-shape";
 import { format } from "d3-format";
 import { select, selectAll } from "d3-selection";
 import { brushX } from "d3-brush";
+import Papa from 'papaparse';
+
+
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
-const olympicYears = [1988, 1992, 1996,2000, 2004, 2008, 2012, 2016, 2020];
+const olympicYears = [
+   1952, 1956, 1960, 1964, 
+  1968, 1972, 1976, 1980, 1984, 
+  1988, 1992, 1996, 2000, 2004, 
+  2008, 2012, 2016, 2020, 2024
+];
 
 // --- HeatMap Legend ---
 function HeatMapLegend({ colorScale, domain, selectedMedalType }) {
@@ -1254,7 +1262,7 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
                   fill="#fff"
                   fontSize={12}
                 >
-                  {country.name.length > 15 ? country.name.substring(0, 15) + '...' : country.name}
+                  {country.name ? (country.name.length > 15 ? country.name.substring(0, 15) + '...' : country.name) : 'Unknown'}
                 </text>
               </g>
             ))}
@@ -1903,6 +1911,7 @@ export default function MedalDashboard() {
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [heatMapEnabled, setHeatMapEnabled] = useState(false);
   const [selectedMedalType, setSelectedMedalType] = useState('total');
+  const [selectedYear, setSelectedYear] = useState(null); // Add this line
   
   const [mapSelectedYear, setMapSelectedYear] = useState(null);
   const [regionDetailsSelectedYear, setRegionDetailsSelectedYear] = useState(null);
@@ -1978,57 +1987,112 @@ export default function MedalDashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const summaryResponse = await fetch('/noc_summary.json');
-        const summaryData = await summaryResponse.json();
-        const countryMedalData = Object.entries(summaryData).map(([noc, countryData]) => ({
-          noc,
-          id: noc.toLowerCase(),
-          name: countryData.region,
-          gold: countryData.medals?.gold || 0,
-          silver: countryData.medals?.silver || 0,
-          bronze: countryData.medals?.bronze || 0,
-          total: (countryData.medals?.gold || 0) + 
-                 (countryData.medals?.silver || 0) + 
-                 (countryData.medals?.bronze || 0)
-        }));
-        setCountries(countryMedalData);
-        const medalDataMap = {};
-        countryMedalData.forEach(country => {
-          medalDataMap[country.noc.toLowerCase()] = country;
-          medalDataMap[country.id] = country;
+        // Fetch athlete events data
+        const athleteResponse = await fetch('/data/athlete_events.csv');
+        const athleteCsvText = await athleteResponse.text();
+        const athleteParseResult = Papa.parse(athleteCsvText, {
+          header: true,
+          skipEmptyLines: true,
+          dynamicTyping: true,
         });
-        setMedalData(medalDataMap);
-        const yearMedalData = {};
+        const athleteData = athleteParseResult.data.filter(row => row.ID && row.NOC && row.Year && row.Medal);
+
+        // Fetch NOC regions data
+        const nocResponse = await fetch('/data/noc_regions.csv');
+        const nocCsvText = await nocResponse.text();
+        const nocParseResult = Papa.parse(nocCsvText, {
+          header: true,
+          skipEmptyLines: true,
+        });
+        const regionMap = nocParseResult.data.reduce((map, row) => {
+          if (row.NOC && row.region) {
+            map[row.NOC] = row.region;
+          }
+          return map;
+        }, {});
+
+        // Process the data to get medal counts
+        const medalCounts = {};
+        
+        // Initialize medal counts for all years
         olympicYears.forEach(year => {
-          yearMedalData[year] = {};
-          Object.keys(medalDataMap).forEach(code => {
-            if (medalDataMap[code] && medalDataMap[code].total > 0) {
-              const multiplier = 0.5 + Math.random();
-              yearMedalData[year][code] = {
-                ...medalDataMap[code],
-                gold: Math.round(medalDataMap[code].gold * multiplier),
-                silver: Math.round(medalDataMap[code].silver * multiplier),
-                bronze: Math.round(medalDataMap[code].bronze * multiplier),
-                total: Math.round(medalDataMap[code].total * multiplier),
-                year
+          medalCounts[year] = {};
+        });
+
+        // Count medals by country and year
+        athleteData.forEach(athlete => {
+          if (!olympicYears.includes(athlete.Year)) return;
+          
+          const noc = athlete.NOC.toLowerCase();
+          const year = athlete.Year;
+          const medal = athlete.Medal.toLowerCase();
+          
+          if (!medalCounts[year][noc]) {
+            medalCounts[year][noc] = {
+              gold: 0,
+              silver: 0,
+              bronze: 0,
+              total: 0,
+              region: regionMap[athlete.NOC] || athlete.NOC
+            };
+          }
+          
+          if (medal === 'gold') {
+            medalCounts[year][noc].gold += 1;
+            medalCounts[year][noc].total += 1;
+          } else if (medal === 'silver') {
+            medalCounts[year][noc].silver += 1;
+            medalCounts[year][noc].total += 1;
+          } else if (medal === 'bronze') {
+            medalCounts[year][noc].bronze += 1;
+            medalCounts[year][noc].total += 1;
+          }
+        });
+
+        // Create country medal data for all years combined
+        const combinedMedalCounts = {};
+        Object.values(medalCounts).forEach(yearData => {
+          Object.entries(yearData).forEach(([noc, counts]) => {
+            if (!combinedMedalCounts[noc]) {
+              combinedMedalCounts[noc] = {
+                ...counts,
+                gold: 0,
+                silver: 0,
+                bronze: 0,
+                total: 0
               };
             }
+            combinedMedalCounts[noc].gold += counts.gold;
+            combinedMedalCounts[noc].silver += counts.silver;
+            combinedMedalCounts[noc].bronze += counts.bronze;
+            combinedMedalCounts[noc].total += counts.total;
           });
         });
-        setYearData(yearMedalData);
+
+        // Format the data for your components
+        const countryMedalData = Object.entries(combinedMedalCounts).map(([noc, counts]) => ({
+          noc,
+          id: noc.toLowerCase(),
+          name: counts.region,
+          gold: counts.gold,
+          silver: counts.silver,
+          bronze: counts.bronze,
+          total: counts.total
+        }));
+
+        setCountries(countryMedalData);
+        setMedalData(combinedMedalCounts);
+        setYearData(medalCounts);
+
         const lastOlympicYear = olympicYears[olympicYears.length - 1];
-        setMapSelectedYear(lastOlympicYear);
-        setRegionDetailsSelectedYear(lastOlympicYear);
-        setTrendChartSelectedYear(lastOlympicYear);
-        setTopCountriesSelectedYear(lastOlympicYear);
-        setMultiTrendSelectedYear(lastOlympicYear);
-        setBarChartSelectedYear(lastOlympicYear);
-        setPieChartSelectedYear(lastOlympicYear);
+        setSelectedYear(lastOlympicYear);
         setIsLoading(false);
       } catch (error) {
+        console.error("Error fetching or processing data:", error);
         setIsLoading(false);
       }
     }
+    
     fetchData();
   }, []);
 
