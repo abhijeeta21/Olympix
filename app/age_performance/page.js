@@ -1,207 +1,412 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import {
   LineChart,
   Line,
-  ScatterChart,
-  Scatter,
+  BarChart,
+  Bar,
+  Cell,
   XAxis,
   YAxis,
-  ZAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
-  BarChart,
-  Bar
+  LabelList
 } from 'recharts';
+import Papa from 'papaparse';
 
 export default function AgePerformance() {
-  const [ageData, setAgeData] = useState([]);
-  const [scatterData, setScatterData] = useState([]);
-  const [countryAgeData, setCountryAgeData] = useState([]);
-  const [selectedSport, setSelectedSport] = useState('all');
-  const [selectedYear, setSelectedYear] = useState('2016');
-  const [selectedAgeThreshold, setSelectedAgeThreshold] = useState(30);
   const [isLoading, setIsLoading] = useState(true);
-  const [sports, setSports] = useState([]);
-  const [years, setYears] = useState([]);
+  const [activeVisualization, setActiveVisualization] = useState('ageDistribution');
+  const [processedAthletes, setProcessedAthletes] = useState([]);
+  const [availableYears, setAvailableYears] = useState([]);
+  const [availableSports, setAvailableSports] = useState([]);
+  const [availableCountries, setAvailableCountries] = useState([]);
+  
+  // Filters
+  const [selectedYear, setSelectedYear] = useState('all');
+  const [selectedSport, setSelectedSport] = useState('all');
+  const [selectedCountry, setSelectedCountry] = useState('all');
+  const [selectedMedal, setSelectedMedal] = useState('all');
+  
+  // For country search
+  const [countrySearchQuery, setCountrySearchQuery] = useState('All Countries');
+  const [countrySearchSuggestions, setCountrySearchSuggestions] = useState([]);
+  const [showCountrySuggestions, setShowCountrySuggestions] = useState(false);
+  const countrySearchContainerRef = useRef(null);
 
   useEffect(() => {
-    // In a real application, we would fetch this data from an API
-    // For now, we'll use mock data
-    fetchMockData();
+    fetchData();
   }, []);
 
-  const fetchMockData = () => {
-    // Mock age trend data (youngest, oldest, average by year)
-    const mockAgeData = [
-      { year: 1896, youngest: 10, oldest: 47, average: 23.4 },
-      { year: 1900, youngest: 12, oldest: 51, average: 25.1 },
-      { year: 1904, youngest: 11, oldest: 54, average: 24.8 },
-      { year: 1908, youngest: 10, oldest: 60, average: 26.2 },
-      { year: 1912, youngest: 11, oldest: 58, average: 25.7 },
-      { year: 1920, youngest: 12, oldest: 65, average: 26.9 },
-      { year: 1924, youngest: 11, oldest: 62, average: 27.1 },
-      { year: 1928, youngest: 13, oldest: 60, average: 26.8 },
-      { year: 1932, youngest: 13, oldest: 58, average: 27.2 },
-      { year: 1936, youngest: 12, oldest: 61, average: 27.5 },
-      { year: 1948, youngest: 12, oldest: 66, average: 28.1 },
-      { year: 1952, youngest: 13, oldest: 64, average: 28.4 },
-      { year: 1956, youngest: 14, oldest: 70, average: 28.6 },
-      { year: 1960, youngest: 13, oldest: 67, average: 28.9 },
-      { year: 1964, youngest: 13, oldest: 66, average: 28.7 },
-      { year: 1968, youngest: 14, oldest: 68, average: 28.5 },
-      { year: 1972, youngest: 14, oldest: 69, average: 28.3 },
-      { year: 1976, youngest: 14, oldest: 70, average: 28.2 },
-      { year: 1980, youngest: 13, oldest: 67, average: 28.1 },
-      { year: 1984, youngest: 12, oldest: 65, average: 27.9 },
-      { year: 1988, youngest: 12, oldest: 64, average: 27.6 },
-      { year: 1992, youngest: 11, oldest: 63, average: 27.8 },
-      { year: 1996, youngest: 14, oldest: 61, average: 27.5 },
-      { year: 2000, youngest: 13, oldest: 60, average: 27.7 },
-      { year: 2004, youngest: 14, oldest: 65, average: 27.9 },
-      { year: 2008, youngest: 14, oldest: 67, average: 28.2 },
-      { year: 2012, youngest: 13, oldest: 71, average: 28.5 },
-      { year: 2016, youngest: 14, oldest: 62, average: 28.4 },
-      { year: 2020, youngest: 13, oldest: 66, average: 28.7 },
-    ];
-
-    // Mock sports data for scatter plot
-    const mockSports = [
-      { id: 'all', name: 'All Sports' },
-      { id: 'swimming', name: 'Swimming' },
-      { id: 'gymnastics', name: 'Gymnastics' },
-      { id: 'athletics', name: 'Athletics' },
-      { id: 'cycling', name: 'Cycling' },
-      { id: 'weightlifting', name: 'Weightlifting' },
-      { id: 'shooting', name: 'Shooting' },
-      { id: 'archery', name: 'Archery' },
-      { id: 'skiing', name: 'Alpine Skiing' }
-    ];
-
-    // Mock age vs performance data (scatter plot)
-    const generateScatterData = (sport = 'all') => {
-      const baseData = [];
-      // Generate 300 random points
-      for (let i = 0; i < 300; i++) {
-        const sportId = mockSports[Math.floor(Math.random() * mockSports.length)].id;
-        if (sport === 'all' || sportId === sport) {
-          // Age between 15 and 40
-          const age = Math.floor(15 + Math.random() * 25);
-          // Performance score between 0 and 100
-          let performance = null;
-          
-          // Different sports have different age-performance curves
-          if (sportId === 'swimming' || sportId === 'gymnastics') {
-            // Younger is better for these sports (with some randomness)
-            performance = Math.max(0, 100 - (age - 18) * 3 + Math.random() * 20);
-          } else if (sportId === 'shooting' || sportId === 'archery') {
-            // Experience helps - middle age is better
-            performance = Math.max(0, 70 + Math.abs(age - 30) * -1.5 + Math.random() * 20);
-          } else {
-            // General case - slight curve favoring mid-late 20s
-            performance = Math.max(0, 80 - Math.abs(age - 27) * 1.5 + Math.random() * 25);
-          }
-          
-          // Medal status (1=gold, 2=silver, 3=bronze, 4=no medal)
-          let medalStatus = 4;
-          if (performance > 90) medalStatus = 1;
-          else if (performance > 85) medalStatus = 2;
-          else if (performance > 80) medalStatus = 3;
-          
-          baseData.push({
-            age,
-            performance: Math.round(performance),
-            sport: sportId,
-            medalStatus
-          });
-        }
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (countrySearchContainerRef.current && !countrySearchContainerRef.current.contains(event.target)) {
+        setShowCountrySuggestions(false);
       }
-      return baseData;
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
     };
+  }, [countrySearchContainerRef]);
 
-    // Mock country-wise data for athletes above age threshold
-    const mockCountries = [
-      'USA', 'China', 'Japan', 'Great Britain', 'Russia',
-      'Australia', 'France', 'Germany', 'Italy', 'Canada'
-    ];
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const athleteCsvPath = '/data/athlete_events.csv';
+      const athleteResponse = await fetch(athleteCsvPath);
+      if (!athleteResponse.ok) throw new Error(`Failed to fetch ${athleteCsvPath}`);
+      const athleteCsvText = await athleteResponse.text();
+      const athleteParseResult = Papa.parse(athleteCsvText, {
+        header: true,
+        skipEmptyLines: true,
+        dynamicTyping: true,
+      });
+      const athleteData = athleteParseResult.data.filter(row => 
+        row.ID && row.NOC && row.Year && row.Age
+      );
 
-    const generateCountryAgeData = (ageThreshold) => {
-      return mockCountries.map(country => {
-        let count;
-        // Generate somewhat realistic numbers with some countries having more veteran athletes
-        if (['USA', 'Russia', 'Germany'].includes(country)) {
-          count = Math.floor(30 + Math.random() * 20);
-        } else if (['China', 'Japan'].includes(country)) {
-          count = Math.floor(15 + Math.random() * 15);
-        } else {
-          count = Math.floor(20 + Math.random() * 15);
+      const nocCsvPath = '/data/noc_regions.csv';
+      const nocResponse = await fetch(nocCsvPath);
+      if (!nocResponse.ok) throw new Error(`Failed to fetch ${nocCsvPath}`);
+      const nocCsvText = await nocResponse.text();
+      const nocParseResult = Papa.parse(nocCsvText, {
+        header: true,
+        skipEmptyLines: true,
+      });
+      
+      const regionMap = nocParseResult.data.reduce((map, row) => {
+        if (row.NOC && row.region) {
+          map[row.NOC] = row.region;
         }
-        
-        return {
-          country,
-          count
-        };
-      }).sort((a, b) => b.count - a.count);
-    };
+        return map;
+      }, {});
 
-    // Set up the state
-    setAgeData(mockAgeData);
-    setSports(mockSports);
-    setYears(mockAgeData.map(d => ({ year: d.year.toString() })));
-    setScatterData(generateScatterData());
-    setCountryAgeData(generateCountryAgeData(selectedAgeThreshold));
-    setIsLoading(false);
+      if (athleteData.length > 0 && Object.keys(regionMap).length > 0) {
+        processRawData(athleteData, regionMap);
+      } else {
+        console.error("Athlete data or NOC map missing.");
+      }
+    } catch (error) {
+      console.error("Error fetching or processing data:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Update scatter data when sport changes
-  useEffect(() => {
-    if (isLoading) return;
-    // In a real app, this would be a new API call
-    // Here we're just filtering the mock data
-    const newData = scatterData.filter(d => selectedSport === 'all' || d.sport === selectedSport);
-    setScatterData(newData);
-  }, [selectedSport, isLoading]);
+  const processRawData = (data, regionMap) => {
+    console.log("Processing raw data:", data.length, "rows");
 
-  // Update country age data when threshold changes
-  useEffect(() => {
-    if (isLoading) return;
-    // In a real app, this would be a new API call
-    const mockCountries = [
-      'USA', 'China', 'Japan', 'Great Britain', 'Russia',
-      'Australia', 'France', 'Germany', 'Italy', 'Canada'
+    // Process athletes with age data
+    const athletes = data
+      .filter(row => row.Age && !isNaN(row.Age))
+      .map(row => {
+        const regionName = regionMap[row.NOC] || row.NOC;
+        return {
+          id: row.ID,
+          name: row.Name,
+          sex: row.Sex,
+          age: row.Age,
+          height: row.Height,
+          weight: row.Weight,
+          noc: row.NOC,
+          country: regionName,
+          year: row.Year,
+          sport: row.Sport,
+          event: row.Event,
+          medal: row.Medal,
+          season: row.Season
+        };
+      });
+
+    setProcessedAthletes(athletes);
+    console.log("Processed athletes with age data:", athletes.length);
+
+    // Extract available filter options
+    const allYears = new Set();
+    const allSports = new Set();
+    const allCountries = new Set();
+
+    athletes.forEach(athlete => {
+      if (athlete.year) allYears.add(athlete.year);
+      if (athlete.sport) allSports.add(athlete.sport);
+      if (athlete.country) allCountries.add(athlete.country);
+    });
+
+    setAvailableYears(Array.from(allYears).sort((a, b) => a - b));
+    setAvailableSports(Array.from(allSports).sort());
+    
+    const sortedCountries = [
+      { id: 'all', name: 'All Countries' }, 
+      ...Array.from(allCountries).sort().map(c => ({ id: c, name: c }))
     ];
+    setAvailableCountries(sortedCountries);
 
-    const newData = mockCountries.map(country => {
-      // Generate realistic numbers with fewer athletes as age threshold increases
-      const baseCount = Math.floor(50 - selectedAgeThreshold * 0.8 + Math.random() * 10);
-      let count = Math.max(0, baseCount);
+    console.log("Data processing complete.");
+  };
+
+  const filteredAthleteData = useMemo(() => {
+    if (!processedAthletes.length) return [];
+    
+    return processedAthletes.filter(athlete => {
+      const yearMatch = selectedYear === 'all' || athlete.year === parseInt(selectedYear, 10);
+      const sportMatch = selectedSport === 'all' || athlete.sport === selectedSport;
+      const countryMatch = selectedCountry === 'all' || athlete.country === selectedCountry;
+      const medalMatch = selectedMedal === 'all' || 
+                         (selectedMedal === 'any' && athlete.medal) || 
+                         athlete.medal === selectedMedal;
       
-      // Some countries tend to have more veteran athletes
-      if (['USA', 'Russia', 'Germany'].includes(country)) {
-        count += Math.floor(5 + Math.random() * 5);
-      } else if (['China', 'Japan'].includes(country)) {
-        count -= Math.floor(3 + Math.random() * 3);
+      return yearMatch && sportMatch && countryMatch && medalMatch;
+    });
+  }, [processedAthletes, selectedYear, selectedSport, selectedCountry, selectedMedal]);
+
+  // 1. Age Distribution Data
+  const ageDistributionData = useMemo(() => {
+    if (!filteredAthleteData.length) return [];
+    
+    // Group athletes by age
+    const ageGroups = {};
+    filteredAthleteData.forEach(athlete => {
+      const age = Math.floor(athlete.age);
+      if (!ageGroups[age]) {
+        ageGroups[age] = { 
+          age: age, 
+          count: 0,
+          medalCount: 0
+        };
       }
       
-      return {
-        country,
-        count: Math.max(0, count)
-      };
-    }).sort((a, b) => b.count - a.count);
+      ageGroups[age].count++;
+      if (athlete.medal) ageGroups[age].medalCount++;
+    });
     
-    setCountryAgeData(newData);
-  }, [selectedAgeThreshold, isLoading]);
+    return Object.values(ageGroups).sort((a, b) => a.age - b.age);
+  }, [filteredAthleteData]);
 
-  const getMedalColor = (medalStatus) => {
-    switch (medalStatus) {
-      case 1: return '#FFD700'; // gold
-      case 2: return '#C0C0C0'; // silver
-      case 3: return '#CD7F32'; // bronze
-      default: return '#95A5A6'; // no medal (gray)
+  // 2. Age vs Medal Performance Data
+  const ageMedalData = useMemo(() => {
+    if (!filteredAthleteData.length) return [];
+    
+    // Group athletes by age and calculate medal percentage
+    const ageGroups = {};
+    
+    filteredAthleteData.forEach(athlete => {
+      const age = Math.floor(athlete.age);
+      if (!ageGroups[age]) {
+        ageGroups[age] = { 
+          age: age, 
+          totalAthletes: 0,
+          goldCount: 0,
+          silverCount: 0,
+          bronzeCount: 0,
+          medalCount: 0
+        };
+      }
+      
+      ageGroups[age].totalAthletes++;
+      
+      if (athlete.medal === 'Gold') ageGroups[age].goldCount++;
+      else if (athlete.medal === 'Silver') ageGroups[age].silverCount++;
+      else if (athlete.medal === 'Bronze') ageGroups[age].bronzeCount++;
+      
+      if (athlete.medal) ageGroups[age].medalCount++;
+    });
+    
+    // Calculate percentages
+    return Object.values(ageGroups)
+      .map(group => ({
+        ...group,
+        medalPercentage: parseFloat(((group.medalCount / group.totalAthletes) * 100).toFixed(1)),
+        goldPercentage: parseFloat(((group.goldCount / group.totalAthletes) * 100).toFixed(1)),
+        silverPercentage: parseFloat(((group.silverCount / group.totalAthletes) * 100).toFixed(1)),
+        bronzePercentage: parseFloat(((group.bronzeCount / group.totalAthletes) * 100).toFixed(1))
+      }))
+      .sort((a, b) => a.age - b.age);
+  }, [filteredAthleteData]);
+
+  // 3. Peak Performance Age Data (Medal count by age)
+  const medalsByAgeData = useMemo(() => {
+    if (!filteredAthleteData.length) return [];
+    
+    // Group medals by age
+    const ageGroups = {};
+    filteredAthleteData.forEach(athlete => {
+      if (!athlete.age || !athlete.medal) return;
+      
+      const age = Math.floor(athlete.age);
+      if (!ageGroups[age]) {
+        ageGroups[age] = { 
+          age: age, 
+          goldCount: 0,
+          silverCount: 0,
+          bronzeCount: 0,
+          totalMedals: 0,
+          athleteCount: 0
+        };
+      }
+      
+      if (athlete.medal === 'Gold') ageGroups[age].goldCount++;
+      else if (athlete.medal === 'Silver') ageGroups[age].silverCount++;
+      else if (athlete.medal === 'Bronze') ageGroups[age].bronzeCount++;
+      
+      ageGroups[age].totalMedals++;
+      ageGroups[age].athleteCount++;
+    });
+    
+    return Object.values(ageGroups)
+      .sort((a, b) => a.age - b.age);
+  }, [filteredAthleteData]);
+
+  // 4. Age by Sport Comparison
+  const ageBySportData = useMemo(() => {
+    if (!filteredAthleteData.length) return [];
+    
+    const sportAgeGroups = {};
+    
+    filteredAthleteData.forEach(athlete => {
+      if (!athlete.sport) return;
+      
+      if (!sportAgeGroups[athlete.sport]) {
+        sportAgeGroups[athlete.sport] = {
+          sport: athlete.sport,
+          ages: [],
+          medalAges: []
+        };
+      }
+      
+      sportAgeGroups[athlete.sport].ages.push(athlete.age);
+      if (athlete.medal) {
+        sportAgeGroups[athlete.sport].medalAges.push(athlete.age);
+      }
+    });
+    
+    // Calculate statistics for each sport
+    return Object.values(sportAgeGroups)
+      .map(group => {
+        const ages = group.ages;
+        const medalAges = group.medalAges;
+        
+        // Only include sports with sufficient data
+        if (ages.length < 10) return null;
+        
+        // Calculate average age
+        const avgAge = ages.reduce((sum, age) => sum + age, 0) / ages.length;
+        
+        // Calculate average medal age if there are medal winners
+        const avgMedalAge = medalAges.length > 0 
+          ? medalAges.reduce((sum, age) => sum + age, 0) / medalAges.length 
+          : null;
+        
+        // Calculate min and max ages
+        const minAge = Math.min(...ages);
+        const maxAge = Math.max(...ages);
+        
+        return {
+          sport: group.sport,
+          avgAge: parseFloat(avgAge.toFixed(1)),
+          avgMedalAge: avgMedalAge !== null ? parseFloat(avgMedalAge.toFixed(1)) : null,
+          minAge: minAge,
+          maxAge: maxAge,
+          athleteCount: ages.length,
+          medalCount: medalAges.length
+        };
+      })
+      .filter(item => item !== null)
+      .sort((a, b) => a.avgAge - b.avgAge);
+  }, [filteredAthleteData]);
+
+
+  // Age Trends Over Time
+const ageTrendsOverTimeData = useMemo(() => {
+  if (!filteredAthleteData.length) return [];
+  
+  // Group athletes by year
+  const yearGroups = {};
+  
+  filteredAthleteData.forEach(athlete => {
+    if (!athlete.year || !athlete.age) return;
+    
+    const year = athlete.year;
+    if (!yearGroups[year]) {
+      yearGroups[year] = {
+        year: year,
+        ages: []
+      };
     }
+    
+    yearGroups[year].ages.push(athlete.age);
+  });
+  
+  // Calculate statistics for each year
+  return Object.values(yearGroups)
+    .map(group => {
+      const ages = group.ages;
+      
+      // Skip years with insufficient data
+      if (ages.length < 5) return null;
+      
+      // Calculate statistics
+      const minAge = Math.min(...ages);
+      const maxAge = Math.max(...ages);
+      const avgAge = ages.reduce((sum, age) => sum + age, 0) / ages.length;
+      
+      return {
+        year: group.year,
+        minAge: minAge,
+        maxAge: maxAge,
+        avgAge: parseFloat(avgAge.toFixed(1)),
+        athleteCount: ages.length
+      };
+    })
+    .filter(item => item !== null)
+    .sort((a, b) => a.year - b.year);
+}, [filteredAthleteData]);
+
+
+  // Handle country search
+  const handleCountrySearchChange = (event) => {
+    const query = event.target.value;
+    setCountrySearchQuery(query);
+
+    if (!query) {
+      setCountrySearchSuggestions([]);
+      setShowCountrySuggestions(false);
+      return;
+    }
+
+    const queryLower = query.toLowerCase();
+    const filtered = availableCountries
+      .filter(country => country.name.toLowerCase().startsWith(queryLower))
+      .slice(0, 10);
+
+    setCountrySearchSuggestions(filtered);
+    setShowCountrySuggestions(filtered.length > 0);
+  };
+
+  const handleCountrySuggestionClick = (country) => {
+    setCountrySearchQuery(country.name);
+    setSelectedCountry(country.id);
+    setShowCountrySuggestions(false);
+  };
+
+  const handleCountrySearchSubmit = (event) => {
+    event.preventDefault();
+    const queryLower = countrySearchQuery.toLowerCase();
+    const matchedCountry = availableCountries.find(c => c.name.toLowerCase() === queryLower);
+
+    if (matchedCountry) {
+      setSelectedCountry(matchedCountry.id);
+    } else {
+      const allCountriesOption = availableCountries.find(c => c.id === 'all');
+      if (allCountriesOption) {
+        setCountrySearchQuery(allCountriesOption.name);
+        setSelectedCountry(allCountriesOption.id);
+      }
+    }
+    setShowCountrySuggestions(false);
   };
 
   if (isLoading) {
@@ -213,230 +418,374 @@ export default function AgePerformance() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 p-4">
+    <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-200 p-4">
       <div className="w-full max-w-7xl mx-auto space-y-8 py-6">
         <div className="flex justify-between items-center">
-          <Link href="/" className="text-blue-600 hover:text-blue-800">
+          <Link href="/" className="text-blue-400 hover:text-blue-600">
             &larr; Back to Home
           </Link>
-          
-          <h1 className="text-4xl font-bold text-blue-900 text-center">
+          <h1 className="text-4xl font-bold text-blue-300 text-center">
             Age vs Performance Analysis
           </h1>
-          
-          <div className="w-24"></div> {/* Empty div for balance */}
+          <div className="w-24"></div>
         </div>
 
-        {/* Age Trends Over Time */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Age Trends in the Olympics</h2>
-          <div className="h-[400px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={ageData}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="year"
-                  tick={{ fontSize: 12 }}
-                  interval={2}
-                />
-                <YAxis yAxisId="left" />
-                <Tooltip 
-                  formatter={(value, name) => [value, name === 'youngest' ? 'Youngest Athlete' : name === 'oldest' ? 'Oldest Athlete' : 'Average Age']}
-                  labelFormatter={(value) => `Year: ${value}`}
-                />
-                <Legend />
-                <Line 
-                  yAxisId="left"
-                  type="monotone" 
-                  dataKey="youngest" 
-                  name="Youngest Athlete"
-                  stroke="#8884d8" 
-                  activeDot={{ r: 8 }}
-                />
-                <Line 
-                  yAxisId="left"
-                  type="monotone" 
-                  dataKey="oldest" 
-                  name="Oldest Athlete"
-                  stroke="#82ca9d"
-                  activeDot={{ r: 8 }}
-                />
-                <Line 
-                  yAxisId="left"
-                  type="monotone" 
-                  dataKey="average" 
-                  name="Average Age"
-                  stroke="#ff7300"
-                  activeDot={{ r: 8 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+        <div className="flex flex-wrap justify-center gap-4 mb-6">
+          <button
+            className={`px-4 py-2 rounded-lg ${activeVisualization === 'ageDistribution' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
+            onClick={() => setActiveVisualization('ageDistribution')}
+          >
+            Age Distribution
+          </button>
+          {/* <button
+            className={`px-4 py-2 rounded-lg ${activeVisualization === 'ageMedalRate' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
+            onClick={() => setActiveVisualization('ageMedalRate')}
+          >
+            Age vs Medal Rate
+          </button> */}
+          <button
+            className={`px-4 py-2 rounded-lg ${activeVisualization === 'peakPerformance' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
+            onClick={() => setActiveVisualization('peakPerformance')}
+          >
+            Peak Performance Age
+          </button>
+          <button
+            className={`px-4 py-2 rounded-lg ${activeVisualization === 'ageTrends' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
+            onClick={() => setActiveVisualization('ageTrends')}
+          >
+            Age Trends Over Time
+          </button>
+
+
+          <button
+            className={`px-4 py-2 rounded-lg ${activeVisualization === 'ageBySport' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
+            onClick={() => setActiveVisualization('ageBySport')}
+          >
+            Age by Sport
+          </button>
         </div>
 
-        {/* Age vs Performance Scatter Plot */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Age vs Performance</h2>
-          
-          <div className="mb-6">
-            <label htmlFor="sport-select" className="block text-sm font-medium text-gray-700 mb-1">
-              Select Sport
-            </label>
-            <select 
-              id="sport-select"
-              value={selectedSport}
-              onChange={(e) => setSelectedSport(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            >
-              {sports.map((sport) => (
-                <option key={sport.id} value={sport.id}>
-                  {sport.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="h-[400px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <ScatterChart
-                margin={{
-                  top: 20,
-                  right: 20,
-                  bottom: 20,
-                  left: 20,
-                }}
+        <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-gray-100 mb-4">Filters</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div>
+              <label htmlFor="year-select" className="block text-sm font-medium text-gray-300 mb-1">Year:</label>
+              <select 
+                id="year-select" 
+                value={selectedYear} 
+                onChange={(e) => setSelectedYear(e.target.value)} 
+                className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               >
-                <CartesianGrid />
-                <XAxis 
-                  type="number" 
-                  dataKey="age" 
-                  name="Age" 
-                  unit=" years"
-                  domain={[15, 40]}
-                />
-                <YAxis 
-                  type="number" 
-                  dataKey="performance" 
-                  name="Performance" 
-                  unit=" points"
-                  domain={[0, 100]}
-                />
-                <ZAxis 
-                  type="number"
-                  range={[100, 500]}
-                  dataKey="medalStatus"
-                />
-                <Tooltip 
-                  cursor={{ strokeDasharray: '3 3' }}
-                  formatter={(value, name) => {
-                    if (name === 'Age') return [value, 'Age (years)'];
-                    if (name === 'Performance') return [value, 'Performance Score'];
-                    return [value, name];
+                <option value="all">All Years</option>
+                {availableYears.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label htmlFor="sport-select" className="block text-sm font-medium text-gray-300 mb-1">Sport:</label>
+              <select 
+                id="sport-select" 
+                value={selectedSport} 
+                onChange={(e) => setSelectedSport(e.target.value)} 
+                className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              >
+                <option value="all">All Sports</option>
+                {availableSports.map(sport => (
+                  <option key={sport} value={sport}>{sport}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="relative" ref={countrySearchContainerRef}>
+              <label htmlFor="country-search" className="block text-sm font-medium text-gray-300 mb-1">Country:</label>
+              <div className="flex flex-col gap-2">
+                <form onSubmit={handleCountrySearchSubmit} className="flex gap-2">
+                  <div className="flex-grow">
+                    <input
+                      id="country-search"
+                      type="text"
+                      value={countrySearchQuery}
+                      onChange={handleCountrySearchChange}
+                      onFocus={() => setShowCountrySuggestions(countrySearchSuggestions.length > 0)}
+                      placeholder="Search Country..."
+                      className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
+                      autoComplete="off"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm whitespace-nowrap"
+                  >
+                    Search
+                  </button>
+                </form>
+                
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setCountrySearchQuery('All Countries');
+                    setSelectedCountry('all');
+                    setShowCountrySuggestions(false);
                   }}
-                  labelFormatter={() => ''}
-                />
-                <Legend />
-                <Scatter 
-                  name="Athletes" 
-                  data={scatterData} 
-                  fill="#8884d8"
-                  shape={(props) => {
-                    const { cx, cy, fill, medalStatus } = props;
-                    const color = getMedalColor(medalStatus);
-                    return (
-                      <circle 
-                        cx={cx} 
-                        cy={cy} 
-                        r={4} 
-                        fill={color} 
-                        stroke="none"
-                      />
-                    );
-                  }}
-                />
-              </ScatterChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="flex justify-center mt-4 space-x-6">
-            <div className="flex items-center">
-              <span className="w-4 h-4 inline-block mr-2 rounded-full bg-[#FFD700]"></span>
-              <span className="text-sm text-gray-700">Gold Medal</span>
+                  className="py-2 px-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm w-full"
+                >
+                  All Countries
+                </button>
+              </div>
+              
+              {showCountrySuggestions && countrySearchSuggestions.length > 0 && (
+                <ul className="absolute z-10 w-full mt-1 bg-gray-600 border border-gray-500 rounded-md shadow-lg max-h-60 overflow-auto">
+                  {countrySearchSuggestions.map((country) => (
+                    <li
+                      key={country.id}
+                      className="px-4 py-2 text-white hover:bg-gray-500 cursor-pointer"
+                      onClick={() => handleCountrySuggestionClick(country)}
+                    >
+                      {country.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-            <div className="flex items-center">
-              <span className="w-4 h-4 inline-block mr-2 rounded-full bg-[#C0C0C0]"></span>
-              <span className="text-sm text-gray-700">Silver Medal</span>
-            </div>
-            <div className="flex items-center">
-              <span className="w-4 h-4 inline-block mr-2 rounded-full bg-[#CD7F32]"></span>
-              <span className="text-sm text-gray-700">Bronze Medal</span>
-            </div>
-            <div className="flex items-center">
-              <span className="w-4 h-4 inline-block mr-2 rounded-full bg-[#95A5A6]"></span>
-              <span className="text-sm text-gray-700">No Medal</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Country-wise Analysis */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            Countries with Athletes Above Age {selectedAgeThreshold}
-          </h2>
-          
-          <div className="mb-6">
-            <label htmlFor="age-threshold" className="block text-sm font-medium text-gray-700 mb-1">
-              Age Threshold: {selectedAgeThreshold}
-            </label>
-            <input
-              id="age-threshold"
-              type="range"
-              min="20"
-              max="40"
-              value={selectedAgeThreshold}
-              onChange={(e) => setSelectedAgeThreshold(parseInt(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-            />
           </div>
           
-          <div className="h-[400px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={countryAgeData}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label htmlFor="medal-select" className="block text-sm font-medium text-gray-300 mb-1">Medal:</label>
+              <select 
+                id="medal-select" 
+                value={selectedMedal} 
+                onChange={(e) => setSelectedMedal(e.target.value)} 
+                className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="country" />
-                <YAxis />
-                <Tooltip 
-                  formatter={(value, name) => [value, `Number of Athletes`]}
-                  labelFormatter={(value) => `Country: ${value}`}
-                />
-                <Legend />
-                <Bar 
-                  dataKey="count" 
-                  name={`Athletes ${selectedAgeThreshold}+ years old`} 
-                  fill="#3B82F6"
-                />
-              </BarChart>
-            </ResponsiveContainer>
+                <option value="all">All Athletes</option>
+                <option value="any">Any Medal</option>
+                <option value="Gold">Gold</option>
+                <option value="Silver">Silver</option>
+                <option value="Bronze">Bronze</option>
+              </select>
+            </div>
+            
+            <div className="col-span-2 p-3 bg-gray-700 rounded-lg flex items-center justify-center">
+              <p className="text-sm font-medium text-gray-300">
+                {filteredAthleteData.length} athletes match your filters
+              </p>
+            </div>
           </div>
+
+          {/* Age Distribution Visualization */}
+          {activeVisualization === 'ageDistribution' && (
+            <div className="mt-8 space-y-6">
+              <h2 className="text-xl font-semibold text-gray-100 mb-2">Age Distribution of Olympic Athletes</h2>
+              <div className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={ageDistributionData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                    <XAxis dataKey="age" stroke="#ccc" label={{ value: 'Age', position: 'insideBottomRight', offset: -5, fill: '#ccc' }} />
+                    <YAxis stroke="#ccc" label={{ value: 'Number of Athletes', angle: -90, position: 'insideLeft', fill: '#ccc' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }}
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="p-2 bg-gray-700 border border-gray-600 rounded shadow-lg text-sm text-gray-200">
+                              <p className="label font-bold mb-1">{`Age: ${label}`}</p>
+                              <p className="intro" style={{ color: '#82ca9d' }}>{`Total Athletes: ${data.count}`}</p>
+                              {/* <p className="intro" style={{ color: '#FFC0CB' }}>{`Medal Winners: ${data.medalCount}`}</p> */}
+                              {/* <p className="intro" style={{ color: '#FFB74D' }}>{`Medal Rate: ${((data.medalCount / data.count) * 100).toFixed(1)}%`}</p> */}
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Legend wrapperStyle={{ color: "#ccc" }} />
+                    <Bar dataKey="count" name="Number of Athletes" fill="#82ca9d">
+                      {ageDistributionData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.medalCount > 0 ? '#82ca9d' : '#555'} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
+
+          {/* Age vs Medal Rate Visualization
+          {activeVisualization === 'ageMedalRate' && (
+            <div className="mt-8 space-y-6">
+              <h2 className="text-xl font-semibold text-gray-100 mb-2">Medal Win Rate by Age</h2>
+              <div className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={ageMedalData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                    <XAxis dataKey="age" stroke="#ccc" label={{ value: 'Age', position: 'insideBottomRight', offset: -5, fill: '#ccc' }} />
+                    <YAxis stroke="#ccc" label={{ value: 'Medal Win Rate (%)', angle: -90, position: 'insideLeft', fill: '#ccc' }} domain={[0, 'dataMax + 5']} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }}
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="p-2 bg-gray-700 border border-gray-600 rounded shadow-lg text-sm text-gray-200">
+                              <p className="label font-bold mb-1">{`Age: ${label}`}</p>
+                              <p className="intro" style={{ color: '#FFD700' }}>{`Gold: ${data.goldCount} (${data.goldPercentage.toFixed(1)}%)`}</p>
+                              <p className="intro" style={{ color: '#C0C0C0' }}>{`Silver: ${data.silverCount} (${data.silverPercentage.toFixed(1)}%)`}</p>
+                              <p className="intro" style={{ color: '#CD7F32' }}>{`Bronze: ${data.bronzeCount} (${data.bronzePercentage.toFixed(1)}%)`}</p>
+                              {/* <p className="intro" style={{ color: '#FF6B6B' }}>{`Any Medal: ${data.medalCount} (${data.medalPercentage.toFixed(1)}%)`}</p> */}
+                              {/* <p className="intro" style={{ color: '#FFB74D' }}>{`Total Athletes: ${data.totalAthletes}`}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Legend wrapperStyle={{ color: "#ccc" }} />
+                    <Line type="monotone" dataKey="medalPercentage" name="Any Medal %" stroke="#FF6B6B" strokeWidth={2} dot={{ r: 3 }} />
+                    <Line type="monotone" dataKey="goldPercentage" name="Gold %" stroke="#FFD700" strokeWidth={2} dot={{ r: 3 }} />
+                    <Line type="monotone" dataKey="silverPercentage" name="Silver %" stroke="#C0C0C0" strokeWidth={2} dot={{ r: 3 }} />
+                    <Line type="monotone" dataKey="bronzePercentage" name="Bronze %" stroke="#CD7F32" strokeWidth={2} dot={{ r: 3 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )} */}
+
+          {/* Peak Performance Age Visualization */}
+          {activeVisualization === 'peakPerformance' && (
+            <div className="mt-8 space-y-6">
+              <h2 className="text-xl font-semibold text-gray-100 mb-2">Peak Performance Age: Medal Count by Age</h2>
+              <div className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={medalsByAgeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                    <XAxis dataKey="age" stroke="#ccc" />
+                    <YAxis stroke="#ccc" />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }}
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="p-2 bg-gray-700 border border-gray-600 rounded shadow-lg text-sm text-gray-200">
+                              <p className="label font-bold mb-1">{`Age: ${label}`}</p>
+                              <p className="intro" style={{ color: '#FFD700' }}>{`Gold: ${data.goldCount}`}</p>
+                              <p className="intro" style={{ color: '#C0C0C0' }}>{`Silver: ${data.silverCount}`}</p>
+                              <p className="intro" style={{ color: '#CD7F32' }}>{`Bronze: ${data.bronzeCount}`}</p>
+                              {/* <p className="intro" style={{ color: '#FF6B6B' }}>{`Total Medals: ${data.totalMedals}`}</p> */}
+                              {/* <p className="intro" style={{ color: '#FFB74D' }}>{`Medalists: ${data.athleteCount}`}</p> */}
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Legend wrapperStyle={{ color: "#ccc" }} />
+                    <Bar dataKey="goldCount" name="Gold Medals" stackId="a" fill="#FFD700" />
+                    <Bar dataKey="silverCount" name="Silver Medals" stackId="a" fill="#C0C0C0" />
+                    <Bar dataKey="bronzeCount" name="Bronze Medals" stackId="a" fill="#CD7F32" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+          )}
+
+          {/* Age Trends Over Time Visualization */}
+          {activeVisualization === 'ageTrends' && (
+            <div className="mt-8 space-y-6">
+              <h2 className="text-xl font-semibold text-gray-100 mb-2">Age Trends Over Olympic History</h2>
+              <p className="text-gray-400 mb-2">Shows how minimum, maximum, and average ages have changed over time.</p>
+              <div className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={ageTrendsOverTimeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                    <XAxis dataKey="year" stroke="#ccc" />
+                    <YAxis stroke="#ccc" domain={['dataMin - 2', 'dataMax + 2']} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }}
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="p-2 bg-gray-700 border border-gray-600 rounded shadow-lg text-sm text-gray-200">
+                              <p className="label font-bold mb-1">{`Year: ${label}`}</p>
+                              <p className="intro" style={{ color: '#FF8042' }}>{`Maximum Age: ${data.maxAge}`}</p>
+                              <p className="intro" style={{ color: '#82ca9d' }}>{`Average Age: ${data.avgAge}`}</p>
+                              <p className="intro" style={{ color: '#8884d8' }}>{`Minimum Age: ${data.minAge}`}</p>
+                              <p className="intro" style={{ color: '#FFB74D' }}>{`Athletes: ${data.athleteCount}`}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Legend wrapperStyle={{ color: "#ccc" }} />
+                    <Line type="monotone" dataKey="maxAge" name="Maximum Age" stroke="#FF8042" strokeWidth={2} dot={{ r: 2 }} />
+                    <Line type="monotone" dataKey="avgAge" name="Average Age" stroke="#82ca9d" strokeWidth={2} dot={{ r: 2 }} />
+                    <Line type="monotone" dataKey="minAge" name="Minimum Age" stroke="#8884d8" strokeWidth={2} dot={{ r: 2 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
+
+
+          {/* Age by Sport Visualization */}
+          {activeVisualization === 'ageBySport' && (
+            <div className="mt-8 space-y-6">
+              <h2 className="text-xl font-semibold text-gray-100 mb-2">Average Age by Sport</h2>
+              <p className="text-gray-400 mb-2">Sports are sorted from youngest to oldest average age.</p>
+              <div className="h-[500px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart 
+                    layout="vertical" 
+                    data={ageBySportData.slice(0, 20)} 
+                    margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                    <XAxis type="number" domain={[0, 'dataMax + 5']} stroke="#ccc" />
+                    <YAxis 
+                      type="category" 
+                      dataKey="sport" 
+                      stroke="#ccc" 
+                      width={90} 
+                      tick={{ fontSize: 12 }} 
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "#333", borderColor: "#555", color: "#fff" }}
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="p-2 bg-gray-700 border border-gray-600 rounded shadow-lg text-sm text-gray-200">
+                              <p className="label font-bold mb-1">{`${label}`}</p>
+                              <p className="intro" style={{ color: '#82ca9d' }}>{`Average Age: ${data.avgAge}`} </p>
+                              <p className="intro" style={{ color: '#8884d8' }}>{`Age Range: ${data.minAge} - ${data.maxAge}`}</p>
+                              <p className="intro" style={{ color: '#FFB74D' }}>{`Athletes: ${data.athleteCount}`}</p>
+                              {/* <p className="intro" style={{ color: '#FFC0CB' }}>{`Medal Winners: ${data.medalCount}`}</p> */}
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Legend wrapperStyle={{ color: "#ccc" }} />
+                    <Bar dataKey="avgAge" name="Average Age" fill="#82ca9d">
+                      <LabelList dataKey="avgAge" position="right" formatter={(value) => value.toFixed(1)} style={{ fill: 'white' }} />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="text-center text-sm text-gray-500 mt-12">
-          <p>Note: This page uses simulated data for visualization purposes.</p>
+          <p>Data sourced from Kaggle Olympics dataset (athlete_events.csv). Analysis shows age patterns for Olympic athletes and their medal performances.</p>
         </div>
       </div>
     </main>
