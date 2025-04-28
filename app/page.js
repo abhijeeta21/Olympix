@@ -88,15 +88,15 @@ export default function Home() {
       borderColor: 'border-red-400',
       icon: '🌎'
     },
-    { 
-      name: 'Miscellaneous', 
-      route: '/miscellaneous', 
-      description: 'Additional interesting Olympic insights',
-      color: 'bg-indigo-600',
-      hoverColor: 'hover:bg-indigo-700',
-      borderColor: 'border-indigo-400',
-      icon: '🔍'
-    }
+    // { 
+    //   name: 'Miscellaneous', 
+    //   route: '/miscellaneous', 
+    //   description: 'Additional interesting Olympic insights',
+    //   color: 'bg-indigo-600',
+    //   hoverColor: 'hover:bg-indigo-700',
+    //   borderColor: 'border-indigo-400',
+    //   icon: '🔍'
+    // }
   ];
 
   return (
