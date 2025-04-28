@@ -1998,7 +1998,7 @@ export default function MedalDashboard() {
         const athleteData = athleteParseResult.data.filter(row => row.ID && row.NOC && row.Year && row.Medal);
 
         // Fetch NOC regions data
-        const nocResponse = await fetch('/data/noc_regions.csv');
+        const nocResponse = await fetch('./data/noc_regions.csv');
         const nocCsvText = await nocResponse.text();
         const nocParseResult = Papa.parse(nocCsvText, {
           header: true,

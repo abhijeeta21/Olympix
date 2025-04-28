@@ -56,7 +56,7 @@ export default function GenderParticipation() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const athleteCsvPath = '/data/athlete_events.csv';
+      const athleteCsvPath = './data/athlete_events.csv';
       const athleteResponse = await fetch(athleteCsvPath);
       if (!athleteResponse.ok) throw new Error(`Failed to fetch ${athleteCsvPath}`);
       const athleteCsvText = await athleteResponse.text();
@@ -67,7 +67,7 @@ export default function GenderParticipation() {
       });
       const athleteData = athleteParseResult.data.filter(row => row.ID && row.NOC && row.Year && row.Sex && row.Sport);
 
-      const nocCsvPath = '/data/noc_regions.csv';
+      const nocCsvPath = './data/noc_regions.csv';
       const nocResponse = await fetch(nocCsvPath);
       if (!nocResponse.ok) throw new Error(`Failed to fetch ${nocCsvPath}`);
       const nocCsvText = await nocResponse.text();

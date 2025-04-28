@@ -31,8 +31,8 @@ export default function Sports() {
       setIsLoading(true);
       try {
         const [athleteRes, nocRes, geoRes] = await Promise.all([
-          fetch('/data/athlete_events.csv'),
-          fetch('/data/noc_regions.csv'),
+          fetch('./data/athlete_events.csv'),
+          fetch('./data/noc_regions.csv'),
           fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
         ]);
 
