@@ -1,4 +1,4 @@
-import { processOlympicsData } from '../../utils/processOlympicsData';
+import { processOlympicsData } from '../../../utils/processOlympicsData';
 
 export async function GET(req, res) {
   try {
