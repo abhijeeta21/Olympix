@@ -130,7 +130,7 @@ const HostCountryAdvantage = ({ data }) => {
         <div className="mb-6">
           <label className="block text-md font-medium text-white mb-2">Development Status:</label>
           <div className="flex flex-wrap gap-4 text-white">
-            {["all", "developed", "developing", "underdeveloped"].map(status => (
+            {["all", "Developed", "Developing", "Underdeveloped"].map(status => (
               <label key={status} className="flex items-center space-x-2">
                 <input
                   type="radio"

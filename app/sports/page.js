@@ -25,6 +25,7 @@ export default function Sports() {
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchContainerRef = useRef(null);
+  const [selectedSports, setSelectedSports] = useState([]);
 
   useEffect(() => {
     async function fetchDataAndProcess() {
@@ -510,6 +511,13 @@ export default function Sports() {
     setShowSuggestions(false);
   };
 
+  useEffect(() => {
+    if (selectedCountryData && selectedCountryData.sportsWithEvents) {
+      // Set all sports as selected by default
+      setSelectedSports(selectedCountryData.sportsWithEvents.map((sportData) => sportData.sport));
+    }
+  }, [selectedCountryData]);
+
   if (isLoading) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4 flex justify-center items-center">
@@ -730,33 +738,164 @@ export default function Sports() {
                     Event Participation by {selectedCountryData.countryName} in {selectedYear}
                   </h3>
                   {selectedCountryData.sportsWithEvents.length > 0 ? (
-                    <table className="table-auto w-full text-left text-gray-300 border-collapse rounded-lg overflow-hidden">
-                      <thead>
-                        <tr className="bg-black">
-                          <th className="px-6 py-3 text-sm font-semibold text-gray-100 uppercase tracking-wider">
-                            Sport
-                          </th>
-                          <th className="px-6 py-3 text-sm font-semibold text-gray-100 uppercase tracking-wider text-right">
-                            Events Participated / Total Events
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {selectedCountryData.sportsWithEvents
-                          .sort((a, b) => a.sport.localeCompare(b.sport))
-                          .map(({ sport, participatedEvents, totalEvents }, index) => (
-                            <tr
-                              key={sport}
-                              className={`${
-                                index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'
-                              }`}
-                            >
-                              <td className="px-6 py-4">{sport}</td>
-                              <td className="px-6 py-4 text-right">{`${participatedEvents} / ${totalEvents}`}</td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
+                    <>
+                      <div className="mb-6">
+                        <h4 className="text-lg font-semibold text-white mb-2">Select Sports to Display:</h4>
+                        <div className="bg-gray-800 p-4 rounded-lg shadow-md border border-gray-600 flex gap-4 items-start">
+                          {/* Search Sport Feature */}
+                          <div className="w-1/3">
+                            <input
+                              type="text"
+                              placeholder="Search Sport..."
+                              className="w-full bg-gray-700 text-white px-3 py-2 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                              onChange={(e) => {
+                                const query = e.target.value.toLowerCase();
+                                setSelectedSports(
+                                  selectedCountryData.sportsWithEvents
+                                    .filter((sportData) => sportData.sport.toLowerCase().includes(query))
+                                    .map((sportData) => sportData.sport)
+                                );
+                              }}
+                            />
+                          </div>
+
+                          {/* Checkbox List with Select/Deselect All */}
+                          <div className="w-2/3">
+                            <div className="flex justify-end gap-2 mb-2">
+                              <button
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm"
+                                onClick={() =>
+                                  setSelectedSports(selectedCountryData.sportsWithEvents.map((sportData) => sportData.sport))
+                                }
+                              >
+                                Select All
+                              </button>
+                              <button
+                                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm"
+                                onClick={() => setSelectedSports([])}
+                              >
+                                Deselect All
+                              </button>
+                            </div>
+                            <div className="max-h-40 overflow-y-auto">
+                              <div className="flex flex-wrap gap-2">
+                                {selectedCountryData.sportsWithEvents.map((sportData) => (
+                                  <label
+                                    key={sportData.sport}
+                                    className="flex items-center gap-2 text-gray-300 bg-gray-700 px-3 py-2 rounded-lg hover:bg-gray-600 cursor-pointer transition"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      value={sportData.sport}
+                                      checked={selectedSports.includes(sportData.sport)}
+                                      onChange={(e) => {
+                                        const sport = e.target.value;
+                                        setSelectedSports((prev) =>
+                                          e.target.checked
+                                            ? [...prev, sport]
+                                            : prev.filter((s) => s !== sport)
+                                        );
+                                      }}
+                                      className="form-checkbox text-blue-500"
+                                    />
+                                    {sportData.sport}
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div ref={(ref) => {
+                        if (ref) {
+                          // Clear any existing SVG
+                          d3.select(ref).selectAll("*").remove();
+
+                          if (selectedSports.length === 0) {
+                            // Display message when no sports are selected
+                            d3.select(ref)
+                              .append("text")
+                              .attr("x", "50%")
+                              .attr("y", "50%")
+                              .attr("text-anchor", "middle")
+                              .attr("dominant-baseline", "middle")
+                              .style("fill", "#FFFFFF")
+                              .style("font-size", "16px")
+                              .text("Select sports to display results");
+                            return;
+                          }
+
+                          const width = ref.offsetWidth;
+                          const height = 400;
+                          const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+
+                          const svg = d3.select(ref)
+                            .append("svg")
+                            .attr("width", width)
+                            .attr("height", height);
+
+                          const chartWidth = width - margin.left - margin.right;
+                          const chartHeight = height - margin.top - margin.bottom;
+
+                          const g = svg.append("g")
+                            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                          // Filter data based on selected sports
+                          const filteredData = selectedCountryData.sportsWithEvents.filter((d) =>
+                            selectedSports.includes(d.sport)
+                          );
+
+                          const xScale = d3.scaleBand()
+                            .domain(filteredData.map((d) => d.sport))
+                            .range([0, chartWidth])
+                            .padding(0.2);
+
+                          const yScale = d3.scaleLinear()
+                            .domain([0, d3.max(filteredData, (d) => d.totalEvents)])
+                            .range([chartHeight, 0]);
+
+                          // X-axis
+                          g.append("g")
+                            .attr("transform", `translate(0,${chartHeight})`)
+                            .call(d3.axisBottom(xScale))
+                            .selectAll("text")
+                            .attr("transform", "rotate(-45)")
+                            .style("text-anchor", "end")
+                            .style("fill", "#FFFFFF");
+
+                          // Y-axis
+                          g.append("g")
+                            .call(d3.axisLeft(yScale))
+                            .selectAll("text")
+                            .style("fill", "#FFFFFF");
+
+                          // Bars
+                          g.selectAll(".bar")
+                            .data(filteredData)
+                            .enter()
+                            .append("rect")
+                            .attr("class", "bar")
+                            .attr("x", (d) => xScale(d.sport))
+                            .attr("y", (d) => yScale(d.participatedEvents))
+                            .attr("width", xScale.bandwidth())
+                            .attr("height", (d) => chartHeight - yScale(d.participatedEvents))
+                            .attr("fill", "#4F46E5");
+
+                          // Add labels for total events
+                          g.selectAll(".label")
+                            .data(filteredData)
+                            .enter()
+                            .append("text")
+                            .attr("x", (d) => xScale(d.sport) + xScale.bandwidth() / 2)
+                            .attr("y", (d) => yScale(d.participatedEvents) - 5)
+                            .attr("text-anchor", "middle")
+                            .style("fill", "#FFFFFF")
+                            .style("font-size", "10px")
+                            .text((d) => `${d.participatedEvents}/${d.totalEvents}`);
+                        }
+                      }} className="w-full h-[400px]"></div>
+                    </>
                   ) : (
                     <p className="text-gray-400">No participation data found for {selectedCountryData.countryName} in {selectedYear}.</p>
                   )}
