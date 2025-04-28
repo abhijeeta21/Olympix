@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import csvParser from 'csv-parser';
 
-const athletesFilePath = path.join(process.cwd(), 'data', 'athlete_events.csv'); 
-const regionsFilePath = path.join(process.cwd(), 'data', 'noc_regions.csv'); 
+const athletesFilePath = path.join(process.cwd(), 'public', 'data', 'athlete_events.csv'); 
+const regionsFilePath = path.join(process.cwd(), 'public', 'data', 'noc_regions.csv');
 
 export async function processOlympicsData() {
   return new Promise((resolve, reject) => {
