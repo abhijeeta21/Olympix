@@ -32,10 +32,11 @@ const olympicYears = [
 function HeatMapLegend({ colorScale, domain, selectedMedalType }) {
   const gradientId = "heatmap-gradient";
   const width = 450, height = 16;
+  
   return (
-    <div className="my-2">
+    <div className="my-2 w-full max-w-[450px]">
       <div className="relative">
-        <svg width={width} height={height}>
+        <svg width="100%" height={height} preserveAspectRatio="none" viewBox={`0 0 ${width} ${height}`}>
           <defs>
             <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
               {domain.map((d, i) => (
@@ -49,28 +50,27 @@ function HeatMapLegend({ colorScale, domain, selectedMedalType }) {
           </defs>
           <rect x="0" y="0" width={width} height={height} fill={`url(#${gradientId})`} />
         </svg>
-        <div className="flex w-full absolute top-full left-0">
-          {domain.map((d, i) => {
-            const position = `${(i / (domain.length - 1)) * 100}%`;
-            const offsetX = i === 0 ? 0 : i === domain.length - 1 ? -20 : -10;
-            return (
-              <div 
-                key={i} 
-                className="absolute text-xs text-gray-300"
-                style={{
-                  left: position,
-                  transform: `translateX(${offsetX}px)`,
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {d}
-              </div>
-            );
-          })}
+        
+        {/* Labels container with proper spacing */}
+        <div className="flex justify-between w-full mt-2 px-1">
+          {domain.map((d, i) => (
+            <div 
+              key={i} 
+              className="text-xs text-gray-300"
+              style={{
+                textAlign: i === 0 ? 'left' : i === domain.length - 1 ? 'right' : 'center',
+                width: i === 0 || i === domain.length - 1 ? 'auto' : `${100 / (domain.length - 1)}%`,
+                overflow: 'visible',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {d}
+            </div>
+          ))}
         </div>
       </div>
       <div className="h-6" /> {/* Spacer for the labels */}
-      <span className="text-xs text-gray-400 mt-6">
+      <span className="text-xs text-gray-400 mt-6 block">
         ({selectedMedalType.charAt(0).toUpperCase() + selectedMedalType.slice(1)} medals)
       </span>
     </div>
@@ -84,8 +84,9 @@ function RegionMapVisualization({
   mapZoom, setMapZoom, setSelectedRegion, colorScale, colorDomain
 }) {
   const [tooltipContent, setTooltipContent] = useState("");
-  const [tooltipPosition, setTooltipPosition] = useState(null); // Change to null instead of {x:0, y:0}
+  const [tooltipPosition, setTooltipPosition] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
+  const mapContainerRef = useRef(null);
 
   const getCountryCode = (geo) => {
     if (!geo?.properties) return "";
@@ -398,44 +399,97 @@ function RegionMapVisualization({
     }
   };
 
+  // const handleMouseEnter = (event, geo) => {
+  //   console.debug("Mouse enter:", geo.properties?.name);
+  //   const content = getTooltipContent(geo);
+    
+  //   const mapContainer = event.currentTarget.closest('.map-container');
+  //   const rect = mapContainer.getBoundingClientRect();
+    
+  //   // Calculate safe tooltip position (prevent overflow)
+  //   const safePosition = calculateTooltipPosition(event, rect);
+    
+  //   // Set both the tooltip content and position
+  //   setTooltipContent(content);
+  //   setTooltipPosition(safePosition);
+  //   setShowTooltip(true);
+  // };
+  
+
+  // const handleMouseMove = (event) => {
+  //   if (showTooltip) {
+  //     const mapContainer = event.currentTarget.closest('.map-container');
+  //     const rect = mapContainer.getBoundingClientRect();
+      
+  //     // Use the same safe positioning logic
+  //     const safePosition = calculateTooltipPosition(event, rect);
+  //     setTooltipPosition(safePosition);
+  //   }
+  // };
+  // New function to calculate safe tooltip position
+  const calculateTooltipPosition = (event, containerRect) => {
+    const TOOLTIP_WIDTH = 180;
+    const TOOLTIP_HEIGHT = 140;
+    const MARGIN = 10;
+    
+    // Get cursor position relative to container
+    let x = event.clientX - containerRect.left;
+    let y = event.clientY - containerRect.top;
+    
+    // Initial position (right-bottom of cursor)
+    let posX = x + MARGIN;
+    let posY = y + MARGIN;
+    
+    // Check for right edge overflow
+    if (posX + TOOLTIP_WIDTH > containerRect.width) {
+      posX = x - TOOLTIP_WIDTH - MARGIN; // Place to left of cursor
+    }
+    
+    // Check for bottom edge overflow
+    if (posY + TOOLTIP_HEIGHT > containerRect.height) {
+      posY = y - TOOLTIP_HEIGHT - MARGIN; // Place above cursor
+    }
+    
+    // Ensure tooltip doesn't go outside the container bounds
+    posX = Math.max(MARGIN, Math.min(containerRect.width - TOOLTIP_WIDTH - MARGIN, posX));
+    posY = Math.max(MARGIN, Math.min(containerRect.height - TOOLTIP_HEIGHT - MARGIN, posY));
+    
+    return { x: posX, y: posY };
+  };
+
   const handleMouseEnter = (event, geo) => {
-    console.debug("Mouse enter:", geo.properties?.name);
     const content = getTooltipContent(geo);
     
-    // Use a standard class name instead of Tailwind's utility class with brackets
-    const mapContainer = event.currentTarget.closest('.map-container');
-    const rect = mapContainer.getBoundingClientRect();
-    const x = event.clientX - rect.left + 10;
-    const y = event.clientY - rect.top + 10;
+    if (!mapContainerRef.current) return;
+    const rect = mapContainerRef.current.getBoundingClientRect();
+    
+    // Calculate safe tooltip position
+    const safePosition = calculateTooltipPosition(event, rect);
     
     // Set both the tooltip content and position
     setTooltipContent(content);
-    setTooltipPosition({ x, y });
+    setTooltipPosition(safePosition);
     setShowTooltip(true);
-    
-    console.debug("Tooltip position set to:", x, y);
   };
 
   const handleMouseMove = (event) => {
-    if (showTooltip) {
-      // Use the same standard class name here
-      const mapContainer = event.currentTarget.closest('.map-container');
-      const rect = mapContainer.getBoundingClientRect();
-      const x = event.clientX - rect.left + 10;
-      const y = event.clientY - rect.top + 10;
-      setTooltipPosition({ x, y });
+    if (showTooltip && mapContainerRef.current) {
+      const rect = mapContainerRef.current.getBoundingClientRect();
+      const safePosition = calculateTooltipPosition(event, rect);
+      setTooltipPosition(safePosition);
     }
   };
 
   const handleMouseLeave = () => {
-    console.debug("Mouse leave");
     setShowTooltip(false);
   };
 
   return (
     <section className="bg-gray-900 p-4 rounded-lg shadow-md mb-6">
       <h2 className="text-2xl font-bold text-white mb-4">Region-Wise Medal Count</h2>
-      <div className="flex flex-wrap justify-between items-center mb-4">
+      
+      {/* Responsive controls */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-4">
         <div className="flex items-center space-x-2">
           <button 
             onClick={() => setMapZoom(prev => Math.min(prev + 0.5, 4))}
@@ -450,7 +504,7 @@ function RegionMapVisualization({
             Zoom Out -
           </button>
         </div>
-        <div className="flex items-center space-x-2 my-2">
+        <div className="flex items-center space-x-2">
           <label className="text-white">Year:</label>
           <select 
             value={selectedYear || ''}
@@ -464,8 +518,10 @@ function RegionMapVisualization({
           </select>
         </div>
       </div>
-      <div className="flex flex-col items-start mb-4 bg-gray-800 p-2 rounded">
-        <div className="flex flex-wrap mb-2">
+      
+      {/* Medal type selector and legend - now more responsive */}
+      <div className="flex flex-col items-start mb-4 bg-gray-800 p-2 rounded overflow-x-auto w-full">
+        <div className="flex flex-wrap mb-2 w-full">
           <button 
             onClick={() => setSelectedMedalType('total')}
             className={`px-3 py-1 m-1 rounded ${selectedMedalType === 'total' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-800'}`}
@@ -491,9 +547,18 @@ function RegionMapVisualization({
             Bronze
           </button>
         </div>
-        <HeatMapLegend colorScale={colorScale} domain={colorDomain} selectedMedalType={selectedMedalType} />
+        <div className="w-full overflow-x-auto">
+          <HeatMapLegend colorScale={colorScale} domain={colorDomain} selectedMedalType={selectedMedalType} />
+        </div>
       </div>
-      <div className="h-[500px] map-container relative" id="map-container" onMouseMove={handleMouseMove}>
+      
+      {/* Map container with ref for positioning */}
+      <div 
+        className="h-[500px] map-container relative" 
+        id="map-container" 
+        ref={mapContainerRef}
+        onMouseMove={handleMouseMove}
+      >
         <ComposableMap
           projectionConfig={{
             rotate: [-10, 0, 0],
@@ -531,17 +596,20 @@ function RegionMapVisualization({
             </Geographies>
           </ZoomableGroup>
         </ComposableMap>
+        
+        {/* Improved tooltip with fixed positioning */}
         {showTooltip && tooltipPosition && (
           <div
             className="absolute z-50 bg-gray-800 text-white p-3 rounded-md shadow-lg border border-gray-700 animate-fadeIn"
             style={{
-              left: tooltipPosition.x + 'px',
-              top: tooltipPosition.y + 'px',
-              minWidth: '180px',
+              left: `${tooltipPosition.x}px`,
+              top: `${tooltipPosition.y}px`,
+              maxWidth: '220px',
+              width: 'auto',
               pointerEvents: 'none'
             }}
           >
-            <div className="font-bold mb-2 text-center border-b border-gray-600 pb-1">
+            <div className="font-bold mb-2 text-center border-b border-gray-600 pb-1 text-sm truncate">
               {tooltipContent.name}
               {tooltipContent.year ? (
                 <span className="text-blue-400 ml-1">({tooltipContent.year})</span>
