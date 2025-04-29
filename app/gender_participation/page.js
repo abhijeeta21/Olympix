@@ -38,7 +38,7 @@ export default function GenderParticipation() {
   const timelineSearchContainerRef = useRef(null);
 
   // Add a toggle for showing Summer/Winter/Both Olympics
-  const [seasonFilter, setSeasonFilter] = useState('both'); // 'summer', 'winter', 'both'
+  const [seasonFilter, setSeasonFilter] = useState('summer'); // Changed from 'both' to 'summer'
 
   // First, add a new state for search query in both timeline and sports sections
   const [timelineSportSearchQuery, setTimelineSportSearchQuery] = useState('');
@@ -370,6 +370,74 @@ export default function GenderParticipation() {
       prevList.map(sport => ({ ...sport, checked: false }))
     );
   };
+
+  // Modified version of the functions for better data sorting
+  const handleSelectTop3Sports = () => {
+    // Create a map of sport ID to female percentage for easy lookup
+    const sportPercentageMap = {};
+    processedSportDataFiltered.forEach(sport => {
+      sportPercentageMap[sport.sport] = sport.femalePercentage || 0;
+    });
+    
+    const sortedSports = [...sportCheckboxList]
+      .filter(sport => !sport.disabled)
+      .sort((a, b) => {
+        const aPercentage = sportPercentageMap[a.id] || 0;
+        const bPercentage = sportPercentageMap[b.id] || 0;
+        return bPercentage - aPercentage; // Descending order
+      });
+
+    const top3SportIds = new Set(sortedSports.slice(0, 3).map(sport => sport.id));
+    
+    setSportCheckboxList(prevList =>
+      prevList.map(sport => ({
+        ...sport,
+        checked: !sport.disabled && top3SportIds.has(sport.id)
+      }))
+    );
+  };
+
+  const handleSelectTop10Sports = () => {
+    // Create a map of sport ID to female percentage for easy lookup
+    const sportPercentageMap = {};
+    processedSportDataFiltered.forEach(sport => {
+      sportPercentageMap[sport.sport] = sport.femalePercentage || 0;
+    });
+    
+    const sortedSports = [...sportCheckboxList]
+      .filter(sport => !sport.disabled)
+      .sort((a, b) => {
+        const aPercentage = sportPercentageMap[a.id] || 0;
+        const bPercentage = sportPercentageMap[b.id] || 0;
+        return bPercentage - aPercentage; // Descending order
+      });
+
+    const top10SportIds = new Set(sortedSports.slice(0, 10).map(sport => sport.id));
+    
+    setSportCheckboxList(prevList =>
+      prevList.map(sport => ({
+        ...sport,
+        checked: !sport.disabled && top10SportIds.has(sport.id)
+      }))
+    );
+  };
+
+  // Add this useEffect to trigger top 10 selection on initial load (not just year change)
+  useEffect(() => {
+    if (sportCheckboxList.length > 0 && processedSportDataFiltered.length > 0) {
+      handleSelectTop10Sports();
+    }
+  }, [sportCheckboxList.length > 0, processedSportDataFiltered.length > 0]);
+
+  // Modify the existing useEffect to not trigger on initialization
+  useEffect(() => {
+    if (sportCheckboxList.length > 0 && processedSportDataFiltered.length > 0) {
+      // Only run when year changes and not on initial load
+      if (selectedSportYear !== 'all') {
+        handleSelectTop10Sports();
+      }
+    }
+  }, [selectedSportYear]); // This will trigger when the year is changed
 
   const handleTimelineSearchChange = (event) => {
     const query = event.target.value;
@@ -798,7 +866,19 @@ export default function GenderParticipation() {
               <div className="md:col-span-2">
                 <div className="flex justify-between items-center mb-1">
                   <label className="block text-sm font-medium text-gray-300">Select Sports:</label>
-                  <div className="space-x-2">
+                  <div className="flex flex-wrap gap-2 justify-end">
+                    <button 
+                      onClick={handleSelectTop3Sports} 
+                      className="text-xs px-2 py-0.5 bg-pink-600 hover:bg-pink-700 text-white rounded disabled:opacity-50"
+                    >
+                      Top 3 Female %
+                    </button>
+                    <button 
+                      onClick={handleSelectTop10Sports} 
+                      className="text-xs px-2 py-0.5 bg-pink-600 hover:bg-pink-700 text-white rounded disabled:opacity-50"
+                    >
+                      Top 10 Female %
+                    </button>
                     <button 
                       onClick={handleSelectAllSports} 
                       className="text-xs px-2 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50"
