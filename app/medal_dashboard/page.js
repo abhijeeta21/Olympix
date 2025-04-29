@@ -1432,6 +1432,7 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
 }
 // --- Medal Distribution by Continent Pie Chart ---
 // --- Medal Distribution by Continent Pie Chart (Enhanced) ---
+// --- Medal Distribution by Continent Pie Chart (Enhanced) ---
 function ContinentDistributionChart({ countries, selectedYear, yearData, olympicYears, setSelectedYear }) {
   const [medalType, setMedalType] = useState('total');
   const [highlightedContinent, setHighlightedContinent] = useState(null);
@@ -1476,35 +1477,54 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
   
   // Get the appropriate data source
   let dataToUse = countries;
-  if (selectedYear && yearData[selectedYear]) {
-    dataToUse = Object.values(yearData[selectedYear])
-      .filter(c => c && typeof c === 'object');
-  }
+  // Get the appropriate data source with proper NOC formatting
+// let dataToUse = countries;
+if (selectedYear && yearData[selectedYear]) {
+  dataToUse = Object.entries(yearData[selectedYear])
+    .filter(([_, c]) => c && typeof c === 'object')
+    .map(([noc, data]) => {
+      // Include the NOC as a property in the country object
+      return {
+        ...data,
+        noc: noc // This preserves the NOC code in the object
+      };
+    });
+}
+console.log("Data to Use for Year:", selectedYear, dataToUse);
+  console.log("Data to Use for Year:", selectedYear, dataToUse);
   
   // Group medals by continent
-  const continentMedals = Object.keys(continentMapping).map(continent => {
-    const countriesInContinent = continentMapping[continent];
-    let totalGold = 0, totalSilver = 0, totalBronze = 0;
-    
-    dataToUse.forEach(country => {
-      if (country.noc && countriesInContinent.includes(country.noc.toLowerCase())) {
-        totalGold += country.gold || 0;
-        totalSilver += country.silver || 0;
-        totalBronze += country.bronze || 0;
-      }
-    });
-    
-    return {
-      continent,
-      name: continentNames[continent],
-      icon: continentIcons[continent],
-      gold: totalGold,
-      silver: totalSilver,
-      bronze: totalBronze,
-      total: totalGold + totalSilver + totalBronze
-    };
-  }).sort((a, b) => b[medalType] - a[medalType]);
-  
+ // Group medals by continent
+ const continentMedals = Object.keys(continentMapping).map(continent => {
+  const countriesInContinent = continentMapping[continent];
+  let totalGold = 0, totalSilver = 0, totalBronze = 0;
+
+  dataToUse.forEach(country => {
+    if (country.noc && countriesInContinent.includes(country.noc.toLowerCase())) {
+      totalGold += country.gold || 0;
+      totalSilver += country.silver || 0;
+      totalBronze += country.bronze || 0;
+    }
+  });
+
+  console.log(`Continent: ${continent}`, {
+    totalGold,
+    totalSilver,
+    totalBronze,
+    total: totalGold + totalSilver + totalBronze,
+  });
+
+  return {
+    continent,
+    name: continentNames[continent],
+    icon: continentIcons[continent],
+    gold: totalGold,
+    silver: totalSilver,
+    bronze: totalBronze,
+    total: totalGold + totalSilver + totalBronze,
+  };
+}).sort((a, b) => b[medalType] - a[medalType]);
+console.log("Continent Medals:", continentMedals);
   // Create pie chart data
   const pieData = pie().value(d => d[medalType])(continentMedals);
   
@@ -1898,6 +1918,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
     </section>
   );
 }
+
 
 // --- Top Countries Table Visualization ---
 function TopCountriesTable({ countries, selectedYear, yearData, olympicYears, setSelectedYear }) {
