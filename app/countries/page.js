@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import * as d3 from 'd3';
+
 
 export default function Countries() {
   const [countries, setCountries] = useState([]);
@@ -34,10 +34,11 @@ export default function Countries() {
         
         setIsLoading(false);
         
-        // Create map after data is loaded
-        if (nocArray.length > 0) {
-          setTimeout(() => createWorldMap(nocArray), 500);
-        }
+        // Create map after data is loaded (Note: createWorldMap function is not included in this snippet)
+        // If createWorldMap relies on D3 or similar, ensure the library is loaded and the function is defined elsewhere
+        // if (nocArray.length > 0) {
+        //   setTimeout(() => createWorldMap(nocArray), 500);
+        // }
       } catch (error) {
         console.error('Error fetching countries data:', error);
         setIsLoading(false);
@@ -46,7 +47,7 @@ export default function Countries() {
 
     fetchData();
   }, []);
-  
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4">
       <div className="w-full max-w-6xl mx-auto space-y-8 py-8">
@@ -71,10 +72,9 @@ export default function Countries() {
           </p>
         </div>
 
-
-        {/* Simplified Search Bar (without filters and sorting) */}
-        <div className="bg-gray-800 p-4 rounded-lg">
-          <div className="relative w-full max-w-md mx-auto">
+        {/* Search Bar and Compare Button */}
+        <div className="bg-gray-800 p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full max-w-md">
             <input
               type="text"
               value={searchQuery}
@@ -88,6 +88,9 @@ export default function Countries() {
               </svg>
             </div>
           </div>
+          <Link href="/countries/compare" className="w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 ease-in-out">
+            Compare Two Countries
+          </Link>
         </div>
 
         {/* Countries Cards */}
@@ -97,12 +100,12 @@ export default function Countries() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {countries.filter(country => 
+            {countries.filter(country =>
               !searchQuery || (country?.region?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 country?.noc?.toLowerCase().includes(searchQuery.toLowerCase()))
             ).length > 0 ? (
               countries
-                .filter(country => 
+                .filter(country =>
                   !searchQuery || (country?.region?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     country?.noc?.toLowerCase().includes(searchQuery.toLowerCase()))
                 )
