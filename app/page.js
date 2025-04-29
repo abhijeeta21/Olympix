@@ -207,12 +207,14 @@ export default function Home() {
       <div className="w-full mx-auto flex flex-col min-h-screen relative z-10 pt-16 pb-12 px-4">
         {/* Hero Section */}
         <div className="text-center space-y-8 py-16 md:py-24">
-          {/* Olympic Rings Logo above the heading */}
-          <div className="mx-auto w-32 h-16 mb-8">
-            <img 
-              src="/images/olympics-logo.svg" 
-              alt="Olympic Rings" 
-              className="w-full h-full" 
+          {/* Olympic Rings Logo above the heading - fixed stretching and increased size */}
+          <div className="mx-auto w-48 h-24 mb-10 relative">
+            <Image
+              src="/images/olympics-logo.svg"
+              alt="Olympic Rings"
+              fill
+              style={{ objectFit: "contain", objectPosition: "center" }}
+              priority
             />
           </div>
           
