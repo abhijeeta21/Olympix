@@ -20,10 +20,12 @@ import Papa from 'papaparse';
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 const olympicYears = [
-   1952, 1956, 1960, 1964, 
-  1968, 1972, 1976, 1980, 1984, 
-  1988, 1992, 1996, 2000, 2004, 
-  2008, 2012, 2016, 2020, 2024
+  1896, 1900, 1904, 1908, 1912,
+  1920, 1924, 1928, 1932, 1936,
+  1948, 1952, 1956, 1960, 1964,
+  1968, 1972, 1976, 1980, 1984,
+  1988, 1992, 1996, 2000, 2004,
+  2008, 2012, 2016
 ];
 
 // --- HeatMap Legend ---
@@ -78,7 +80,7 @@ function HeatMapLegend({ colorScale, domain, selectedMedalType }) {
 // --- Region Map Visualization ---
 function RegionMapVisualization({
   countries, medalData, yearData, selectedYear, setSelectedYear,
-  heatMapEnabled, setHeatMapEnabled, selectedMedalType, setSelectedMedalType,
+  selectedMedalType, setSelectedMedalType,
   mapZoom, setMapZoom, setSelectedRegion, colorScale, colorDomain
 }) {
   const [tooltipContent, setTooltipContent] = useState("");
@@ -359,7 +361,6 @@ function RegionMapVisualization({
   };
 
   const getCountryFillColor = (geo) => {
-    if (!heatMapEnabled) return "#151522"; // very dark blue-gray for no heatmap
     const countryCode = getCountryCode(geo);
     let dataSource = medalData;
     if (selectedYear && yearData[selectedYear]) {
@@ -462,49 +463,36 @@ function RegionMapVisualization({
             ))}
           </select>
         </div>
-        <div className="flex items-center">
-          <label className="text-white mr-2">
-            <input 
-              type="checkbox" 
-              checked={heatMapEnabled}
-              onChange={() => setHeatMapEnabled(!heatMapEnabled)}
-              className="mr-1"
-            />
-            Heat Map
-          </label>
-        </div>
       </div>
-      {heatMapEnabled && (
-        <div className="flex flex-col items-start mb-4 bg-gray-800 p-2 rounded">
-          <div className="flex flex-wrap mb-2">
-            <button 
-              onClick={() => setSelectedMedalType('total')}
-              className={`px-3 py-1 m-1 rounded ${selectedMedalType === 'total' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-800'}`}
-            >
-              Total Medals
-            </button>
-            <button 
-              onClick={() => setSelectedMedalType('gold')}
-              className={`px-3 py-1 m-1 rounded ${selectedMedalType === 'gold' ? 'bg-yellow-500 text-black' : 'bg-gray-300 text-gray-800'}`}
-            >
-              Gold
-            </button>
-            <button 
-              onClick={() => setSelectedMedalType('silver')}
-              className={`px-3 py-1 m-1 rounded ${selectedMedalType === 'silver' ? 'bg-gray-400 text-black' : 'bg-gray-300 text-gray-800'}`}
-            >
-              Silver
-            </button>
-            <button 
-              onClick={() => setSelectedMedalType('bronze')}
-              className={`px-3 py-1 m-1 rounded ${selectedMedalType === 'bronze' ? 'bg-amber-700 text-white' : 'bg-gray-300 text-gray-800'}`}
-            >
-              Bronze
-            </button>
-          </div>
-          <HeatMapLegend colorScale={colorScale} domain={colorDomain} selectedMedalType={selectedMedalType} />
+      <div className="flex flex-col items-start mb-4 bg-gray-800 p-2 rounded">
+        <div className="flex flex-wrap mb-2">
+          <button 
+            onClick={() => setSelectedMedalType('total')}
+            className={`px-3 py-1 m-1 rounded ${selectedMedalType === 'total' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-800'}`}
+          >
+            Total Medals
+          </button>
+          <button 
+            onClick={() => setSelectedMedalType('gold')}
+            className={`px-3 py-1 m-1 rounded ${selectedMedalType === 'gold' ? 'bg-yellow-500 text-black' : 'bg-gray-300 text-gray-800'}`}
+          >
+            Gold
+          </button>
+          <button 
+            onClick={() => setSelectedMedalType('silver')}
+            className={`px-3 py-1 m-1 rounded ${selectedMedalType === 'silver' ? 'bg-gray-400 text-black' : 'bg-gray-300 text-gray-800'}`}
+          >
+            Silver
+          </button>
+          <button 
+            onClick={() => setSelectedMedalType('bronze')}
+            className={`px-3 py-1 m-1 rounded ${selectedMedalType === 'bronze' ? 'bg-amber-700 text-white' : 'bg-gray-300 text-gray-800'}`}
+          >
+            Bronze
+          </button>
         </div>
-      )}
+        <HeatMapLegend colorScale={colorScale} domain={colorDomain} selectedMedalType={selectedMedalType} />
+      </div>
       <div className="h-[500px] map-container relative" id="map-container" onMouseMove={handleMouseMove}>
         <ComposableMap
           projectionConfig={{
@@ -514,11 +502,11 @@ function RegionMapVisualization({
           style={{
             width: "100%",
             height: "100%",
-            backgroundColor: heatMapEnabled ? "#fff" : "#000"
+            backgroundColor: "#fff"
           }}
         >
           <ZoomableGroup center={[0, 0]} zoom={1.5}>
-            <Sphere stroke="#333" strokeWidth={0.5} fill={heatMapEnabled ? "#fff" : "#000"} />
+            <Sphere stroke="#333" strokeWidth={0.5} fill="#fff" />
             <Graticule stroke="#333" strokeWidth={0.5} />
             <Geographies geography={geoUrl}>
               {({ geographies }) =>
@@ -769,26 +757,20 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
   const containerRef = useRef(null);
 
   const [dimensions, setDimensions] = useState({
-    width: 1200,
+    width: Math.min(1200, window.innerWidth - 40),
     height: 400
   });
 
-  const margin = { top: 40, right: 150, bottom: 60, left: 80 };
-  const innerWidth = dimensions.width - margin.left - margin.right;
-  const innerHeight = dimensions.height - margin.top - margin.bottom;
-
-  // Update dimensions on window resize
   useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const width = Math.min(1500, containerRef.current.clientWidth);
-        setDimensions({ width, height: 400 });
-      }
+    const handleResize = () => {
+      setDimensions({
+        width: Math.min(1200, window.innerWidth - 40),
+        height: 400
+      });
     };
-    
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Get filtered years based on brush selection
@@ -823,11 +805,11 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
       // Create x scale for the brush
       const xScale = scaleLinear()
         .domain([0, olympicYears.length - 1]) // Use indices instead of years
-        .range([0, innerWidth]);
+        .range([0, dimensions.width - 80]);
       
       // Setup brush
       const brush = brushX()
-        .extent([[0, 0], [innerWidth, 30]])
+        .extent([[0, 0], [dimensions.width - 80, 30]])
         .on("end", (event) => {
           if (!event.selection) return;
           
@@ -854,7 +836,7 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
           xScale(olympicYears.indexOf(brushRange[1]))
         ]);
     }
-  }, [innerWidth, olympicYears]); // Remove brushRange from dependencies
+  }, [dimensions.width, olympicYears]); // Remove brushRange from dependencies
 
   const toggleCountry = (country) => {
     if (selectedCountries.some(c => c.noc === country.noc)) {
@@ -875,7 +857,7 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
   // X scale maps year indices to x positions
   const xScale = scaleLinear()
     .domain([0, filteredYears.length - 1])
-    .range([0, innerWidth]);
+    .range([0, dimensions.width - 80]);
 
   // Find the maximum medal count for y scale
   let maxMedals = 10;  // Default minimum
@@ -893,7 +875,7 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
   // Y scale maps medal counts to y positions
   const yScale = scaleLinear()
     .domain([0, maxMedals])
-    .range([innerHeight, 0]);
+    .range([dimensions.height - 80, 0]);
 
   return (
     <section className="bg-gray-800 p-4 rounded-lg shadow-md mt-6" ref={containerRef}>
@@ -949,168 +931,176 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
 
         {/* Chart */}
         <div className="flex-1 bg-gray-900 rounded relative overflow-hidden">
-          <svg width={dimensions.width} height={dimensions.height} ref={svgRef}>
-            <g transform={`translate(${margin.left},${margin.top})`}>
-              {/* Y-axis */}
-              {yScale.ticks(5).map(tick => (
-                <g key={tick} transform={`translate(0,${yScale(tick)})`}>
-                  <line
-                    x1={0}
-                    x2={innerWidth}
-                    stroke="#444"
-                    strokeWidth={0.5}
-                  />
-                  <text
-                    x={-10}
-                    y={4}
-                    fontSize={12}
-                    textAnchor="end"
-                    fill="#aaa"
-                  >
-                    {tick}
-                  </text>
-                </g>
-              ))}
-              
-              {/* X-axis (just tick marks, no labels) */}
-              {/* X-axis (tick marks and year labels) */}
-{filteredYears.map((year, i) => (
-  <g key={year} transform={`translate(${xScale(i)},${innerHeight})`}>
-    <line
-      y1={0}
-      y2={5}
-      stroke="#aaa"
-      strokeWidth={1}
-    />
-    <text
-      y={20}
-      fontSize={12}
-      textAnchor="middle"
-      fill="#aaa"
-    >
-      {year}
-    </text>
-  </g>
-))}
-
-              {/* Lines for each country */}
-              {selectedCountries.map(country => {
-                // Get data points for this country
-                const dataPoints = filteredYears.map((year, i) => {
-                  // Try both regular and lowercase NOC
-                  const countryData = 
-                    yearData[year]?.[country.noc] || 
-                    yearData[year]?.[country.noc.toLowerCase()];
-                  
-                  return {
-                    x: xScale(i),
-                    y: yScale(countryData?.total || 0),
-                    year,
-                    medals: countryData?.total || 0
-                  };
-                });
-
-                return (
-                  <g key={country.noc}>
-                    {dataPoints.length > 1 && (
-                      <path
-                        d={`M ${dataPoints.map(d => `${d.x},${d.y}`).join(' L ')}`}
-                        stroke={countryColors[country.noc]}
-                        strokeWidth={3}
-                        fill="none"
-                      />
-                    )}
-                    {dataPoints.map((point, i) => (
-                      <circle
-                        key={i}
-                        cx={point.x}
-                        cy={point.y}
-                        r={5}
-                        fill={countryColors[country.noc]}
-                        onMouseEnter={() => setHoverData({
-                          country: country.name,
-                          year: point.year,
-                          medals: point.medals,
-                          x: point.x,
-                          y: point.y
-                        })}
-                        onMouseLeave={() => setHoverData(null)}
-                      />
-                    ))}
-                  </g>
-                );
-              })}
-              
-              {/* Legend */}
-              <g transform={`translate(${innerWidth + 20}, 0)`}>
-                {selectedCountries.map((country, i) => (
-                  <g key={country.noc} transform={`translate(0, ${i * 25})`}>
-                    <rect
-                      width={15}
-                      height={15}
-                      fill={countryColors[country.noc]}
+          <div className="w-full overflow-x-auto">
+            <svg
+              width="100%"
+              height={dimensions.height}
+              viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
+              preserveAspectRatio="xMidYMid meet"
+              className="overflow-hidden rounded-lg"
+            >
+              <g transform={`translate(80,40)`}>
+                {/* Y-axis */}
+                {yScale.ticks(5).map(tick => (
+                  <g key={tick} transform={`translate(0,${yScale(tick)})`}>
+                    <line
+                      x1={0}
+                      x2={dimensions.width - 80}
+                      stroke="#444"
+                      strokeWidth={0.5}
                     />
                     <text
-                      x={20}
-                      y={12}
+                      x={-10}
+                      y={4}
                       fontSize={12}
-                      fill="#fff"
+                      textAnchor="end"
+                      fill="#aaa"
                     >
-                      {country.name}
+                      {tick}
+                    </text>
+                  </g>
+                ))} {/* <-- Correctly close the map function here */}
+                
+                {/* X-axis (just tick marks, no labels) */}
+                {/* X-axis (tick marks and year labels) */}
+                {filteredYears.map((year, i) => (
+                  <g key={year} transform={`translate(${xScale(i)},${dimensions.height - 80})`}>
+                    <line
+                      y1={0}
+                      y2={5}
+                      stroke="#aaa"
+                      strokeWidth={1}
+                    />
+                    <text
+                      y={20}
+                      fontSize={12}
+                      textAnchor="middle"
+                      fill="#aaa"
+                    >
+                      {year}
                     </text>
                   </g>
                 ))}
-              </g>
-              
-              {/* Hover tooltip */}
-              {hoverData && (
-                <g transform={`translate(${hoverData.x + 10}, ${hoverData.y - 40})`}>
-                  <rect
-                    width={180}
-                    height={60}
-                    fill="#333"
-                    stroke="#555"
-                    rx={5}
-                  />
-                  <text x={10} y={20} fontSize={12} fill="#fff">
-                    {hoverData.country}
-                  </text>
-                  <text x={10} y={40} fontSize={12} fill="#fff">
-                    Year: {hoverData.year}, Medals: {hoverData.medals}
-                  </text>
+
+                {/* Lines for each country */}
+                {selectedCountries.map(country => {
+                  // Get data points for this country
+                  const dataPoints = filteredYears.map((year, i) => {
+                    // Try both regular and lowercase NOC
+                    const countryData = 
+                      yearData[year]?.[country.noc] || 
+                      yearData[year]?.[country.noc.toLowerCase()];
+                    
+                    return {
+                      x: xScale(i),
+                      y: yScale(countryData?.total || 0),
+                      year,
+                      medals: countryData?.total || 0
+                    };
+                  });
+
+                  return (
+                    <g key={country.noc}>
+                      {dataPoints.length > 1 && (
+                        <path
+                          d={`M ${dataPoints.map(d => `${d.x},${d.y}`).join(' L ')}`}
+                          stroke={countryColors[country.noc]}
+                          strokeWidth={3}
+                          fill="none"
+                        />
+                      )}
+                      {dataPoints.map((point, i) => (
+                        <circle
+                          key={i}
+                          cx={point.x}
+                          cy={point.y}
+                          r={5}
+                          fill={countryColors[country.noc]}
+                          onMouseEnter={() => setHoverData({
+                            country: country.name,
+                            year: point.year,
+                            medals: point.medals,
+                            x: point.x,
+                            y: point.y
+                          })}
+                          onMouseLeave={() => setHoverData(null)}
+                        />
+                      ))}
+                    </g>
+                  );
+                })}
+                
+                {/* Legend */}
+                <g transform={`translate(${dimensions.width - 60}, 0)`}>
+                  {selectedCountries.map((country, i) => (
+                    <g key={country.noc} transform={`translate(0, ${i * 25})`}>
+                      <rect
+                        width={15}
+                        height={15}
+                        fill={countryColors[country.noc]}
+                      />
+                      <text
+                        x={20}
+                        y={12}
+                        fontSize={12}
+                        fill="#fff"
+                      >
+                        {country.name}
+                      </text>
+                    </g>
+                  ))}
                 </g>
-              )}
-              
-              {/* Y-axis label */}
-              <text
-                transform={`translate(-50, ${innerHeight / 2}) rotate(-90)`}
-                textAnchor="middle"
-                fill="#fff"
-                fontSize={18}
-              >
-                Total Medals
-              </text>
-              
-              {/* X-axis label */}
-              <text
-                transform={`translate(${innerWidth / 2}, ${innerHeight + 45})`}
-                textAnchor="middle"
-                fill="#fff"
-                fontSize={18}
-              >
-                Olympic Year
-              </text>
-            </g>
-          </svg>
+                
+                {/* Hover tooltip */}
+                {hoverData && (
+                  <g transform={`translate(${hoverData.x + 10}, ${hoverData.y - 40})`}>
+                    <rect
+                      width={180}
+                      height={60}
+                      fill="#333"
+                      stroke="#555"
+                      rx={5}
+                    />
+                    <text x={10} y={20} fontSize={12} fill="#fff">
+                      {hoverData.country}
+                    </text>
+                    <text x={10} y={40} fontSize={12} fill="#fff">
+                      Year: {hoverData.year}, Medals: {hoverData.medals}
+                    </text>
+                  </g>
+                )}
+                
+                {/* Y-axis label */}
+                <text
+                  transform={`translate(-50, ${dimensions.height / 2 - 40}) rotate(-90)`}
+                  textAnchor="middle"
+                  fill="#fff"
+                  fontSize={18}
+                >
+                  Total Medals
+                </text>
+                
+                {/* X-axis label */}
+                <text
+                  transform={`translate(${dimensions.width / 2 - 40}, ${dimensions.height - 20})`}
+                  textAnchor="middle"
+                  fill="#fff"
+                  fontSize={18}
+                >
+                  Olympic Year
+                </text>
+              </g>
+            </svg>
+          </div>
           
           {/* Brush control below chart (no year labels, just ticks and brush) */}
           <div className="mt-4 px-12">
-  <svg width={dimensions.width} height={50}>
-    <g transform={`translate(${margin.left}, 10)`}>
-      <g ref={brushRef}></g>
-    </g>
-  </svg>
-</div>
+            <svg width={dimensions.width} height={50}>
+              <g transform={`translate(80, 10)`}>
+                <g ref={brushRef}></g>
+              </g>
+            </svg>
+          </div>
         </div>
       </div>
       
@@ -1909,7 +1899,6 @@ export default function MedalDashboard() {
   const [medalData, setMedalData] = useState({});
   const [countries, setCountries] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState(null);
-  const [heatMapEnabled, setHeatMapEnabled] = useState(false);
   const [selectedMedalType, setSelectedMedalType] = useState('total');
   const [selectedYear, setSelectedYear] = useState(null); // Add this line
   
@@ -1925,7 +1914,7 @@ export default function MedalDashboard() {
   const [activeTab, setActiveTab] = useState('map');
 
   // Medal color palettes for heatmap - updated to match the image scale
-  const colorDomain = [0, 10, 50, 150, 300, 600, 1000, 1500, 2500];
+  const colorDomain = [0, 5, 10, 25, 50, 100, 500, 1000, 2500];
   const medalColorScales = {
     gold: scaleLinear()
       .domain(colorDomain)
@@ -1988,14 +1977,14 @@ export default function MedalDashboard() {
     async function fetchData() {
       try {
         // Fetch athlete events data
-        const athleteResponse = await fetch('/data/athlete_events.csv');
+        const athleteResponse = await fetch('/data/cleaned_athlete_events.csv');
         const athleteCsvText = await athleteResponse.text();
         const athleteParseResult = Papa.parse(athleteCsvText, {
           header: true,
           skipEmptyLines: true,
           dynamicTyping: true,
         });
-        const athleteData = athleteParseResult.data.filter(row => row.ID && row.NOC && row.Year && row.Medal);
+        const athleteData = athleteParseResult.data.filter(row => row.NOC && row.Year && row.Medal);
 
         // Fetch NOC regions data
         const nocResponse = await fetch('./data/noc_regions.csv');
@@ -2086,6 +2075,8 @@ export default function MedalDashboard() {
 
         const lastOlympicYear = olympicYears[olympicYears.length - 1];
         setSelectedYear(lastOlympicYear);
+        setMapSelectedYear(lastOlympicYear);
+        setBarChartSelectedYear(lastOlympicYear);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching or processing data:", error);
@@ -2161,8 +2152,6 @@ export default function MedalDashboard() {
               yearData={yearData}
               selectedYear={mapSelectedYear}
               setSelectedYear={setMapSelectedYear}
-              heatMapEnabled={heatMapEnabled}
-              setHeatMapEnabled={setHeatMapEnabled}
               selectedMedalType={selectedMedalType}
               setSelectedMedalType={setSelectedMedalType}
               mapZoom={mapZoom}
