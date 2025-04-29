@@ -1,9 +1,9 @@
 {
     "country": "GBR",
     "medal_counts": {
-        "Silver": 739,
-        "Gold": 678,
-        "Bronze": 651
+        "Silver": 332,
+        "Bronze": 318,
+        "Gold": 297
     },
     "participation": {
         "1896": 10,

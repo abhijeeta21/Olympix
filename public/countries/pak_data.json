@@ -1,9 +1,9 @@
 {
     "country": "PAK",
     "medal_counts": {
-        "Silver": 45,
-        "Gold": 42,
-        "Bronze": 34
+        "Bronze": 4,
+        "Gold": 3,
+        "Silver": 3
     },
     "participation": {
         "1948": 35,

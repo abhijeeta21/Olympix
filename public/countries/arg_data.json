@@ -1,9 +1,9 @@
 {
     "country": "ARG",
     "medal_counts": {
-        "Silver": 92,
-        "Gold": 91,
-        "Bronze": 91
+        "Bronze": 28,
+        "Silver": 25,
+        "Gold": 22
     },
     "participation": {
         "1900": 1,

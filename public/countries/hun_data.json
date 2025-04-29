@@ -1,9 +1,9 @@
 {
     "country": "HUN",
     "medal_counts": {
-        "Gold": 432,
-        "Bronze": 371,
-        "Silver": 332
+        "Bronze": 180,
+        "Gold": 178,
+        "Silver": 158
     },
     "participation": {
         "1896": 7,

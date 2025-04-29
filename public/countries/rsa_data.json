@@ -1,9 +1,9 @@
 {
     "country": "RSA",
     "medal_counts": {
-        "Bronze": 52,
-        "Silver": 47,
-        "Gold": 32
+        "Silver": 33,
+        "Bronze": 30,
+        "Gold": 25
     },
     "participation": {
         "1904": 8,

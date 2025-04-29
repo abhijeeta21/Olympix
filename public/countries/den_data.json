@@ -1,9 +1,9 @@
 {
     "country": "DEN",
     "medal_counts": {
-        "Silver": 241,
-        "Gold": 179,
-        "Bronze": 177
+        "Bronze": 84,
+        "Silver": 82,
+        "Gold": 49
     },
     "participation": {
         "1896": 3,

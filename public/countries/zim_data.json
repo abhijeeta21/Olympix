@@ -1,8 +1,8 @@
 {
     "country": "ZIM",
     "medal_counts": {
-        "Gold": 17,
         "Silver": 4,
+        "Gold": 3,
         "Bronze": 1
     },
     "participation": {

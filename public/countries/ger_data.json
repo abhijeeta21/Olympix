@@ -1,9 +1,9 @@
 {
     "country": "GER",
     "medal_counts": {
-        "Bronze": 746,
-        "Gold": 745,
-        "Silver": 674
+        "Silver": 348,
+        "Bronze": 346,
+        "Gold": 332
     },
     "participation": {
         "1896": 19,

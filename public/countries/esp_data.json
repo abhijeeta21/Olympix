@@ -1,9 +1,9 @@
 {
     "country": "ESP",
     "medal_counts": {
-        "Silver": 243,
-        "Bronze": 136,
-        "Gold": 110
+        "Silver": 64,
+        "Gold": 45,
+        "Bronze": 42
     },
     "participation": {
         "1900": 9,

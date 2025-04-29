@@ -1,9 +1,9 @@
 {
     "country": "EUN",
     "medal_counts": {
-        "Gold": 127,
-        "Bronze": 81,
-        "Silver": 71
+        "Gold": 56,
+        "Silver": 45,
+        "Bronze": 38
     },
     "participation": {
         "1992": 603

@@ -1,9 +1,9 @@
 {
     "country": "RUS",
     "medal_counts": {
-        "Bronze": 408,
-        "Gold": 390,
-        "Silver": 367
+        "Gold": 211,
+        "Bronze": 201,
+        "Silver": 190
     },
     "participation": {
         "1900": 4,

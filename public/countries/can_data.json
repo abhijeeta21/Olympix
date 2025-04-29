@@ -1,9 +1,9 @@
 {
     "country": "CAN",
     "medal_counts": {
-        "Gold": 463,
-        "Bronze": 451,
-        "Silver": 438
+        "Bronze": 193,
+        "Silver": 165,
+        "Gold": 129
     },
     "participation": {
         "1900": 4,

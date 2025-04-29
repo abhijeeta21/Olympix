@@ -1,9 +1,9 @@
 {
     "country": "IND",
     "medal_counts": {
-        "Gold": 138,
-        "Bronze": 40,
-        "Silver": 19
+        "Bronze": 12,
+        "Gold": 10,
+        "Silver": 7
     },
     "participation": {
         "1900": 1,

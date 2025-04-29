@@ -1,6 +1,10 @@
 {
     "country": "SIN",
-    "medal_counts": {},
+    "medal_counts": {
+        "Silver": 2,
+        "Bronze": 2,
+        "Gold": 1
+    },
     "participation": {},
     "sports_stats": []
 }

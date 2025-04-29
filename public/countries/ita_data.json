@@ -1,9 +1,9 @@
 {
     "country": "ITA",
     "medal_counts": {
-        "Gold": 575,
-        "Bronze": 531,
-        "Silver": 531
+        "Gold": 256,
+        "Bronze": 243,
+        "Silver": 226
     },
     "participation": {
         "1896": 1,

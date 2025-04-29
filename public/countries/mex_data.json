@@ -1,9 +1,9 @@
 {
     "country": "MEX",
     "medal_counts": {
-        "Bronze": 54,
-        "Gold": 30,
-        "Silver": 26
+        "Bronze": 30,
+        "Silver": 24,
+        "Gold": 13
     },
     "participation": {
         "1900": 3,
