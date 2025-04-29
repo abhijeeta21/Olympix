@@ -37,6 +37,17 @@ export default function GenderParticipation() {
   const [showTimelineSuggestions, setShowTimelineSuggestions] = useState(false);
   const timelineSearchContainerRef = useRef(null);
 
+  // Add a toggle for showing Summer/Winter/Both Olympics
+  const [seasonFilter, setSeasonFilter] = useState('both'); // 'summer', 'winter', 'both'
+
+  // First, add a new state for search query in both timeline and sports sections
+  const [timelineSportSearchQuery, setTimelineSportSearchQuery] = useState('');
+  const [sportSearchQuery, setSportSearchQuery] = useState('');
+  const [isTimelineSportDropdownOpen, setIsTimelineSportDropdownOpen] = useState(false);
+  const [isSportDropdownOpen, setIsSportDropdownOpen] = useState(false);
+  const timelineSportDropdownRef = useRef(null);
+  const sportDropdownRef = useRef(null);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -46,12 +57,18 @@ export default function GenderParticipation() {
       if (timelineSearchContainerRef.current && !timelineSearchContainerRef.current.contains(event.target)) {
         setShowTimelineSuggestions(false);
       }
+      if (timelineSportDropdownRef.current && !timelineSportDropdownRef.current.contains(event.target)) {
+        setIsTimelineSportDropdownOpen(false);
+      }
+      if (sportDropdownRef.current && !sportDropdownRef.current.contains(event.target)) {
+        setIsSportDropdownOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [timelineSearchContainerRef]);
+  }, [timelineSearchContainerRef, timelineSportDropdownRef, sportDropdownRef]);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -201,10 +218,28 @@ export default function GenderParticipation() {
     if (checkedSports.size === 0) {
         return [];
     }
-    const yearFilteredAthletes = selectedSportYear === 'all'
-      ? processedAthletes
-      : processedAthletes.filter(athlete => athlete.year === parseInt(selectedSportYear, 10));
+    
+    let yearFilteredAthletes = processedAthletes;
+    
+    // Handle the new year-season format
+    if (selectedSportYear !== 'all') {
+      if (selectedSportYear.includes('-')) {
+        // Parse the year and season from the combined value
+        const [year, season] = selectedSportYear.split('-');
+        yearFilteredAthletes = processedAthletes.filter(
+          athlete => athlete.year === parseInt(year, 10) && athlete.season === season
+        );
+      } else {
+        // Original format - just year
+        yearFilteredAthletes = processedAthletes.filter(
+          athlete => athlete.year === parseInt(selectedSportYear, 10)
+        );
+      }
+    }
+    
     const sportFilteredAthletes = yearFilteredAthletes.filter(athlete => checkedSports.has(athlete.sport));
+    
+    // Rest of the existing code
     const sportAgg = sportFilteredAthletes.reduce((acc, row) => {
       const sport = row.sport;
       if (!row.sex) return acc;
@@ -216,23 +251,32 @@ export default function GenderParticipation() {
       else if (row.sex === 'F') acc[sport].female++;
       return acc;
     }, {});
+    
     const aggregatedData = Object.values(sportAgg).map(d => ({
       ...d,
       femalePercentage: d.total > 0 ? parseFloat(((d.female / d.total) * 100).toFixed(1)) : 0,
       malePercentage: d.total > 0 ? parseFloat(((d.male / d.total) * 100).toFixed(1)) : 0,
     })).sort((a, b) => b.femalePercentage - a.femalePercentage);
+    
     console.log("Aggregated Sport Data (Filtered):", aggregatedData.length, "sports");
     return aggregatedData;
   }, [processedAthletes, selectedSportYear, sportCheckboxList]);
 
+  // Modify filteredTimelineDataForDisplay to include season filtering
   const filteredTimelineDataForDisplay = useMemo(() => {
     if (!processedTimelineDataFiltered || timelineStartYear === null || timelineEndYear === null) {
       return [];
     }
     const start = Math.min(timelineStartYear, timelineEndYear);
     const end = Math.max(timelineStartYear, timelineEndYear);
-    return processedTimelineDataFiltered.filter(d => d.year >= start && d.year <= end);
-  }, [processedTimelineDataFiltered, timelineStartYear, timelineEndYear]);
+    
+    return processedTimelineDataFiltered
+      .filter(d => d.year >= start && d.year <= end)
+      .filter(d => {
+        if (seasonFilter === 'both') return true;
+        return d.season.toLowerCase() === seasonFilter;
+      });
+  }, [processedTimelineDataFiltered, timelineStartYear, timelineEndYear, seasonFilter]);
 
   useEffect(() => {
     if (!processedAthletes || processedAthletes.length === 0 || !availableSports.length) {
@@ -411,6 +455,7 @@ export default function GenderParticipation() {
               <h2 className="text-2xl font-bold text-gray-100 mb-4">Filters</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 items-start">
                 <div className="md:col-span-1 flex flex-col relative" ref={timelineSearchContainerRef}>
+                  {/* Country search remains at the top */}
                   <label htmlFor="timeline-country-search" className="text-sm font-medium text-gray-300 mb-1">Country:</label>
                   <div className="flex flex-col gap-2">
                     <form onSubmit={handleTimelineSearchSubmit} className="flex gap-2">
@@ -460,68 +505,196 @@ export default function GenderParticipation() {
                       ))}
                     </ul>
                   )}
+                  
+                  {/* Moving Year Range selectors into the left column */}
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Year Range:</label>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center flex-1">
+                        <label htmlFor="start-year-select" className="text-sm font-medium text-gray-300 mr-2">From:</label>
+                        <select 
+                          id="start-year-select" 
+                          value={timelineStartYear ?? ''} 
+                          onChange={(e) => {
+                            const newStartYear = parseInt(e.target.value, 10);
+                            setTimelineStartYear(newStartYear);
+                            if (timelineEndYear < newStartYear) {
+                              setTimelineEndYear(newStartYear);
+                            }
+                          }} 
+                          className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5 flex-1" 
+                          disabled={!availableTimelineYears.length}
+                        >
+                          {availableTimelineYears.map(year => (
+                            <option key={year} value={year}>{year}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex items-center flex-1">
+                        <label htmlFor="end-year-select" className="text-sm font-medium text-gray-300 mr-2">To:</label>
+                        <select 
+                          id="end-year-select" 
+                          value={timelineEndYear ?? ''} 
+                          onChange={(e) => setTimelineEndYear(parseInt(e.target.value, 10))} 
+                          className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5 flex-1" 
+                          disabled={!availableTimelineYears.length}
+                        >
+                          {availableTimelineYears
+                            .filter(year => year >= timelineStartYear)
+                            .map(year => (
+                              <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Moving toggle buttons into the left column */}
+                  <div className="mt-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Season:</label>
+                    <div className="bg-gray-700 rounded-lg p-1 flex">
+                      <button
+                        className={`flex-1 px-2 py-1 rounded-lg text-sm ${seasonFilter === 'summer' ? 'bg-blue-500 text-white' : 'text-gray-300'}`}
+                        onClick={() => setSeasonFilter('summer')}
+                      >
+                        Summer
+                      </button>
+                      <button
+                        className={`flex-1 px-2 py-1 rounded-lg mx-1 text-sm ${seasonFilter === 'both' ? 'bg-blue-500 text-white' : 'text-gray-300'}`}
+                        onClick={() => setSeasonFilter('both')}
+                      >
+                        All
+                      </button>
+                      <button
+                        className={`flex-1 px-2 py-1 rounded-lg text-sm ${seasonFilter === 'winter' ? 'bg-blue-500 text-white' : 'text-gray-300'}`}
+                        onClick={() => setSeasonFilter('winter')}
+                      >
+                        Winter
+                      </button>
+                    </div>
+                  </div>
                 </div>
+                
+                {/* Sports selection remains in the right columns */}
                 <div className="md:col-span-2">
-                   <div className="flex justify-between items-center mb-1">
-                     <label className="block text-sm font-medium text-gray-300">Select Sports (Available in Range):</label>
-                     <div className="space-x-2">
-                       <button onClick={handleTimelineSelectAllSports} className="text-xs px-2 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50">Select All</button>
-                       <button onClick={handleTimelineDeselectAllSports} className="text-xs px-2 py-0..5 bg-gray-600 hover:bg-gray-700 text-white rounded disabled:opacity-50">Deselect All</button>
-                     </div>
-                   </div>
-                   <div className="h-32 overflow-y-auto border border-gray-600 rounded-lg p-2 bg-gray-700 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-1">
-                     {timelineSportCheckboxList.map(sport => (
-                       <div key={sport.id} className="flex items-center">
-                         <input id={`timeline-sport-checkbox-${sport.id}`} type="checkbox" checked={sport.checked} onChange={() => handleTimelineSportCheckboxChange(sport.id)} disabled={sport.disabled} className={`w-4 h-4 text-blue-600 bg-gray-600 border-gray-500 rounded focus:ring-blue-500 focus:ring-2 ${sport.disabled ? 'cursor-not-allowed opacity-50' : ''}`} />
-                         <label htmlFor={`timeline-sport-checkbox-${sport.id}`} className={`ml-2 text-sm font-medium truncate ${sport.disabled ? 'text-gray-500 cursor-not-allowed' : 'text-gray-300'}`} title={sport.name}>{sport.name}</label>
-                       </div>
-                     ))}
-                   </div>
-                </div>
-              </div>
-              <div className="flex flex-wrap justify-center gap-4 items-center">
-                <div className="flex items-center gap-2">
-                  <label htmlFor="start-year-select" className="text-sm font-medium text-gray-300">From:</label>
-                  <select 
-                    id="start-year-select" 
-                    value={timelineStartYear ?? ''} 
-                    onChange={(e) => {
-                      const newStartYear = parseInt(e.target.value, 10);
-                      setTimelineStartYear(newStartYear);
-                      // If end year is smaller than start year, update end year to match start year
-                      if (timelineEndYear < newStartYear) {
-                        setTimelineEndYear(newStartYear);
-                      }
-                    }} 
-                    className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5" 
-                    disabled={!availableTimelineYears.length}
-                  >
-                    {availableTimelineYears.map(year => (
-                      <option key={year} value={year}>{year}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex items-center gap-2">
-                  <label htmlFor="end-year-select" className="text-sm font-medium text-gray-300">To:</label>
-                  <select 
-                    id="end-year-select" 
-                    value={timelineEndYear ?? ''} 
-                    onChange={(e) => setTimelineEndYear(parseInt(e.target.value, 10))} 
-                    className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5" 
-                    disabled={!availableTimelineYears.length}
-                  >
-                    {availableTimelineYears
-                      .filter(year => year >= timelineStartYear) // Only show years >= start year
-                      .map(year => (
-                        <option key={year} value={year}>{year}</option>
-                      ))}
-                  </select>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block text-sm font-medium text-gray-300">Select Sports:</label>
+                    <div className="space-x-2">
+                      <button 
+                        onClick={handleTimelineSelectAllSports} 
+                        className="text-xs px-2 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50"
+                      >
+                        Select All
+                      </button>
+                      <button 
+                        onClick={handleTimelineDeselectAllSports} 
+                        className="text-xs px-2 py-0.5 bg-gray-600 hover:bg-gray-700 text-white rounded disabled:opacity-50"
+                      >
+                        Deselect All
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Dropdown for selecting sports */}
+                  <div className="relative" ref={timelineSportDropdownRef}>
+                    <button
+                      onClick={() => setIsTimelineSportDropdownOpen(!isTimelineSportDropdownOpen)}
+                      className="w-full flex justify-between items-center bg-gray-700 border border-gray-600 rounded-lg p-2.5 text-left text-gray-300"
+                    >
+                      <span>
+                        Add Sports ({timelineSportCheckboxList.filter(s => s.checked).length} selected)
+                      </span>
+                      <svg className="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a 1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                    
+                    {isTimelineSportDropdownOpen && (
+                      <div className="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg shadow-lg">
+                        <div className="p-2 border-b border-gray-600">
+                          <input
+                            type="text"
+                            placeholder="Search sports..."
+                            value={timelineSportSearchQuery}
+                            onChange={(e) => setTimelineSportSearchQuery(e.target.value)}
+                            className="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        
+                        <div className="max-h-60 overflow-y-auto p-2">
+                          {timelineSportCheckboxList
+                            .filter(sport => 
+                              sport.name.toLowerCase().includes(timelineSportSearchQuery.toLowerCase()))
+                            .map(sport => (
+                              <div key={sport.id} className="flex items-center py-1 px-2 hover:bg-gray-600 rounded">
+                                <input
+                                  id={`timeline-sport-checkbox-${sport.id}`}
+                                  type="checkbox"
+                                  checked={sport.checked}
+                                  onChange={() => handleTimelineSportCheckboxChange(sport.id)}
+                                  disabled={sport.disabled}
+                                  className={`w-4 h-4 text-blue-600 bg-gray-600 border-gray-500 rounded focus:ring-blue-500 focus:ring-2 ${sport.disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                                />
+                                <label
+                                  htmlFor={`timeline-sport-checkbox-${sport.id}`}
+                                  className={`ml-2 text-sm font-medium ${sport.disabled ? 'text-gray-500 cursor-not-allowed' : 'text-gray-300'}`}
+                                  title={sport.name}
+                                >
+                                  {sport.name}
+                                </label>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Display selected sports as tags */}
+                  <div className="mt-3">
+                    {timelineSportCheckboxList.filter(s => s.checked).length > 0 ? (
+                      <div className="max-h-32 overflow-y-auto border border-gray-600 rounded-lg p-2 bg-gray-700">
+                        <div className="flex flex-wrap gap-2">
+                          {timelineSportCheckboxList
+                            .filter(sport => sport.checked)
+                            .map(sport => (
+                              <div 
+                                key={sport.id} 
+                                className="bg-blue-600 text-white text-sm rounded-full px-3 py-1 flex items-center"
+                              >
+                                <span className="mr-1">{sport.name}</span>
+                                <button
+                                  onClick={() => handleTimelineSportCheckboxChange(sport.id)}
+                                  className="hover:bg-blue-700 rounded-full w-4 h-4 flex items-center justify-center"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
+                                    <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                                  </svg>
+                                </button>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-sm text-gray-500 italic mt-1">No sports selected</div>
+                    )}
+                    
+                    <div className="mt-1 text-xs text-gray-400">
+                      {timelineSportCheckboxList.filter(s => s.checked).length} of {timelineSportCheckboxList.length} sports selected
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-gray-100 mb-4">Athlete Counts Over Time</h2>
+              <h2 className="text-xl font-semibold text-gray-100 mb-4">
+                Athlete Counts Over Time 
+                {seasonFilter === 'both' ? '' : seasonFilter === 'summer' ? ' - Summer Olympics' : ' - Winter Olympics'}
+              </h2>
               <div className="h-[350px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={filteredTimelineDataForDisplay} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -553,7 +726,10 @@ export default function GenderParticipation() {
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-gray-100 mb-4">Female Participation Percentage Over Time</h2>
+              <h2 className="text-xl font-semibold text-gray-100 mb-4">
+                Female Participation Percentage Over Time
+                {seasonFilter === 'both' ? '' : seasonFilter === 'summer' ? ' - Summer Olympics' : ' - Winter Olympics'}
+              </h2>
               <div className="h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={filteredTimelineDataForDisplay} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -585,27 +761,149 @@ export default function GenderParticipation() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div className="md:col-span-1">
                 <label htmlFor="sport-year-select" className="block text-sm font-medium text-gray-300 mb-1">Select Year:</label>
-                <select id="sport-year-select" value={selectedSportYear} onChange={(e) => setSelectedSportYear(e.target.value)} className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                <select 
+                  id="sport-year-select" 
+                  value={selectedSportYear} 
+                  onChange={(e) => setSelectedSportYear(e.target.value)} 
+                  className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                >
                   <option value="all">All Years</option>
-                  {availableTimelineYears.map(year => (<option key={year} value={year}>{year}</option>))}
+                  {availableTimelineYears.flatMap(year => {
+                    // Find all athletes from this year to determine the season(s)
+                    const yearAthletes = processedAthletes.filter(athlete => athlete.year === year);
+                    const seasons = new Set(yearAthletes.map(athlete => athlete.season));
+                    
+                    // If both Summer and Winter exist for this year, create separate options
+                    if (seasons.size > 1 && seasons.has('Summer') && seasons.has('Winter')) {
+                      return [
+                        <option key={`${year}-Summer`} value={`${year}-Summer`}>
+                          {year} - Summer
+                        </option>,
+                        <option key={`${year}-Winter`} value={`${year}-Winter`}>
+                          {year} - Winter
+                        </option>
+                      ];
+                    }
+                    
+                    // Otherwise just show the year with its single season
+                    const seasonLabel = Array.from(seasons)[0];
+                    return [
+                      <option key={year} value={year}>
+                        {year} - {seasonLabel}
+                      </option>
+                    ];
+                  })}
                 </select>
               </div>
               <div className="md:col-span-2">
-                 <div className="flex justify-between items-center mb-1">
-                   <label className="block text-sm font-medium text-gray-300">Select Sports:</label>
-                   <div className="space-x-2">
-                     <button onClick={handleSelectAllSports} className="text-xs px-2 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50">Select All</button>
-                     <button onClick={handleDeselectAllSports} className="text-xs px-2 py-0.5 bg-gray-600 hover:bg-gray-700 text-white rounded disabled:opacity-50">Deselect All</button>
-                   </div>
-                 </div>
-                 <div className="h-32 overflow-y-auto border border-gray-600 rounded-lg p-2 bg-gray-700 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-1">
-                   {sportCheckboxList.map(sport => (
-                     <div key={sport.id} className="flex items-center">
-                       <input id={`sport-checkbox-${sport.id}`} type="checkbox" checked={sport.checked} onChange={() => handleSportCheckboxChange(sport.id)} disabled={sport.disabled} className={`w-4 h-4 text-blue-600 bg-gray-600 border-gray-500 rounded focus:ring-blue-500 focus:ring-2 ${sport.disabled ? 'cursor-not-allowed opacity-50' : ''}`} />
-                       <label htmlFor={`sport-checkbox-${sport.id}`} className={`ml-2 text-sm font-medium truncate ${sport.disabled ? 'text-gray-500 cursor-not-allowed' : 'text-gray-300'}`} title={sport.name}>{sport.name}</label>
-                     </div>
-                   ))}
-                 </div>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block text-sm font-medium text-gray-300">Select Sports:</label>
+                  <div className="space-x-2">
+                    <button 
+                      onClick={handleSelectAllSports} 
+                      className="text-xs px-2 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50"
+                    >
+                      Select All
+                    </button>
+                    <button 
+                      onClick={handleDeselectAllSports} 
+                      className="text-xs px-2 py-0.5 bg-gray-600 hover:bg-gray-700 text-white rounded disabled:opacity-50"
+                    >
+                      Deselect All
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="relative" ref={sportDropdownRef}>
+                  <button
+                    onClick={() => setIsSportDropdownOpen(!isSportDropdownOpen)}
+                    className="w-full flex justify-between items-center bg-gray-700 border border-gray-600 rounded-lg p-2.5 text-left text-gray-300"
+                  >
+                    <span>
+                      Add Sports ({sportCheckboxList.filter(s => s.checked).length} selected)
+                    </span>
+                    <svg className="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fillRule="evenodd"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                  
+                  {isSportDropdownOpen && (
+                    <div className="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg shadow-lg">
+                      <div className="p-2 border-b border-gray-600">
+                        <input
+                          type="text"
+                          placeholder="Search sports..."
+                          value={sportSearchQuery}
+                          onChange={(e) => setSportSearchQuery(e.target.value)}
+                          className="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      
+                      <div className="max-h-60 overflow-y-auto p-2">
+                        {sportCheckboxList
+                          .filter(sport => 
+                            sport.name.toLowerCase().includes(sportSearchQuery.toLowerCase()))
+                          .map(sport => (
+                            <div key={sport.id} className="flex items-center py-1 px-2 hover:bg-gray-600 rounded">
+                              <input
+                                id={`sport-checkbox-${sport.id}`}
+                                type="checkbox"
+                                checked={sport.checked}
+                                onChange={() => handleSportCheckboxChange(sport.id)}
+                                disabled={sport.disabled}
+                                className={`w-4 h-4 text-blue-600 bg-gray-600 border-gray-500 rounded focus:ring-blue-500 focus:ring-2 ${sport.disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                              />
+                              <label
+                                htmlFor={`sport-checkbox-${sport.id}`}
+                                className={`ml-2 text-sm font-medium ${sport.disabled ? 'text-gray-500 cursor-not-allowed' : 'text-gray-300'}`}
+                                title={sport.name}
+                              >
+                                {sport.name}
+                              </label>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Display selected sports as tags */}
+                <div className="mt-3">
+                  {sportCheckboxList.filter(s => s.checked).length > 0 ? (
+                    <div className="max-h-32 overflow-y-auto border border-gray-600 rounded-lg p-2 bg-gray-700">
+                      <div className="flex flex-wrap gap-2">
+                        {sportCheckboxList
+                          .filter(sport => sport.checked)
+                          .map(sport => (
+                            <div 
+                              key={sport.id} 
+                              className="bg-blue-600 text-white text-sm rounded-full px-3 py-1 flex items-center"
+                            >
+                              <span className="mr-1">{sport.name}</span>
+                              <button
+                                onClick={() => handleSportCheckboxChange(sport.id)}
+                                className="hover:bg-blue-700 rounded-full w-4 h-4 flex items-center justify-center"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
+                                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                                </svg>
+                              </button>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-500 italic mt-1">No sports selected</div>
+                  )}
+                  
+                  <div className="mt-1 text-xs text-gray-400">
+                    {sportCheckboxList.filter(s => s.checked).length} of {sportCheckboxList.length} sports selected
+                  </div>
+                </div>
               </div>
             </div>
             <div className="h-[500px]">
@@ -642,7 +940,7 @@ export default function GenderParticipation() {
         )}
 
         <div className="text-center text-sm text-gray-500 mt-12">
-          <p>Data sourced from Kaggle Olympics dataset (athlete_events.csv and noc_regions.csv). Counts represent unique athletes per Games/Sport/Country as applicable.</p>
+          <p>Data sourced from Kaggle Olympics dataset. Counts represent unique athletes per Games/Sport/Country as applicable.</p>
         </div>
       </div>
     </main>
