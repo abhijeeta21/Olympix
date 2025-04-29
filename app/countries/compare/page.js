@@ -15,6 +15,7 @@ import {
   Title,
   BarElement
 } from 'chart.js'; // Import necessary Chart.js elements
+import { WORKERS_SUPPORTED } from 'papaparse';
 
 // Register Chart.js components
 ChartJS.register(
@@ -248,210 +249,453 @@ export default function CompareCountriesPage() {
   }, [country1, country2]); // Refetch when selected countries change
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Compare Olympic Performance</h1>
+    <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4">
+      <div className="w-full max-w-6xl mx-auto space-y-8 py-8">
+        <nav className="flex justify-between items-center mb-6">
+          <a href="/countries" className="text-blue-400 hover:text-blue-300 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+            </svg>
+            Back to Countries
+          </a>
+          <div className="text-sm font-medium py-1 px-3 bg-blue-800 rounded-full">Country Comparison</div>
+        </nav>
 
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+        <div className="text-center space-y-4 mb-8">
+          <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+            Olympic Performance Comparison
+          </h1>
+          <p className="text-gray-300 max-w-3xl mx-auto">
+            Select two countries to compare their Olympic medals, participation, and top sports.
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div>
-          <label htmlFor="country1-select" className="block text-sm font-medium text-gray-700">Select Country 1</label>
-          <Select
-            id="country1-select"
-            options={countryOptions}
-            onChange={setCountry1}
-            value={country1}
-            isClearable
-            className="mt-1 block w-full"
-          />
+        {error && <div className="text-red-400 mb-4 p-3 bg-gray-800 rounded-lg">{error}</div>}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div>
+            <label htmlFor="country1-select" className="block text-sm font-medium text-gray-300 mb-2">Select Country 1</label>
+            <Select
+              id="country1-select"
+              options={countryOptions}
+              onChange={setCountry1}
+              value={country1}
+              isClearable
+              className="text-gray-800"
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  background: "#374151",
+                  borderColor: "#4B5563",
+                  boxShadow: "none",
+                  "&:hover": {
+                    borderColor: "#6B7280"
+                  }
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isSelected ? "#3B82F6" : state.isFocused ? "#4B5563" : "#374151",
+                  color: "white",
+                  "&:active": {
+                    backgroundColor: "#3B82F6"
+                  }
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: "#374151",
+                  border: "1px solid #4B5563"
+                }),
+                singleValue: (base) => ({
+                  ...base,
+                  color: "white"
+                }),
+                input: (base) => ({
+                  ...base,
+                  color: "white"
+                })
+              }}
+            />
+          </div>
+          <div>
+            <label htmlFor="country2-select" className="block text-sm font-medium text-gray-300 mb-2">Select Country 2</label>
+            <Select
+              id="country2-select"
+              options={countryOptions}
+              onChange={setCountry2}
+              value={country2}
+              isClearable
+              className="text-gray-800"
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  background: "#374151",
+                  borderColor: "#4B5563",
+                  boxShadow: "none",
+                  "&:hover": {
+                    borderColor: "#6B7280"
+                  }
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isSelected ? "#3B82F6" : state.isFocused ? "#4B5563" : "#374151",
+                  color: "white",
+                  "&:active": {
+                    backgroundColor: "#3B82F6"
+                  }
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: "#374151",
+                  border: "1px solid #4B5563"
+                }),
+                singleValue: (base) => ({
+                  ...base,
+                  color: "white"
+                }),
+                input: (base) => ({
+                  ...base,
+                  color: "white"
+                })
+              }}
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="country2-select" className="block text-sm font-medium text-gray-700">Select Country 2</label>
-          <Select
-            id="country2-select"
-            options={countryOptions}
-            onChange={setCountry2}
-            value={country2}
-            isClearable
-            className="mt-1 block w-full"
-          />
-        </div>
+
+        {loading && <p className="text-center text-blue-300">Loading comparison data...</p>}
+
+        {/* Comparison Display Area */}
+        {country1Data || country2Data ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Display for Country 1 */}
+            <div className="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+              <h2 className="text-xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                {country1Data?.country || (country1?.label || 'Select Country 1')}
+              </h2>
+              {country1Data ? (
+                <div>
+                  {/* Medal Counts Pie Chart */}
+                  <h3 className="text-lg font-medium mb-3 text-white">Medal Counts</h3>
+                  {country1MedalChartData ? (
+                    <div className="mb-8" style={{ maxWidth: '300px', margin: 'auto' }}>
+                      <Pie data={country1MedalChartData} options={{ 
+                        responsive: true, 
+                        plugins: { 
+                          legend: { 
+                            position: 'top',
+                            labels: {
+                              color: 'white',
+                              font: {
+                                size: 12
+                              }
+                            }
+                          }, 
+                          title: { 
+                            display: true, 
+                            text: 'Medal Distribution',
+                            color: 'white',
+                            font: {
+                              size: 14,
+                              weight: 'bold'
+                            }
+                          } 
+                        } 
+                      }} />
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 mb-6">No medal data available.</p>
+                  )}
+
+                  {/* Summer Olympic Athletes Line Chart */}
+                  <h3 className="text-lg font-medium mb-3 text-white">Summer Olympic Athletes</h3>
+                  {country1OlympicsData.summer ? (
+                    <div className="mb-8">
+                      <Line data={country1OlympicsData.summer} options={{ 
+                        responsive: true, 
+                        plugins: { 
+                          legend: { 
+                            position: 'top',
+                            labels: {
+                              color: 'white',
+                              font: {
+                                size: 12
+                              }
+                            }
+                          }
+                        }, 
+                        scales: { 
+                          x: { 
+                            title: { 
+                              display: true, 
+                              text: 'Year', 
+                              color: 'white' 
+                            },
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          }, 
+                          y: { 
+                            title: { 
+                              display: true, 
+                              text: 'Number of Athletes', 
+                              color: 'white' 
+                            },
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          } 
+                        } 
+                      }} />
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 mb-6">No summer Olympics data available.</p>
+                  )}
+
+                  {/* Winter Olympic Athletes Line Chart */}
+                  <h3 className="text-lg font-medium mb-3 text-white">Winter Olympic Athletes</h3>
+                  {country1OlympicsData.winter ? (
+                    <div className="mb-8">
+                      <Line data={country1OlympicsData.winter} options={{ 
+                        responsive: true, 
+                        plugins: { 
+                          legend: { 
+                            position: 'top',
+                            labels: {
+                              color: 'white',
+                              font: {
+                                size: 12
+                              }
+                            }
+                          }
+                        }, 
+                        scales: { 
+                          x: { 
+                            title: { 
+                              display: true, 
+                              text: 'Year', 
+                              color: 'white' 
+                            },
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          }, 
+                          y: { 
+                            title: { 
+                              display: true, 
+                              text: 'Number of Athletes', 
+                              color: 'white' 
+                            },
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          } 
+                        } 
+                      }} />
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 mb-6">No winter Olympics data available.</p>
+                  )}
+
+                  {/* Top Sports by Athlete Count Bar Chart */}
+                  <h3 className="text-lg font-medium mb-3 text-white">Top 10 Sports by Athlete Count</h3>
+                  {country1TopSportsData ? (
+                    <div className="mb-4">
+                      <Bar data={country1TopSportsData} options={{ 
+                        responsive: true, 
+                        indexAxis: 'y',
+                        plugins: { 
+                          legend: { display: false }
+                        },
+                        scales: {
+                          x: { 
+                            title: { 
+                              display: true, 
+                              text: 'Number of Athletes',
+                              color: 'white'
+                            },
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          },
+                          y: { 
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          }
+                        }
+                      }} />
+                    </div>
+                  ) : (
+                    <p className="text-gray-400">No sports statistics available.</p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-center text-gray-400">{country1 ? `No data available for ${country1.label}.` : 'Select a country to see data.'}</p>
+              )}
+            </div>
+
+            {/* Display for Country 2 */}
+            <div className="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+              <h2 className="text-xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                {country2Data?.country || (country2?.label || 'Select Country 2')}
+              </h2>
+              {country2Data ? (
+                <div>
+                  {/* Medal Counts Pie Chart */}
+                  <h3 className="text-lg font-medium mb-3 text-white">Medal Counts</h3>
+                  {country2MedalChartData ? (
+                    <div className="mb-8" style={{ maxWidth: '300px', margin: 'auto' }}>
+                      <Pie data={country2MedalChartData} options={{ 
+                        responsive: true, 
+                        plugins: { 
+                          legend: { 
+                            position: 'top',
+                            labels: {
+                              color: 'white',
+                              font: {
+                                size: 12
+                              }
+                            }
+                          }, 
+                          title: { 
+                            display: true, 
+                            text: 'Medal Distribution',
+                            color: 'white',
+                            font: {
+                              size: 14,
+                              weight: 'bold'
+                            }
+                          } 
+                        } 
+                      }} />
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 mb-6">No medal data available.</p>
+                  )}
+
+                  {/* Summer Olympic Athletes Line Chart */}
+                  <h3 className="text-lg font-medium mb-3 text-white">Summer Olympic Athletes</h3>
+                  {country2OlympicsData.summer ? (
+                    <div className="mb-8">
+                      <Line data={country2OlympicsData.summer} options={{ 
+                        responsive: true, 
+                        plugins: { 
+                          legend: { 
+                            position: 'top',
+                            labels: {
+                              color: 'white',
+                              font: {
+                                size: 12
+                              }
+                            }
+                          }
+                        }, 
+                        scales: { 
+                          x: { 
+                            title: { 
+                              display: true, 
+                              text: 'Year', 
+                              color: 'white' 
+                            },
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          }, 
+                          y: { 
+                            title: { 
+                              display: true, 
+                              text: 'Number of Athletes', 
+                              color: 'white' 
+                            },
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          } 
+                        } 
+                      }} />
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 mb-6">No summer Olympics data available.</p>
+                  )}
+
+                  {/* Winter Olympic Athletes Line Chart */}
+                  <h3 className="text-lg font-medium mb-3 text-white">Winter Olympic Athletes</h3>
+                  {country2OlympicsData.winter ? (
+                    <div className="mb-8">
+                      <Line data={country2OlympicsData.winter} options={{ 
+                        responsive: true, 
+                        plugins: { 
+                          legend: { 
+                            position: 'top',
+                            labels: {
+                              color: 'white',
+                              font: {
+                                size: 12
+                              }
+                            }
+                          }
+                        }, 
+                        scales: { 
+                          x: { 
+                            title: { 
+                              display: true, 
+                              text: 'Year', 
+                              color: 'white' 
+                            },
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          }, 
+                          y: { 
+                            title: { 
+                              display: true, 
+                              text: 'Number of Athletes', 
+                              color: 'white' 
+                            },
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          } 
+                        } 
+                      }} />
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 mb-6">No winter Olympics data available.</p>
+                  )}
+
+                  {/* Top Sports by Athlete Count Bar Chart */}
+                  <h3 className="text-lg font-medium mb-3 text-white">Top 10 Sports by Athlete Count</h3>
+                  {country2TopSportsData ? (
+                    <div className="mb-4">
+                      <Bar data={country2TopSportsData} options={{ 
+                        responsive: true, 
+                        indexAxis: 'y',
+                        plugins: { 
+                          legend: { display: false }
+                        },
+                        scales: {
+                          x: { 
+                            title: { 
+                              display: true, 
+                              text: 'Number of Athletes',
+                              color: 'white'
+                            },
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          },
+                          y: { 
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                          }
+                        }
+                      }} />
+                    </div>
+                  ) : (
+                    <p className="text-gray-400">No sports statistics available.</p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-center text-gray-400">{country2 ? `No data available for ${country2.label}.` : 'Select a country to see data.'}</p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 text-center">
+            <p className="text-gray-300">Select two countries to compare their Olympic performances.</p>
+          </div>
+        )}
       </div>
-
-      {loading && <p className="text-center">Loading comparison data...</p>}
-
-      {/* Comparison Display Area */}
-      {country1Data || country2Data ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Display for Country 1 */}
-          <div className="border p-4 rounded shadow">
-            <h2 className="text-xl font-semibold mb-3">{country1Data?.country || (country1?.label || 'Select Country 1')}</h2>
-            {country1Data ? (
-              <div>
-                {/* Medal Counts Pie Chart */}
-                <h3 className="text-lg font-medium mb-2">Medal Counts</h3>
-                {country1MedalChartData ? (
-                  <div className="mb-6" style={{ maxWidth: '300px', margin: 'auto' }}>
-                    <Pie data={country1MedalChartData} options={{ 
-                      responsive: true, 
-                      plugins: { 
-                        legend: { position: 'top' }, 
-                        title: { display: true, text: 'Medal Distribution' } 
-                      } 
-                    }} />
-                  </div>
-                ) : (
-                  <p className="text-gray-500 mb-6">No medal data available.</p>
-                )}
-
-                {/* Summer Olympic Athletes Line Chart */}
-                <h3 className="text-lg font-medium mb-2">Summer Olympic Athletes</h3>
-                {country1OlympicsData.summer ? (
-                  <div className="mb-6">
-                    <Line data={country1OlympicsData.summer} options={{ 
-                      responsive: true, 
-                      plugins: { 
-                        legend: { position: 'top' } 
-                      }, 
-                      scales: { 
-                        x: { title: { display: true, text: 'Year' } }, 
-                        y: { title: { display: true, text: 'Number of Athletes' } } 
-                      } 
-                    }} />
-                  </div>
-                ) : (
-                  <p className="text-gray-500 mb-6">No summer Olympics data available.</p>
-                )}
-
-                {/* Winter Olympic Athletes Line Chart */}
-                <h3 className="text-lg font-medium mb-2">Winter Olympic Athletes</h3>
-                {country1OlympicsData.winter ? (
-                  <div className="mb-6">
-                    <Line data={country1OlympicsData.winter} options={{ 
-                      responsive: true, 
-                      plugins: { 
-                        legend: { position: 'top' } 
-                      }, 
-                      scales: { 
-                        x: { title: { display: true, text: 'Year' } }, 
-                        y: { title: { display: true, text: 'Number of Athletes' } } 
-                      } 
-                    }} />
-                  </div>
-                ) : (
-                  <p className="text-gray-500 mb-6">No winter Olympics data available.</p>
-                )}
-
-                {/* Top Sports by Athlete Count Bar Chart */}
-                <h3 className="text-lg font-medium mb-2">Top 10 Sports by Athlete Count</h3>
-                {country1TopSportsData ? (
-                  <div className="mb-4">
-                    <Bar data={country1TopSportsData} options={{ 
-                      responsive: true, 
-                      indexAxis: 'y', // Horizontal bar chart for better readability
-                      plugins: { 
-                        legend: { display: false } 
-                      },
-                      scales: {
-                        x: { title: { display: true, text: 'Number of Athletes' } }
-                      }
-                    }} />
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No sports statistics available.</p>
-                )}
-              </div>
-            ) : (
-              <p className="text-center text-gray-500">{country1 ? `No data available for ${country1.label}.` : 'Select a country to see data.'}</p>
-            )}
-          </div>
-
-          {/* Display for Country 2 */}
-          <div className="border p-4 rounded shadow">
-            <h2 className="text-xl font-semibold mb-3">{country2Data?.country || (country2?.label || 'Select Country 2')}</h2>
-            {country2Data ? (
-              <div>
-                {/* Medal Counts Pie Chart */}
-                <h3 className="text-lg font-medium mb-2">Medal Counts</h3>
-                {country2MedalChartData ? (
-                  <div className="mb-6" style={{ maxWidth: '300px', margin: 'auto' }}>
-                    <Pie data={country2MedalChartData} options={{ 
-                      responsive: true, 
-                      plugins: { 
-                        legend: { position: 'top' }, 
-                        title: { display: true, text: 'Medal Distribution' } 
-                      } 
-                    }} />
-                  </div>
-                ) : (
-                  <p className="text-gray-500 mb-6">No medal data available.</p>
-                )}
-
-                {/* Summer Olympic Athletes Line Chart */}
-                <h3 className="text-lg font-medium mb-2">Summer Olympic Athletes</h3>
-                {country2OlympicsData.summer ? (
-                  <div className="mb-6">
-                    <Line data={country2OlympicsData.summer} options={{ 
-                      responsive: true, 
-                      plugins: { 
-                        legend: { position: 'top' } 
-                      }, 
-                      scales: { 
-                        x: { title: { display: true, text: 'Year' } }, 
-                        y: { title: { display: true, text: 'Number of Athletes' } } 
-                      } 
-                    }} />
-                  </div>
-                ) : (
-                  <p className="text-gray-500 mb-6">No summer Olympics data available.</p>
-                )}
-
-                {/* Winter Olympic Athletes Line Chart */}
-                <h3 className="text-lg font-medium mb-2">Winter Olympic Athletes</h3>
-                {country2OlympicsData.winter ? (
-                  <div className="mb-6">
-                    <Line data={country2OlympicsData.winter} options={{ 
-                      responsive: true, 
-                      plugins: { 
-                        legend: { position: 'top' } 
-                      }, 
-                      scales: { 
-                        x: { title: { display: true, text: 'Year' } }, 
-                        y: { title: { display: true, text: 'Number of Athletes' } } 
-                      } 
-                    }} />
-                  </div>
-                ) : (
-                  <p className="text-gray-500 mb-6">No winter Olympics data available.</p>
-                )}
-
-                {/* Top Sports by Athlete Count Bar Chart */}
-                <h3 className="text-lg font-medium mb-2">Top 10 Sports by Athlete Count</h3>
-                {country2TopSportsData ? (
-                  <div className="mb-4">
-                    <Bar data={country2TopSportsData} options={{ 
-                      responsive: true, 
-                      indexAxis: 'y', // Horizontal bar chart for better readability
-                      plugins: { 
-                        legend: { display: false } 
-                      },
-                      scales: {
-                        x: { title: { display: true, text: 'Number of Athletes' } }
-                      }
-                    }} />
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No sports statistics available.</p>
-                )}
-              </div>
-            ) : (
-              <p className="text-center text-gray-500">{country2 ? `No data available for ${country2.label}.` : 'Select a country to see data.'}</p>
-            )}
-          </div>
-        </div>
-      ) : (
-        <p className="text-center text-gray-500">Select two countries to compare their Olympic performances.</p>
-      )}
-    </div>
+    </main>
   );
 }
+
+// just adding this to see if git commit WORKERS_SUPPORTED

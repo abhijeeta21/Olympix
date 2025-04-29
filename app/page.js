@@ -127,8 +127,14 @@ export default function Home() {
             {/* Logo/Brand */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="flex items-center space-x-2">
-                <span className="text-2xl">🏆</span>
-                <span className="text-white font-bold text-xl tracking-tight">Olympics Viz</span>
+                <span className="w-8 h-8">
+                  <img 
+                    src="/images/olympics-logo.svg" 
+                    alt="Olympic Rings" 
+                    className="w-full h-full"
+                  />
+                </span>
+                <span className="text-white font-bold text-xl tracking-tight">Olympix</span>
               </Link>
             </div>
             
@@ -201,6 +207,15 @@ export default function Home() {
       <div className="w-full mx-auto flex flex-col min-h-screen relative z-10 pt-16 pb-12 px-4">
         {/* Hero Section */}
         <div className="text-center space-y-8 py-16 md:py-24">
+          {/* Olympic Rings Logo above the heading */}
+          <div className="mx-auto w-32 h-16 mb-8">
+            <img 
+              src="/images/olympics-logo.svg" 
+              alt="Olympic Rings" 
+              className="w-full h-full" 
+            />
+          </div>
+          
           <div className="relative inline-block mx-auto">
             <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tighter leading-tight drop-shadow-lg">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">Olympics</span> Data
@@ -283,7 +298,7 @@ export default function Home() {
             <p className="font-medium text-white/80 mb-1">Olympic Data Visualization Project</p>
             <p className="text-gray-400">Built with D3.js and React</p>
             <div className="mt-4 text-xs">
-              <p>© 2023 Olympics Visualization | All rights reserved</p>
+              <p>© 2025 Olympics Visualization | No rights reserved</p>
             </div>
           </div>
         </footer>
