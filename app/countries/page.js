@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import * as d3 from 'd3';
+
 
 export default function Countries() {
   const [countries, setCountries] = useState([]);
@@ -34,10 +34,11 @@ export default function Countries() {
         
         setIsLoading(false);
         
-        // Create map after data is loaded
-        if (nocArray.length > 0) {
-          setTimeout(() => createWorldMap(nocArray), 500);
-        }
+        // Create map after data is loaded (Note: createWorldMap function is not included in this snippet)
+        // If createWorldMap relies on D3 or similar, ensure the library is loaded and the function is defined elsewhere
+        // if (nocArray.length > 0) {
+        //   setTimeout(() => createWorldMap(nocArray), 500);
+        // }
       } catch (error) {
         console.error('Error fetching countries data:', error);
         setIsLoading(false);
@@ -46,299 +47,6 @@ export default function Countries() {
 
     fetchData();
   }, []);
-
-  // Create world map visualization using the local worldmap.json file
-  const createWorldMap = (countriesData) => {
-    if (!mapRef.current) return;
-
-    // Clear previous content
-    d3.select(mapRef.current).selectAll("*").remove();
-    
-    const width = mapRef.current.clientWidth;
-    const height = 500;
-    
-    // Create SVG
-    const svg = d3.select(mapRef.current)
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("viewBox", `0 0 ${width} ${height}`)
-      .attr("style", "max-width: 100%; height: auto;");
-    
-    // Create a group for the map
-    const g = svg.append("g");
-    
-    // Add zoom functionality
-    const zoom = d3.zoom()
-      .scaleExtent([1, 8])
-      .on("zoom", (event) => {
-        g.attr("transform", event.transform);
-      });
-    
-    svg.call(zoom);
-    
-    // Create tooltip
-    const tooltip = d3.select("body")
-      .append("div")
-      .attr("class", "absolute bg-gray-900 text-white p-3 rounded shadow-lg pointer-events-none opacity-0 transition-opacity duration-200")
-      .style("z-index", "10")
-      .style("position", "absolute")
-      .style("min-width", "200px");
-    
-    // Create a more distinguishing color scale (using a better color scheme for differentiation)
-    // Using the viridis color scheme which provides better visual distinction
-    const maxMedals = d3.max(countriesData, d => {
-      const totalMedals = d.medals ? 
-        d.medals.gold + d.medals.silver + d.medals.bronze : 0;
-      return totalMedals;
-    });
-    
-    // Using a logarithmic scale to better differentiate between countries with fewer medals
-    const colorScale = d3.scaleSequentialLog(d3.interpolateViridis)
-      .domain([1, maxMedals]) // Using 1 as the min to handle log scale (can't have log(0))
-      .clamp(true); // Prevents errors with zeros
-    
-    // Function to determine color based on medal count
-    const getColor = (medals) => {
-      if (!medals || medals === 0) return "#2d3748"; // Default color for countries with no medals
-      return colorScale(medals);
-    };
-    
-    // Create a map of country ISO codes to medal data
-    const countryMedalMap = {};
-    countriesData.forEach(country => {
-      if (country.region) {
-        // Make sure we prioritize "CAN" for Canada and not "NFL"
-        if (country.region === "Canada" && country.noc !== "CAN") {
-          return; // Skip non-CAN entries for Canada
-        }
-        
-        // Map the country data by both region name and country code
-        // This improves matching chances
-        countryMedalMap[country.region] = {
-          noc: country.noc,
-          region: country.region,
-          medals: country.medals ? 
-            country.medals.gold + country.medals.silver + country.medals.bronze : 0,
-          details: country
-        };
-        
-        // Also add by NOC code for alternative matching
-        countryMedalMap[country.noc] = {
-          noc: country.noc,
-          region: country.region,
-          medals: country.medals ? 
-            country.medals.gold + country.medals.silver + country.medals.bronze : 0,
-          details: country
-        };
-      }
-    });
-    
-    // Load the local world map data
-    d3.json("/worldmap.json")
-      .then(worldData => {
-
-        // Filter out Antarctica from the map
-        worldData.features = worldData.features.filter(feature => 
-        feature.properties.name !== "Antarctica" && 
-        feature.properties.name_en !== "Antarctica" &&
-        feature.properties.iso_a3 !== "ATA");
-
-        // Create projection and path
-        const projection = d3.geoMercator()
-          .fitSize([width, height], worldData);
-        
-        const path = d3.geoPath()
-          .projection(projection);
-        
-        // Helper function to find country data using various properties
-        const findCountryData = (feature) => {
-          // Special case for Canada - ensure we use CAN and not NFL
-          if (feature.properties.name === "Canada" || 
-              feature.properties.name_en === "Canada" || 
-              feature.properties.iso_a3 === "CAN") {
-            return countryMedalMap["CAN"] || countryMedalMap["Canada"];
-          }
-          if (feature.properties.name === "Germany" ||
-            feature.properties.name_en === "Germany" ||
-            feature.properties.iso_a3 === "GER"
-          ){
-            return countryMedalMap["GER"] || countryMedalMap["Germany"]
-          }
-          // Try different properties to match with our medal data
-          const options = [
-            feature.properties.name,
-            feature.properties.name_en,
-            feature.properties.sov_a3,
-            feature.properties.adm0_a3,
-            feature.properties.iso_a3,
-            feature.properties.formal_en
-          ];
-          
-          for (const option of options) {
-            if (option && countryMedalMap[option]) {
-              return countryMedalMap[option];
-            }
-          }
-          
-          // Also try to match with any NOC that might be related
-          // This is a fallback approach for countries with name mismatches
-          if (feature.properties.iso_a3) {
-            const iso = feature.properties.iso_a3;
-            // Find any NOC that might contain this ISO code
-            const matchingCountry = countriesData.find(c => 
-              c.noc.includes(iso) || 
-              iso.includes(c.noc) || 
-              (c.region && c.region.includes(feature.properties.name))
-            );
-            
-            if (matchingCountry) {
-              return {
-                noc: matchingCountry.noc,
-                region: matchingCountry.region,
-                medals: matchingCountry.medals ? 
-                  matchingCountry.medals.gold + matchingCountry.medals.silver + matchingCountry.medals.bronze : 0,
-                details: matchingCountry
-              };
-            }
-          }
-          
-          return null;
-        };
-        
-        // Draw map
-        g.selectAll("path")
-          .data(worldData.features)
-          .join("path")
-          .attr("d", path)
-          .attr("fill", d => {
-            const countryData = findCountryData(d);
-            return countryData ? getColor(countryData.medals) : "#2d3748";
-          })
-          .attr("stroke", "#1a202c")
-          .attr("stroke-width", 0.5)
-          .on("mouseover", function(event, d) {
-            const countryData = findCountryData(d);
-            
-            d3.select(this)
-              .attr("stroke", "#60a5fa")
-              .attr("stroke-width", 2);
-            
-            const countryName = d.properties.name || d.properties.name_en;
-            
-            if (countryData) {
-              tooltip
-                .style("opacity", 1)
-                .style("left", `${event.pageX + 10}px`)
-                .style("top", `${event.pageY - 20}px`)
-                .html(`
-                  <div class="font-bold text-lg">${countryData.region} (${countryData.noc})</div>
-                  <div class="mt-1">Total Medals: ${countryData.medals}</div>
-                  <div class="mt-1">Gold: ${countryData.details.medals.gold} | Silver: ${countryData.details.medals.silver} | Bronze: ${countryData.details.medals.bronze}</div>
-                `);
-            } else {
-              tooltip
-                .style("opacity", 1)
-                .style("left", `${event.pageX + 10}px`)
-                .style("top", `${event.pageY - 20}px`)
-                .html(`
-                  <div class="font-bold text-lg">${countryName}</div>
-                  <div class="mt-1">No Olympic data available</div>
-                `);
-            }
-          })
-          .on("mouseout", function() {
-            d3.select(this)
-              .attr("stroke", "#1a202c")
-              .attr("stroke-width", 0.5);
-            
-            tooltip.style("opacity", 0);
-          })
-          .on("click", function(event, d) {
-            const countryData = findCountryData(d);
-            
-            if (countryData && countryData.noc) {
-              window.location.href = `/countries/${countryData.noc.toLowerCase()}`;
-            }
-          })
-          .style("cursor", d => findCountryData(d) ? "pointer" : "default");
-        
-        // Add legend with improved color scale (logarithmic)
-        const legendWidth = 200;
-        const legendHeight = 20;
-        const legendX = width - legendWidth - 20;
-        const legendY = height - 50;
-        
-        // For legend, create a linear scale but with custom tick values that reflect log distribution
-        const logTickValues = [1, 10, 50, 100, 500, maxMedals];
-        const legendScale = d3.scaleLinear()
-          .domain([0, 100])
-          .range([0, legendWidth]);
-        
-        const legendAxis = d3.axisBottom()
-          .scale(legendScale)
-          .tickValues([0, 20, 40, 60, 80, 100])
-          .tickFormat((d, i) => {
-            // Map the linear scale position to our log-distributed values
-            return logTickValues[i] || "";
-          });
-        
-        // Create gradient for legend
-        const defs = svg.append("defs");
-        const linearGradient = defs.append("linearGradient")
-          .attr("id", "medal-gradient")
-          .attr("x1", "0%")
-          .attr("y1", "0%")
-          .attr("x2", "100%")
-          .attr("y2", "0%");
-        
-        // Add stops for viridis color scheme (reversed to have dark purple for high values)
-        // We sample the viridis color scheme at different points
-        linearGradient.selectAll("stop")
-          .data([
-            {offset: "0%", color: d3.interpolateViridis(0)},  // Highest (purple)
-            {offset: "25%", color: d3.interpolateViridis(0.75)},
-            {offset: "50%", color: d3.interpolateViridis(0.5)},
-            {offset: "75%", color: d3.interpolateViridis(0.25)},
-            {offset: "100%", color: d3.interpolateViridis(1)} // Lowest (dark yellow)
-          ])
-          .enter().append("stop")
-          .attr("offset", d => d.offset)
-          .attr("stop-color", d => d.color);
-        
-        svg.append("g")
-          .attr("transform", `translate(${legendX}, ${legendY})`)
-          .append("rect")
-          .attr("width", legendWidth)
-          .attr("height", legendHeight)
-          .style("fill", "url(#medal-gradient)");
-        
-        svg.append("g")
-          .attr("transform", `translate(${legendX}, ${legendY + legendHeight})`)
-          .call(legendAxis)
-          .selectAll("text")
-          .style("font-size", "10px")
-          .style("fill", "#e2e8f0");
-        
-        svg.append("text")
-          .attr("x", legendX)
-          .attr("y", legendY - 10)
-          .style("font-size", "12px")
-          .style("fill", "#e2e8f0")
-          .text("Medal Count (Log Scale)");
-      })
-      .catch(error => {
-        console.error("Error loading world map data:", error);
-        // Show error message in the UI
-        svg.append("text")
-          .attr("x", width / 2)
-          .attr("y", height / 2)
-          .attr("text-anchor", "middle")
-          .style("fill", "#e2e8f0")
-          .style("font-size", "16px")
-          .text("Error loading map data. Please check console for details.");
-      });
-  };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4">
@@ -364,24 +72,9 @@ export default function Countries() {
           </p>
         </div>
 
-        {/* Interactive Map */}
-        <div className="bg-gray-800 rounded-lg shadow-lg p-4">
-          <h2 className="text-2xl font-bold text-blue-300 mb-4">Interactive World Map</h2>
-          <div className="relative" style={{ height: "500px" }}>
-            {isLoading ? (
-              <div className="absolute inset-0 flex justify-center items-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-400"></div>
-              </div>
-            ) : (
-              <div ref={mapRef} className="w-full h-full relative"></div>
-            )}
-            <p className="absolute bottom-2 left-4 text-sm text-gray-400">Click on a country to view detailed Olympic performance</p>
-          </div>
-        </div>
-
-        {/* Simplified Search Bar (without filters and sorting) */}
-        <div className="bg-gray-800 p-4 rounded-lg">
-          <div className="relative w-full max-w-md mx-auto">
+        {/* Search Bar and Compare Button */}
+        <div className="bg-gray-800 p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full max-w-md">
             <input
               type="text"
               value={searchQuery}
@@ -395,6 +88,9 @@ export default function Countries() {
               </svg>
             </div>
           </div>
+          <Link href="/countries/compare" className="w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 ease-in-out">
+            Compare Two Countries
+          </Link>
         </div>
 
         {/* Countries Cards */}
@@ -404,12 +100,12 @@ export default function Countries() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {countries.filter(country => 
+            {countries.filter(country =>
               !searchQuery || (country?.region?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 country?.noc?.toLowerCase().includes(searchQuery.toLowerCase()))
             ).length > 0 ? (
               countries
-                .filter(country => 
+                .filter(country =>
                   !searchQuery || (country?.region?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     country?.noc?.toLowerCase().includes(searchQuery.toLowerCase()))
                 )

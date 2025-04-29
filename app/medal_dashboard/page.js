@@ -32,10 +32,11 @@ const olympicYears = [
 function HeatMapLegend({ colorScale, domain, selectedMedalType }) {
   const gradientId = "heatmap-gradient";
   const width = 450, height = 16;
+  
   return (
-    <div className="my-2">
+    <div className="my-2 w-full max-w-[450px]">
       <div className="relative">
-        <svg width={width} height={height}>
+        <svg width="100%" height={height} preserveAspectRatio="none" viewBox={`0 0 ${width} ${height}`}>
           <defs>
             <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
               {domain.map((d, i) => (
@@ -49,28 +50,27 @@ function HeatMapLegend({ colorScale, domain, selectedMedalType }) {
           </defs>
           <rect x="0" y="0" width={width} height={height} fill={`url(#${gradientId})`} />
         </svg>
-        <div className="flex w-full absolute top-full left-0">
-          {domain.map((d, i) => {
-            const position = `${(i / (domain.length - 1)) * 100}%`;
-            const offsetX = i === 0 ? 0 : i === domain.length - 1 ? -20 : -10;
-            return (
-              <div 
-                key={i} 
-                className="absolute text-xs text-gray-300"
-                style={{
-                  left: position,
-                  transform: `translateX(${offsetX}px)`,
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {d}
-              </div>
-            );
-          })}
+        
+        {/* Labels container with proper spacing */}
+        <div className="flex justify-between w-full mt-2 px-1">
+          {domain.map((d, i) => (
+            <div 
+              key={i} 
+              className="text-xs text-gray-300"
+              style={{
+                textAlign: i === 0 ? 'left' : i === domain.length - 1 ? 'right' : 'center',
+                width: i === 0 || i === domain.length - 1 ? 'auto' : `${100 / (domain.length - 1)}%`,
+                overflow: 'visible',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {d}
+            </div>
+          ))}
         </div>
       </div>
       <div className="h-6" /> {/* Spacer for the labels */}
-      <span className="text-xs text-gray-400 mt-6">
+      <span className="text-xs text-gray-400 mt-6 block">
         ({selectedMedalType.charAt(0).toUpperCase() + selectedMedalType.slice(1)} medals)
       </span>
     </div>
@@ -84,8 +84,9 @@ function RegionMapVisualization({
   mapZoom, setMapZoom, setSelectedRegion, colorScale, colorDomain
 }) {
   const [tooltipContent, setTooltipContent] = useState("");
-  const [tooltipPosition, setTooltipPosition] = useState(null); // Change to null instead of {x:0, y:0}
+  const [tooltipPosition, setTooltipPosition] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
+  const mapContainerRef = useRef(null);
 
   const getCountryCode = (geo) => {
     if (!geo?.properties) return "";
@@ -398,44 +399,97 @@ function RegionMapVisualization({
     }
   };
 
+  // const handleMouseEnter = (event, geo) => {
+  //   console.debug("Mouse enter:", geo.properties?.name);
+  //   const content = getTooltipContent(geo);
+    
+  //   const mapContainer = event.currentTarget.closest('.map-container');
+  //   const rect = mapContainer.getBoundingClientRect();
+    
+  //   // Calculate safe tooltip position (prevent overflow)
+  //   const safePosition = calculateTooltipPosition(event, rect);
+    
+  //   // Set both the tooltip content and position
+  //   setTooltipContent(content);
+  //   setTooltipPosition(safePosition);
+  //   setShowTooltip(true);
+  // };
+  
+
+  // const handleMouseMove = (event) => {
+  //   if (showTooltip) {
+  //     const mapContainer = event.currentTarget.closest('.map-container');
+  //     const rect = mapContainer.getBoundingClientRect();
+      
+  //     // Use the same safe positioning logic
+  //     const safePosition = calculateTooltipPosition(event, rect);
+  //     setTooltipPosition(safePosition);
+  //   }
+  // };
+  // New function to calculate safe tooltip position
+  const calculateTooltipPosition = (event, containerRect) => {
+    const TOOLTIP_WIDTH = 180;
+    const TOOLTIP_HEIGHT = 140;
+    const MARGIN = 10;
+    
+    // Get cursor position relative to container
+    let x = event.clientX - containerRect.left;
+    let y = event.clientY - containerRect.top;
+    
+    // Initial position (right-bottom of cursor)
+    let posX = x + MARGIN;
+    let posY = y + MARGIN;
+    
+    // Check for right edge overflow
+    if (posX + TOOLTIP_WIDTH > containerRect.width) {
+      posX = x - TOOLTIP_WIDTH - MARGIN; // Place to left of cursor
+    }
+    
+    // Check for bottom edge overflow
+    if (posY + TOOLTIP_HEIGHT > containerRect.height) {
+      posY = y - TOOLTIP_HEIGHT - MARGIN; // Place above cursor
+    }
+    
+    // Ensure tooltip doesn't go outside the container bounds
+    posX = Math.max(MARGIN, Math.min(containerRect.width - TOOLTIP_WIDTH - MARGIN, posX));
+    posY = Math.max(MARGIN, Math.min(containerRect.height - TOOLTIP_HEIGHT - MARGIN, posY));
+    
+    return { x: posX, y: posY };
+  };
+
   const handleMouseEnter = (event, geo) => {
-    console.debug("Mouse enter:", geo.properties?.name);
     const content = getTooltipContent(geo);
     
-    // Use a standard class name instead of Tailwind's utility class with brackets
-    const mapContainer = event.currentTarget.closest('.map-container');
-    const rect = mapContainer.getBoundingClientRect();
-    const x = event.clientX - rect.left + 10;
-    const y = event.clientY - rect.top + 10;
+    if (!mapContainerRef.current) return;
+    const rect = mapContainerRef.current.getBoundingClientRect();
+    
+    // Calculate safe tooltip position
+    const safePosition = calculateTooltipPosition(event, rect);
     
     // Set both the tooltip content and position
     setTooltipContent(content);
-    setTooltipPosition({ x, y });
+    setTooltipPosition(safePosition);
     setShowTooltip(true);
-    
-    console.debug("Tooltip position set to:", x, y);
   };
 
   const handleMouseMove = (event) => {
-    if (showTooltip) {
-      // Use the same standard class name here
-      const mapContainer = event.currentTarget.closest('.map-container');
-      const rect = mapContainer.getBoundingClientRect();
-      const x = event.clientX - rect.left + 10;
-      const y = event.clientY - rect.top + 10;
-      setTooltipPosition({ x, y });
+    if (showTooltip && mapContainerRef.current) {
+      const rect = mapContainerRef.current.getBoundingClientRect();
+      const safePosition = calculateTooltipPosition(event, rect);
+      setTooltipPosition(safePosition);
     }
   };
 
   const handleMouseLeave = () => {
-    console.debug("Mouse leave");
     setShowTooltip(false);
   };
 
   return (
     <section className="bg-gray-900 p-4 rounded-lg shadow-md mb-6">
       <h2 className="text-2xl font-bold text-white mb-4">Region-Wise Medal Count</h2>
-      <div className="flex flex-wrap justify-between items-center mb-4">
+      
+      {/* Responsive controls */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-4">
         <div className="flex items-center space-x-2">
           <button 
             onClick={() => setMapZoom(prev => Math.min(prev + 0.5, 4))}
@@ -450,7 +504,7 @@ function RegionMapVisualization({
             Zoom Out -
           </button>
         </div>
-        <div className="flex items-center space-x-2 my-2">
+        <div className="flex items-center space-x-2">
           <label className="text-white">Year:</label>
           <select 
             value={selectedYear || ''}
@@ -464,8 +518,10 @@ function RegionMapVisualization({
           </select>
         </div>
       </div>
-      <div className="flex flex-col items-start mb-4 bg-gray-800 p-2 rounded">
-        <div className="flex flex-wrap mb-2">
+      
+      {/* Medal type selector and legend - now more responsive */}
+      <div className="flex flex-col items-start mb-4 bg-gray-800 p-2 rounded overflow-x-auto w-full">
+        <div className="flex flex-wrap mb-2 w-full">
           <button 
             onClick={() => setSelectedMedalType('total')}
             className={`px-3 py-1 m-1 rounded ${selectedMedalType === 'total' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-800'}`}
@@ -491,9 +547,18 @@ function RegionMapVisualization({
             Bronze
           </button>
         </div>
-        <HeatMapLegend colorScale={colorScale} domain={colorDomain} selectedMedalType={selectedMedalType} />
+        <div className="w-full overflow-x-auto">
+          <HeatMapLegend colorScale={colorScale} domain={colorDomain} selectedMedalType={selectedMedalType} />
+        </div>
       </div>
-      <div className="h-[500px] map-container relative" id="map-container" onMouseMove={handleMouseMove}>
+      
+      {/* Map container with ref for positioning */}
+      <div 
+        className="h-[500px] map-container relative" 
+        id="map-container" 
+        ref={mapContainerRef}
+        onMouseMove={handleMouseMove}
+      >
         <ComposableMap
           projectionConfig={{
             rotate: [-10, 0, 0],
@@ -531,17 +596,20 @@ function RegionMapVisualization({
             </Geographies>
           </ZoomableGroup>
         </ComposableMap>
+        
+        {/* Improved tooltip with fixed positioning */}
         {showTooltip && tooltipPosition && (
           <div
             className="absolute z-50 bg-gray-800 text-white p-3 rounded-md shadow-lg border border-gray-700 animate-fadeIn"
             style={{
-              left: tooltipPosition.x + 'px',
-              top: tooltipPosition.y + 'px',
-              minWidth: '180px',
+              left: `${tooltipPosition.x}px`,
+              top: `${tooltipPosition.y}px`,
+              maxWidth: '220px',
+              width: 'auto',
               pointerEvents: 'none'
             }}
           >
-            <div className="font-bold mb-2 text-center border-b border-gray-600 pb-1">
+            <div className="font-bold mb-2 text-center border-b border-gray-600 pb-1 text-sm truncate">
               {tooltipContent.name}
               {tooltipContent.year ? (
                 <span className="text-blue-400 ml-1">({tooltipContent.year})</span>
@@ -1364,17 +1432,37 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
 }
 // --- Medal Distribution by Continent Pie Chart ---
 // --- Medal Distribution by Continent Pie Chart (Enhanced) ---
+// --- Medal Distribution by Continent Pie Chart (Enhanced) ---
 function ContinentDistributionChart({ countries, selectedYear, yearData, olympicYears, setSelectedYear }) {
   const [medalType, setMedalType] = useState('total');
   const [highlightedContinent, setHighlightedContinent] = useState(null);
   const [focusedContinent, setFocusedContinent] = useState(null);
-  const [chartType, setChartType] = useState('pie'); // 'pie' or 'donut'
   const [showDetails, setShowDetails] = useState(false);
   
-  const width = 600; // Increased width
-  const height = 500; // Increased height
-  const outerRadius = Math.min(width, height) / 2 - 40;
-  const innerRadius = chartType === 'donut' ? outerRadius * 0.5 : 0; // For donut chart
+  // Container ref and responsive dimensions
+  const containerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 500, height: 400 });
+  
+  // Update dimensions based on container size
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const containerHeight = window.innerHeight * 0.6;
+        setDimensions({
+          width: Math.min(500, containerWidth - 40),
+          height: Math.min(400, containerHeight)
+        });
+      }
+    };
+    
+    // Initial update and window resize listener
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, [showDetails]);
+  
+  const outerRadius = Math.min(dimensions.width, dimensions.height) / 2 - 40;
   
   // Country to continent mapping (unchanged)
   const continentMapping = {
@@ -1386,38 +1474,33 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
     'oceania': ['aus', 'cok', 'fij', 'fsm', 'kir', 'mhl', 'nru', 'nzl', 'plw', 'png', 'sam', 'sol', 'tga', 'tuv', 'van']
   };
   
-  // Continent display names
+  // Continent display names and icons (unchanged)
   const continentNames = {
-    'africa': 'Africa',
-    'asia': 'Asia',
-    'europe': 'Europe',
-    'north_america': 'North America',
-    'south_america': 'South America',
-    'oceania': 'Oceania'
-  };
-
-  // Continent icons/emojis
-  const continentIcons = {
-    'africa': '🌍',
-    'asia': '🌏',
-    'europe': '🇪🇺',
-    'north_america': '🌎',
-    'south_america': '🌎',
-    'oceania': '🏝️'
+    'africa': 'Africa', 'asia': 'Asia', 'europe': 'Europe',
+    'north_america': 'North America', 'south_america': 'South America', 'oceania': 'Oceania'
   };
   
-  // Get the appropriate data source
+  const continentIcons = {
+    'africa': '🌍', 'asia': '🌏', 'europe': '🇪🇺',
+    'north_america': '🌎', 'south_america': '🌎', 'oceania': '🏝️'
+  };
+  
+  // Get the appropriate data source with proper NOC formatting
   let dataToUse = countries;
   if (selectedYear && yearData[selectedYear]) {
-    dataToUse = Object.values(yearData[selectedYear])
-      .filter(c => c && typeof c === 'object');
+    dataToUse = Object.entries(yearData[selectedYear])
+      .filter(([_, c]) => c && typeof c === 'object')
+      .map(([noc, data]) => ({
+        ...data,
+        noc: noc
+      }));
   }
   
   // Group medals by continent
   const continentMedals = Object.keys(continentMapping).map(continent => {
     const countriesInContinent = continentMapping[continent];
     let totalGold = 0, totalSilver = 0, totalBronze = 0;
-    
+
     dataToUse.forEach(country => {
       if (country.noc && countriesInContinent.includes(country.noc.toLowerCase())) {
         totalGold += country.gold || 0;
@@ -1425,7 +1508,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
         totalBronze += country.bronze || 0;
       }
     });
-    
+
     return {
       continent,
       name: continentNames[continent],
@@ -1433,7 +1516,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
       gold: totalGold,
       silver: totalSilver,
       bronze: totalBronze,
-      total: totalGold + totalSilver + totalBronze
+      total: totalGold + totalSilver + totalBronze,
     };
   }).sort((a, b) => b[medalType] - a[medalType]);
   
@@ -1442,7 +1525,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
   
   // Create arc generator
   const arcGenerator = arc()
-    .innerRadius(innerRadius)
+    .innerRadius(0)  // Always using pie chart style (no donut)
     .outerRadius((d) => {
       // Expand the arc when hovered
       return d.data.continent === highlightedContinent ? outerRadius * 1.08 : outerRadius;
@@ -1493,14 +1576,15 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
     : null;
 
   return (
-    <section className="bg-gray-800 p-6 rounded-lg shadow-lg mt-6">
-      <div className="flex flex-wrap justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">
+    <section className="bg-gray-800 p-4 md:p-6 rounded-lg shadow-lg mt-6" ref={containerRef}>
+      {/* Header with controls - more responsive layout */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-3">
+        <h2 className="text-xl md:text-2xl font-bold text-white">
           Medal Distribution by Continent
           {selectedYear && <span className="text-blue-400 ml-2">({selectedYear})</span>}
         </h2>
 
-        <div className="flex flex-wrap items-center space-x-3 mt-2 sm:mt-0">
+        <div className="flex flex-wrap items-center gap-3">
           <div>
             <label className="text-white mr-2">Year:</label>
             <select 
@@ -1516,7 +1600,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
           </div>
           
           <div>
-            <label className="text-white mr-2">Medal Type:</label>
+            <label className="text-white mr-2">Medal:</label>
             <select
               value={medalType}
               onChange={e => setMedalType(e.target.value)}
@@ -1528,108 +1612,50 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
               <option value="bronze">Bronze</option>
             </select>
           </div>
-
-          <div>
-            <label className="text-white mr-2">Chart Type:</label>
-            <div className="inline-flex rounded-md shadow-sm">
-              <button
-                onClick={() => setChartType('pie')}
-                className={`px-3 py-1 text-sm rounded-l-md ${chartType === 'pie' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-700 text-gray-300'}`}
-              >
-                Pie
-              </button>
-              <button
-                onClick={() => setChartType('donut')}
-                className={`px-3 py-1 text-sm rounded-r-md ${chartType === 'donut' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-700 text-gray-300'}`}
-              >
-                Donut
-              </button>
-            </div>
-          </div>
         </div>
       </div>
       
-      <div className={`flex flex-col ${showDetails ? 'lg:flex-row' : 'md:flex-row'} bg-gray-900 p-4 rounded-lg transition-all`}>
+      {/* More responsive layout for chart and details */}
+      <div className={`flex flex-col ${showDetails ? 'lg:flex-row' : 'md:flex-row'} bg-gray-900 p-3 md:p-4 rounded-lg`}>
         {/* Chart and Legend Container */}
-        <div className={`flex-1 flex flex-col md:flex-row ${showDetails ? 'lg:w-1/2' : ''}`}>
-          {/* Pie Chart with Gradients */}
-          <div className="flex-1 flex justify-center items-center transition-all duration-300 min-h-[400px]">
-            <svg width={width} height={height} className="overflow-visible">
+        <div className={`flex flex-col md:flex-row ${showDetails ? 'lg:w-1/2' : ''} w-full`}>
+          {/* Pie Chart with Gradients - more responsive */}
+          <div className="flex-1 flex justify-center items-center min-h-[300px] max-w-full overflow-visible">
+            <svg 
+              width={dimensions.width} 
+              height={dimensions.height} 
+              viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
+              preserveAspectRatio="xMidYMid meet"
+              className="overflow-visible"
+            >
               <defs>
                 {/* Define gradients for each continent */}
-                {continentMedals.map((d, i) => (
+                {continentMedals.map(d => (
                   <radialGradient
                     key={`gradient-${d.continent}`}
                     id={`gradient-${d.continent}`}
-                    cx="50%"
-                    cy="50%"
-                    r="70%"
-                    fx="50%"
-                    fy="50%"
+                    cx="50%" cy="50%" r="70%" fx="50%" fy="50%"
                   >
-                    <stop
-                      offset="0%"
-                      stopColor={colorScale(d.continent)}
-                      stopOpacity="0.9"
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor={colorScale(d.continent)}
-                      stopOpacity="0.7"
-                    />
+                    <stop offset="0%" stopColor={colorScale(d.continent)} stopOpacity="0.9" />
+                    <stop offset="100%" stopColor={colorScale(d.continent)} stopOpacity="0.7" />
                   </radialGradient>
                 ))}
+                
+                {/* Add subtle glow effect */}
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
               </defs>
               
-              {/* Add subtle glow effect */}
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-              
-              {/* Center text for donut chart */}
-              {chartType === 'donut' && (
-                <g transform={`translate(${width / 2}, ${height / 2})`}>
-                  <text 
-                    textAnchor="middle" 
-                    className="font-bold" 
-                    fill="#fff" 
-                    fontSize="20"
-                  >
-                    {medalType.charAt(0).toUpperCase() + medalType.slice(1)}
-                  </text>
-                  <text 
-                    textAnchor="middle" 
-                    y="25" 
-                    className="font-bold" 
-                    fill="#fff" 
-                    fontSize="18"
-                  >
-                    {formatNumber(totalMedals)}
-                  </text>
-                  <text 
-                    textAnchor="middle" 
-                    y="45" 
-                    fill="#aaa" 
-                    fontSize="14"
-                  >
-                    medals total
-                  </text>
-                </g>
-              )}
-              
               <g 
-                transform={`translate(${width / 2}, ${height / 2})`}
+                transform={`translate(${dimensions.width / 2}, ${dimensions.height / 2})`}
                 className="transition-all duration-500 ease-in-out"
               >
-                {pieData.map((d, i) => (
+                {pieData.map(d => (
                   <g 
                     key={d.data.continent}
                     className="transition-all duration-300"
@@ -1671,12 +1697,12 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
             </svg>
           </div>
           
-          {/* Enhanced Legend & Stats */}
-          <div className="lg:w-72 mt-4 md:mt-0 md:ml-6 flex flex-col justify-center">
-            <h3 className="text-white font-bold mb-3 text-center text-lg border-b border-gray-700 pb-2">
+          {/* Enhanced Legend & Stats - more compact and responsive */}
+          <div className="w-full md:w-60 mt-4 md:mt-0 md:ml-4 flex flex-col justify-center">
+            <h3 className="text-white font-bold mb-2 text-center text-lg border-b border-gray-700 pb-2">
               {medalType.charAt(0).toUpperCase() + medalType.slice(1)} Medals
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {continentMedals.map(d => (
                 <div 
                   key={d.continent} 
@@ -1688,38 +1714,40 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
                   style={{ cursor: 'pointer' }}
                 >
                   <span 
-                    className="w-6 h-6 mr-3 rounded-md flex items-center justify-center"
+                    className="w-6 h-6 mr-2 rounded-md flex items-center justify-center"
                     style={{ backgroundColor: colorScale(d.continent) }}
                   >
                     {d.icon}
                   </span>
-                  <span className="text-white flex-1 font-medium">{d.name}</span>
-                  <span className="text-white font-bold">{formatNumber(d[medalType])}</span>
-                  <span className="text-gray-400 w-16 text-right">{d.percentage}%</span>
+                  <span className="text-white flex-1 font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+                    {d.name}
+                  </span>
+                  <span className="text-white font-bold text-sm">{formatNumber(d[medalType])}</span>
+                  <span className="text-gray-400 w-12 text-right text-sm">{d.percentage}%</span>
                 </div>
               ))}
               
-              <div className="pt-4 border-t border-gray-700 mt-4">
+              <div className="pt-3 border-t border-gray-700 mt-2">
                 <div className="flex justify-between items-center">
                   <span className="text-white">Total:</span>
-                  <span className="text-white font-bold text-lg">{formatNumber(totalMedals)}</span>
+                  <span className="text-white font-bold">{formatNumber(totalMedals)}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
         
-        {/* Detailed View of Selected Continent */}
+        {/* Detailed View of Selected Continent - more responsive */}
         {showDetails && focusedContinentData && (
-          <div className="lg:w-1/2 mt-6 lg:mt-0 lg:ml-6 bg-gray-850 rounded-md border border-gray-700 p-4 animate-fadeIn">
-            <div className="flex items-center mb-4 pb-3 border-b border-gray-700">
+          <div className="lg:w-1/2 mt-6 lg:mt-0 lg:ml-6 bg-gray-850 rounded-md border border-gray-700 p-3 md:p-4 animate-fadeIn">
+            <div className="flex items-center mb-4 pb-2 border-b border-gray-700">
               <span 
-                className="w-10 h-10 rounded-full flex items-center justify-center text-2xl"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xl"
                 style={{ backgroundColor: colorScale(focusedContinentData.continent) }}
               >
                 {focusedContinentData.icon}
               </span>
-              <h3 className="text-xl font-bold text-white ml-3">
+              <h3 className="text-lg md:text-xl font-bold text-white ml-3">
                 {focusedContinentData.name}
               </h3>
               <button 
@@ -1733,36 +1761,36 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
               </button>
             </div>
             
-            <div className="flex justify-between mb-6 text-center">
+            <div className="flex flex-wrap justify-between mb-4 text-center gap-2">
               <div className="flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-yellow-500 flex items-center justify-center text-black font-bold text-xl mb-2">
+                <div className="w-14 h-14 rounded-full bg-yellow-500 flex items-center justify-center text-black font-bold text-lg mb-1">
                   {formatNumber(focusedContinentData.gold)}
                 </div>
-                <div className="text-yellow-400">Gold</div>
+                <div className="text-yellow-400 text-sm">Gold</div>
               </div>
               <div className="flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-black font-bold text-xl mb-2">
+                <div className="w-14 h-14 rounded-full bg-gray-300 flex items-center justify-center text-black font-bold text-lg mb-1">
                   {formatNumber(focusedContinentData.silver)}
                 </div>
-                <div className="text-gray-300">Silver</div>
+                <div className="text-gray-300 text-sm">Silver</div>
               </div>
               <div className="flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-amber-700 flex items-center justify-center text-black font-bold text-xl mb-2">
+                <div className="w-14 h-14 rounded-full bg-amber-700 flex items-center justify-center text-black font-bold text-lg mb-1">
                   {formatNumber(focusedContinentData.bronze)}
                 </div>
-                <div className="text-amber-700">Bronze</div>
+                <div className="text-amber-700 text-sm">Bronze</div>
               </div>
               <div className="flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xl mb-2">
+                <div className="w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-lg mb-1">
                   {formatNumber(focusedContinentData.total)}
                 </div>
-                <div className="text-blue-400">Total</div>
+                <div className="text-blue-400 text-sm">Total</div>
               </div>
             </div>
             
             <div>
-              <h4 className="text-white font-medium mb-2">Medal Distribution</h4>
-              <div className="w-full h-6 bg-gray-800 rounded-full overflow-hidden">
+              <h4 className="text-white font-medium mb-2 text-sm">Medal Distribution</h4>
+              <div className="w-full h-5 bg-gray-800 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-yellow-500"
                   style={{ 
@@ -1785,7 +1813,6 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
                     width: `${(focusedContinentData.bronze / focusedContinentData.total * 100).toFixed(1)}%`,
                     float: 'left'
                   }}
-                  title={`Bronze: ${formatNumber(focusedContinentData.bronze)} (${(focusedContinentData.bronze / focusedContinentData.total * 100).toFixed(1)}%)`}
                 ></div>
               </div>
               <div className="flex justify-between text-xs text-gray-400 mt-1">
@@ -1795,7 +1822,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
               </div>
             </div>
             
-            <div className="mt-6 bg-gray-800 p-3 rounded text-sm text-gray-300 leading-relaxed">
+            <div className="mt-4 bg-gray-800 p-3 rounded text-xs md:text-sm text-gray-300 leading-relaxed">
               <p className="mb-2">
                 <strong className="text-white">{focusedContinentData.name}</strong> has won a total of 
                 <strong className="text-white"> {formatNumber(focusedContinentData.total)}</strong> medals 
@@ -1830,6 +1857,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
     </section>
   );
 }
+
 
 // --- Top Countries Table Visualization ---
 function TopCountriesTable({ countries, selectedYear, yearData, olympicYears, setSelectedYear }) {
