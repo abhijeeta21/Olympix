@@ -1016,9 +1016,10 @@ export default function Sports() {
                           </div>
                         </div>
                       </div>
-                      <div className="text-center text-sm text-gray-400 mb-3">
+                      {/* Remove this text about clicking on bars */}
+                      {/* <div className="text-center text-sm text-gray-400 mb-3">
                         <p>Click on any bar in the chart to view information for that sport.</p>
-                      </div>
+                      </div> */}
 
                       <div ref={(ref) => {
                         if (ref) {
@@ -1127,7 +1128,7 @@ export default function Sports() {
                             .attr("class", "layer")
                             .attr("fill", (d, i) => colors[i]);
 
-                          // Update the bar creation code with click event handlers
+                          // Update the bar creation code to include hover functionality
                           layer.selectAll("rect")
                             .data(d => d)
                             .enter()
@@ -1136,26 +1137,32 @@ export default function Sports() {
                             .attr("y", d => yScale(d[1]))
                             .attr("height", d => yScale(d[0]) - yScale(d[1]))
                             .attr("width", xScale.bandwidth())
-                            .style("cursor", "pointer") // Add pointer cursor to indicate clickable element
-                            .on("click", function(event, d) {
-                              // Get the sport name from the data
-                              const sportName = d.data.sport;
+                            .on("mouseover", function(event, d) {
+                              // Calculate percentage
+                              const totalEvents = d.data.participated + d.data.remaining;
+                              const percentage = ((d.data.participated / totalEvents) * 100).toFixed(1);
                               
-                              // Find the detailed sport data
-                              const sportData = selectedCountryData.sportsWithEvents.find(
-                                sport => sport.sport === sportName
-                              );
-                              
-                              // Update the selected sport state instead of showing modal
-                              setSelectedSport(sportData);
-                              
-                              // Scroll to the table after a short delay
-                              setTimeout(() => {
-                                const tableElement = document.getElementById('sport-events-table');
-                                if (tableElement) {
-                                  tableElement.scrollIntoView({ behavior: 'smooth' });
-                                }
-                              }, 100);
+                              // Create tooltip
+                              d3.select(ref)
+                                .append("div")
+                                .attr("class", "tooltip")
+                                .style("position", "absolute")
+                                .style("background", "rgba(0, 0, 0, 0.8)")
+                                .style("color", "#fff")
+                                .style("padding", "8px 12px")
+                                .style("border-radius", "4px")
+                                .style("font-size", "12px")
+                                .style("pointer-events", "none")
+                                .style("left", `${event.pageX + 10}px`)
+                                .style("top", `${event.pageY - 25}px`)
+                                .html(`
+                                  <strong>${d.data.sport}</strong><br>
+                                  Participation: ${d.data.participated}/${totalEvents} (${percentage}%)
+                                `);
+                            })
+                            .on("mouseout", function() {
+                              // Remove tooltip
+                              d3.select(ref).select(".tooltip").remove();
                             });
 
                           // Add legend - shift more to the right
@@ -1194,56 +1201,8 @@ export default function Sports() {
                         }
                       }} className="w-full h-[400px]"></div>
 
-                      {/* Add events table here, directly below the bar graph */}
-                      {selectedSport && (
-                        <div id="sport-events-table" className="mt-6 bg-gray-800 p-4 rounded-lg border border-gray-600">
-                          <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-semibold text-white">
-                              {selectedSport.sport} Events
-                            </h3>
-                            <button
-                              onClick={() => setSelectedSport(null)}
-                              className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded"
-                            >
-                              Close
-                            </button>
-                          </div>
-                          
-                          <div className="mb-4">
-                            <p className="text-gray-300">
-                              {selectedSport.sport} had {selectedSport.totalEvents} total events in the {selectedYear} Olympics.
-                            </p>
-                            <p className="text-gray-300">
-                              {selectedCountryData.countryName} participated in {selectedSport.participatedEvents} of these events.
-                            </p>
-                          </div>
-                          
-                          <table className="w-full text-left text-gray-300 border-collapse rounded-lg overflow-hidden">
-                            <thead>
-                              <tr className="bg-gray-900">
-                                <th className="px-4 py-2 border-b border-gray-700">Metric</th>
-                                <th className="px-4 py-2 border-b border-gray-700">Value</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td className="px-4 py-2 border-b border-gray-700">Total Events</td>
-                                <td className="px-4 py-2 border-b border-gray-700">{selectedSport.totalEvents}</td>
-                              </tr>
-                              <tr>
-                                <td className="px-4 py-2 border-b border-gray-700">Events Participated</td>
-                                <td className="px-4 py-2 border-b border-gray-700">{selectedSport.participatedEvents}</td>
-                              </tr>
-                              <tr>
-                                <td className="px-4 py-2 border-b border-gray-700">Participation Rate</td>
-                                <td className="px-4 py-2 border-b border-gray-700">
-                                  {Math.round((selectedSport.participatedEvents / selectedSport.totalEvents) * 100)}%
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
+                      {/* Remove the entire events table section below */}
+                      {/* selectedSport && (... table code ...) */}
                     </>
                   ) : (
                     <p className="text-gray-400">No participation data found for {selectedCountryData.countryName} in {selectedYear}.</p>
