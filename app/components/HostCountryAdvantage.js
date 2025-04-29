@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ComposedChart, Bar, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
 
 const HostCountryAdvantage = ({ data }) => {
   const [isToggled, setIsToggled] = useState(false);
@@ -103,6 +104,26 @@ const HostCountryAdvantage = ({ data }) => {
     setFilteredData(enhancedData);
   }, [data, isToggled, selectedStatus]);
 
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{
+          backgroundColor: '#1f1f1f',
+          border: '1px solid #444',
+          padding: '10px',
+          borderRadius: '8px',
+          color: '#fff',
+          fontSize: '14px'
+        }}>
+          <p style={{ margin: 0 }}><strong>Year:</strong> {label}</p>
+          <p style={{ margin: 0 }}><strong>% Advantage:</strong> {payload[0].value}%</p>
+        </div>
+      );
+    }
+  
+    return null;
+  };
+
   const handleToggle = () => setIsToggled(!isToggled);
 
   const handleStatusChange = (status) => setSelectedStatus(status);
@@ -112,17 +133,17 @@ const HostCountryAdvantage = ({ data }) => {
       <h2 className="text-3xl font-extrabold text-blue-300 mb-6">🏆 Host Country Advantage</h2>
 
       <div className="flex items-center mb-6">
-        <label className="flex items-center cursor-pointer space-x-3">
+        <label className="flex items-center space-x-3 cursor-pointer">
           <input
             type="checkbox"
             className="sr-only peer"
             checked={isToggled}
             onChange={handleToggle}
           />
-          <div className="w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-blue-600 relative transition-all">
-            <div className="absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md peer-checked:translate-x-6 transform transition-transform"></div>
+          <div className="w-14 h-8 bg-gray-400 rounded-full peer-checked:bg-blue-600 relative transition-colors duration-300">
+            <div className="absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 peer-checked:translate-x-6" />
           </div>
-          <span className="text-md font-semibold  text-blue-300">Filter by Country Status</span>
+          <span className="text-md font-semibold text-blue-300">Filter by Country Status</span>
         </label>
       </div>
 
@@ -197,16 +218,33 @@ const HostCountryAdvantage = ({ data }) => {
           <p><strong className="text-yellow-600">Underdeveloped Countries:</strong> Low-income economies with limited industrialization and lower human development index.</p>
         </div>
       </div>
-      <div className="w-full h-64 mb-8">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={filteredData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="year" />
-            <YAxis domain={[0, 100]} label={{ value: 'Advantage %', angle: -90, position: 'insideLeft' }} />
-            <Tooltip />
-            <Line type="monotone" dataKey="percentage" stroke="#8884d8" activeDot={{ r: 8 }} />
-          </LineChart>
-        </ResponsiveContainer>
+      
+      <div>
+      <ResponsiveContainer width="100%" height={400}>
+        <ComposedChart data={filteredData}>
+          <CartesianGrid stroke="#444" strokeDasharray="3 3" />
+          <XAxis
+            dataKey="Year"
+            stroke="#ccc"
+            tick={{ fill: '#ccc' }}
+          />
+          <YAxis
+            label={{ value: 'Host % Advantage', angle: -90, position: 'insideLeft', fill: '#ccc' }}
+            stroke="#ccc"
+            tick={{ fill: '#ccc' }}
+          />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend verticalAlign="top" wrapperStyle={{ color: '#ccc' }} />
+          
+          <Bar
+            dataKey="percentage"
+            name="% Advantage"
+            fill="#00bcd4"
+            barSize={30}
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
+
       </div>
 
     </div>
