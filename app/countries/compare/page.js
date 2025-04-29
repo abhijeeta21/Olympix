@@ -15,6 +15,7 @@ import {
   Title,
   BarElement
 } from 'chart.js'; // Import necessary Chart.js elements
+import { WORKERS_SUPPORTED } from 'papaparse';
 
 // Register Chart.js components
 ChartJS.register(
@@ -696,3 +697,5 @@ export default function CompareCountriesPage() {
     </main>
   );
 }
+
+// just adding this to see if git commit WORKERS_SUPPORTED
