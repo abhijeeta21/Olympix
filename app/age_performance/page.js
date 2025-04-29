@@ -561,7 +561,7 @@ const ageTrendsOverTimeData = useMemo(() => {
                 className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               >
                 <option value="all">All Athletes</option>
-                <option value="any">Any Medal</option>
+                {/* <option value="any">Any Medal</option> */}
                 <option value="Gold">Gold</option>
                 <option value="Silver">Silver</option>
                 <option value="Bronze">Bronze</option>
