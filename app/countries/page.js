@@ -7,9 +7,6 @@ export default function Countries() {
   const [countries, setCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('totalMedals');
-  const [sortDirection, setSortDirection] = useState('desc');
-  const [activeFilter, setActiveFilter] = useState('all');
   
   const mapRef = useRef();
 
@@ -24,15 +21,25 @@ export default function Countries() {
           ...details
         }));
 
-        setCountries(nocArray);
-        setTimeout(() => {
-          if (nocArray.length > 0) {
-            createWorldMap(nocArray);
-          }
-        }, 500);
+        // Fix for Canada - ensure we use "CAN" instead of "NFL" for Canadian data
+        const canadaData = nocArray.find(country => country.noc === "CAN");
+        if (canadaData && nocArray.find(country => country.noc === "NFL" && country.region === "Canada")) {
+          console.log("Fixing Canada data - using CAN instead of NFL");
+          // Remove any data incorrectly labeled as NFL for Canada
+          const filteredArray = nocArray.filter(country => !(country.noc === "NFL" && country.region === "Canada"));
+          setCountries(filteredArray);
+        } else {
+          setCountries(nocArray);
+        }
+        
+        setIsLoading(false);
+        
+        // Create map after data is loaded
+        if (nocArray.length > 0) {
+          setTimeout(() => createWorldMap(nocArray), 500);
+        }
       } catch (error) {
         console.error('Error fetching countries data:', error);
-      } finally {
         setIsLoading(false);
       }
     };
@@ -40,7 +47,7 @@ export default function Countries() {
     fetchData();
   }, []);
 
-  // Create world map visualization
+  // Create world map visualization using the local worldmap.json file
   const createWorldMap = (countriesData) => {
     if (!mapRef.current) return;
 
@@ -71,23 +78,72 @@ export default function Countries() {
     svg.call(zoom);
     
     // Create tooltip
-    const tooltip = d3.select(mapRef.current)
+    const tooltip = d3.select("body")
       .append("div")
       .attr("class", "absolute bg-gray-900 text-white p-3 rounded shadow-lg pointer-events-none opacity-0 transition-opacity duration-200")
       .style("z-index", "10")
+      .style("position", "absolute")
       .style("min-width", "200px");
     
-    // Create a color scale for medal counts
-    const colorScale = d3.scaleSequential(d3.interpolateBlues)
-      .domain([0, d3.max(countriesData, d => {
-        const totalMedals = d.medals ? 
-          d.medals.gold + d.medals.silver + d.medals.bronze : 0;
-        return totalMedals;
-      })]);
+    // Create a more distinguishing color scale (using a better color scheme for differentiation)
+    // Using the viridis color scheme which provides better visual distinction
+    const maxMedals = d3.max(countriesData, d => {
+      const totalMedals = d.medals ? 
+        d.medals.gold + d.medals.silver + d.medals.bronze : 0;
+      return totalMedals;
+    });
     
-    // Load world map data
-    d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
+    // Using a logarithmic scale to better differentiate between countries with fewer medals
+    const colorScale = d3.scaleSequentialLog(d3.interpolateViridis)
+      .domain([1, maxMedals]) // Using 1 as the min to handle log scale (can't have log(0))
+      .clamp(true); // Prevents errors with zeros
+    
+    // Function to determine color based on medal count
+    const getColor = (medals) => {
+      if (!medals || medals === 0) return "#2d3748"; // Default color for countries with no medals
+      return colorScale(medals);
+    };
+    
+    // Create a map of country ISO codes to medal data
+    const countryMedalMap = {};
+    countriesData.forEach(country => {
+      if (country.region) {
+        // Make sure we prioritize "CAN" for Canada and not "NFL"
+        if (country.region === "Canada" && country.noc !== "CAN") {
+          return; // Skip non-CAN entries for Canada
+        }
+        
+        // Map the country data by both region name and country code
+        // This improves matching chances
+        countryMedalMap[country.region] = {
+          noc: country.noc,
+          region: country.region,
+          medals: country.medals ? 
+            country.medals.gold + country.medals.silver + country.medals.bronze : 0,
+          details: country
+        };
+        
+        // Also add by NOC code for alternative matching
+        countryMedalMap[country.noc] = {
+          noc: country.noc,
+          region: country.region,
+          medals: country.medals ? 
+            country.medals.gold + country.medals.silver + country.medals.bronze : 0,
+          details: country
+        };
+      }
+    });
+    
+    // Load the local world map data
+    d3.json("/worldmap.json")
       .then(worldData => {
+
+        // Filter out Antarctica from the map
+        worldData.features = worldData.features.filter(feature => 
+        feature.properties.name !== "Antarctica" && 
+        feature.properties.name_en !== "Antarctica" &&
+        feature.properties.iso_a3 !== "ATA");
+
         // Create projection and path
         const projection = d3.geoMercator()
           .fitSize([width, height], worldData);
@@ -95,19 +151,60 @@ export default function Countries() {
         const path = d3.geoPath()
           .projection(projection);
         
-        // Create a map of country codes to medal data
-        const countryMedalMap = {};
-        countriesData.forEach(country => {
-          if (country.region) {
-            // Convert country name to ISO code for mapping
-            countryMedalMap[country.region] = {
-              noc: country.noc,
-              medals: country.medals ? 
-                country.medals.gold + country.medals.silver + country.medals.bronze : 0,
-              region: country.region
-            };
+        // Helper function to find country data using various properties
+        const findCountryData = (feature) => {
+          // Special case for Canada - ensure we use CAN and not NFL
+          if (feature.properties.name === "Canada" || 
+              feature.properties.name_en === "Canada" || 
+              feature.properties.iso_a3 === "CAN") {
+            return countryMedalMap["CAN"] || countryMedalMap["Canada"];
           }
-        });
+          if (feature.properties.name === "Germany" ||
+            feature.properties.name_en === "Germany" ||
+            feature.properties.iso_a3 === "GER"
+          ){
+            return countryMedalMap["GER"] || countryMedalMap["Germany"]
+          }
+          // Try different properties to match with our medal data
+          const options = [
+            feature.properties.name,
+            feature.properties.name_en,
+            feature.properties.sov_a3,
+            feature.properties.adm0_a3,
+            feature.properties.iso_a3,
+            feature.properties.formal_en
+          ];
+          
+          for (const option of options) {
+            if (option && countryMedalMap[option]) {
+              return countryMedalMap[option];
+            }
+          }
+          
+          // Also try to match with any NOC that might be related
+          // This is a fallback approach for countries with name mismatches
+          if (feature.properties.iso_a3) {
+            const iso = feature.properties.iso_a3;
+            // Find any NOC that might contain this ISO code
+            const matchingCountry = countriesData.find(c => 
+              c.noc.includes(iso) || 
+              iso.includes(c.noc) || 
+              (c.region && c.region.includes(feature.properties.name))
+            );
+            
+            if (matchingCountry) {
+              return {
+                noc: matchingCountry.noc,
+                region: matchingCountry.region,
+                medals: matchingCountry.medals ? 
+                  matchingCountry.medals.gold + matchingCountry.medals.silver + matchingCountry.medals.bronze : 0,
+                details: matchingCountry
+              };
+            }
+          }
+          
+          return null;
+        };
         
         // Draw map
         g.selectAll("path")
@@ -115,19 +212,19 @@ export default function Countries() {
           .join("path")
           .attr("d", path)
           .attr("fill", d => {
-            const countryName = d.properties.name;
-            const countryData = countryMedalMap[countryName];
-            return countryData ? colorScale(countryData.medals) : "#2d3748";
+            const countryData = findCountryData(d);
+            return countryData ? getColor(countryData.medals) : "#2d3748";
           })
           .attr("stroke", "#1a202c")
           .attr("stroke-width", 0.5)
           .on("mouseover", function(event, d) {
-            const countryName = d.properties.name;
-            const countryData = countryMedalMap[countryName];
+            const countryData = findCountryData(d);
             
             d3.select(this)
               .attr("stroke", "#60a5fa")
               .attr("stroke-width", 2);
+            
+            const countryName = d.properties.name || d.properties.name_en;
             
             if (countryData) {
               tooltip
@@ -135,8 +232,9 @@ export default function Countries() {
                 .style("left", `${event.pageX + 10}px`)
                 .style("top", `${event.pageY - 20}px`)
                 .html(`
-                  <div class="font-bold text-lg">${countryName} (${countryData.noc})</div>
+                  <div class="font-bold text-lg">${countryData.region} (${countryData.noc})</div>
                   <div class="mt-1">Total Medals: ${countryData.medals}</div>
+                  <div class="mt-1">Gold: ${countryData.details.medals.gold} | Silver: ${countryData.details.medals.silver} | Bronze: ${countryData.details.medals.bronze}</div>
                 `);
             } else {
               tooltip
@@ -157,31 +255,35 @@ export default function Countries() {
             tooltip.style("opacity", 0);
           })
           .on("click", function(event, d) {
-            const countryName = d.properties.name;
-            const countryData = countryMedalMap[countryName];
+            const countryData = findCountryData(d);
             
             if (countryData && countryData.noc) {
               window.location.href = `/countries/${countryData.noc.toLowerCase()}`;
             }
-          });
+          })
+          .style("cursor", d => findCountryData(d) ? "pointer" : "default");
         
-        // Add legend
+        // Add legend with improved color scale (logarithmic)
         const legendWidth = 200;
         const legendHeight = 20;
         const legendX = width - legendWidth - 20;
         const legendY = height - 50;
         
+        // For legend, create a linear scale but with custom tick values that reflect log distribution
+        const logTickValues = [1, 10, 50, 100, 500, maxMedals];
         const legendScale = d3.scaleLinear()
-          .domain([0, d3.max(countriesData, d => {
-            const totalMedals = d.medals ? 
-              d.medals.gold + d.medals.silver + d.medals.bronze : 0;
-            return totalMedals;
-          })])
+          .domain([0, 100])
           .range([0, legendWidth]);
         
-        const legendAxis = d3.axisBottom(legendScale)
-          .ticks(5);
+        const legendAxis = d3.axisBottom()
+          .scale(legendScale)
+          .tickValues([0, 20, 40, 60, 80, 100])
+          .tickFormat((d, i) => {
+            // Map the linear scale position to our log-distributed values
+            return logTickValues[i] || "";
+          });
         
+        // Create gradient for legend
         const defs = svg.append("defs");
         const linearGradient = defs.append("linearGradient")
           .attr("id", "medal-gradient")
@@ -190,10 +292,15 @@ export default function Countries() {
           .attr("x2", "100%")
           .attr("y2", "0%");
         
+        // Add stops for viridis color scheme (reversed to have dark purple for high values)
+        // We sample the viridis color scheme at different points
         linearGradient.selectAll("stop")
           .data([
-            {offset: "0%", color: "#f7fafc"},
-            {offset: "100%", color: "#3182ce"}
+            {offset: "0%", color: d3.interpolateViridis(0)},  // Highest (purple)
+            {offset: "25%", color: d3.interpolateViridis(0.75)},
+            {offset: "50%", color: d3.interpolateViridis(0.5)},
+            {offset: "75%", color: d3.interpolateViridis(0.25)},
+            {offset: "100%", color: d3.interpolateViridis(1)} // Lowest (dark yellow)
           ])
           .enter().append("stop")
           .attr("offset", d => d.offset)
@@ -218,59 +325,20 @@ export default function Countries() {
           .attr("y", legendY - 10)
           .style("font-size", "12px")
           .style("fill", "#e2e8f0")
-          .text("Medal Count");
+          .text("Medal Count (Log Scale)");
       })
-      .catch(error => console.error("Error loading world map data:", error));
+      .catch(error => {
+        console.error("Error loading world map data:", error);
+        // Show error message in the UI
+        svg.append("text")
+          .attr("x", width / 2)
+          .attr("y", height / 2)
+          .attr("text-anchor", "middle")
+          .style("fill", "#e2e8f0")
+          .style("font-size", "16px")
+          .text("Error loading map data. Please check console for details.");
+      });
   };
-
-  // Filter logic
-  const filteredCountries = countries.filter(country => {
-    if (searchQuery && !(country?.region?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        country?.noc?.toLowerCase().includes(searchQuery.toLowerCase()))) {
-      return false;
-    }
-    
-    if (activeFilter === 'noMedals') {
-      return country.medals.gold + country.medals.silver + country.medals.bronze === 0;
-    }
-    
-    if (activeFilter === 'withMedals') {
-      return country.medals.gold + country.medals.silver + country.medals.bronze > 0;
-    }
-    
-    return true;
-  });
-
-  // Sort logic
-  const sortedCountries = [...filteredCountries].sort((a, b) => {
-    let aValue, bValue;
-    
-    switch(sortBy) {
-      case 'totalMedals':
-        aValue = (a.medals.gold + a.medals.silver + a.medals.bronze);
-        bValue = (b.medals.gold + b.medals.silver + b.medals.bronze);
-        break;
-      case 'gold':
-        aValue = a.medals.gold;
-        bValue = b.medals.gold;
-        break;
-      case 'name':
-        aValue = a.region || '';
-        bValue = b.region || '';
-        return sortDirection === 'asc' ? 
-          aValue.localeCompare(bValue) : 
-          bValue.localeCompare(aValue);
-      case 'athletes':
-        aValue = a.totalAthletes;
-        bValue = b.totalAthletes;
-        break;
-      default:
-        aValue = (a.medals.gold + a.medals.silver + a.medals.bronze);
-        bValue = (b.medals.gold + b.medals.silver + b.medals.bronze);
-    }
-    
-    return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
-  });
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4">
@@ -311,65 +379,21 @@ export default function Countries() {
           </div>
         </div>
 
-        {/* Controls Bar */}
-        <div className="flex flex-col md:flex-row gap-4 md:justify-between items-center bg-gray-800 p-4 rounded-lg">
-          {/* Search */}
-          <div className="relative w-full md:w-auto">
+        {/* Simplified Search Bar (without filters and sorting) */}
+        <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="relative w-full max-w-md mx-auto">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for a country..."
-              className="w-full md:w-64 p-2 pl-10 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+              className="w-full p-2 pl-10 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
             />
             <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-          </div>
-
-          <div className="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
-            {/* Filter */}
-            <div className="flex rounded-lg overflow-hidden border border-gray-600">
-              <button 
-                onClick={() => setActiveFilter('all')}
-                className={`px-3 py-1 text-sm ${activeFilter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
-              >
-                All
-              </button>
-              <button 
-                onClick={() => setActiveFilter('withMedals')}
-                className={`px-3 py-1 text-sm ${activeFilter === 'withMedals' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
-              >
-                With Medals
-              </button>
-              <button 
-                onClick={() => setActiveFilter('noMedals')}
-                className={`px-3 py-1 text-sm ${activeFilter === 'noMedals' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
-              >
-                No Medals
-              </button>
-            </div>
-
-            {/* Sort */}
-            <select 
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="bg-gray-700 border border-gray-600 text-white rounded-lg p-1 text-sm focus:border-blue-500 focus:outline-none"
-            >
-              <option value="totalMedals">Sort by Total Medals</option>
-              <option value="gold">Sort by Gold Medals</option>
-              <option value="name">Sort by Country Name</option>
-              <option value="athletes">Sort by Athlete Count</option>
-            </select>
-
-            <button 
-              onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
-              className="bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-lg p-1 flex items-center gap-1 transition-colors text-sm"
-            >
-              {sortDirection === 'desc' ? 'Highest First' : 'Lowest First'}
-            </button>
           </div>
         </div>
 
@@ -380,8 +404,22 @@ export default function Countries() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedCountries.length > 0 ? (
-              sortedCountries.map((country) => (
+            {countries.filter(country => 
+              !searchQuery || (country?.region?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                country?.noc?.toLowerCase().includes(searchQuery.toLowerCase()))
+            ).length > 0 ? (
+              countries
+                .filter(country => 
+                  !searchQuery || (country?.region?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    country?.noc?.toLowerCase().includes(searchQuery.toLowerCase()))
+                )
+                .sort((a, b) => {
+                  // Default sort by total medals (descending)
+                  const aTotal = a.medals.gold + a.medals.silver + a.medals.bronze;
+                  const bTotal = b.medals.gold + b.medals.silver + b.medals.bronze;
+                  return bTotal - aTotal;
+                })
+                .map((country) => (
                 <Link key={country.noc} href={`/countries/${country.noc.toLowerCase()}`}>
                   <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all hover:shadow-blue-900/20 hover:shadow-lg cursor-pointer">
                     <div className="p-6">
