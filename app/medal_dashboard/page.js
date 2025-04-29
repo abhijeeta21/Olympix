@@ -1441,17 +1441,17 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
   
   // Container ref and responsive dimensions
   const containerRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: 500, height: 400 });
+  const [dimensions, setDimensions] = useState({ width: 400, height: 350 }); // Reduced default size
   
   // Update dimensions based on container size
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.clientWidth;
-        const containerHeight = window.innerHeight * 0.6;
+        const containerHeight = window.innerHeight * 0.5; // Reduced from 0.6
         setDimensions({
-          width: Math.min(500, containerWidth - 40),
-          height: Math.min(400, containerHeight)
+          width: Math.min(400, containerWidth - 60), // Reduced from 500 and increased padding
+          height: Math.min(350, containerHeight) // Reduced from 400
         });
       }
     };
@@ -1462,7 +1462,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
     return () => window.removeEventListener('resize', updateDimensions);
   }, [showDetails]);
   
-  const outerRadius = Math.min(dimensions.width, dimensions.height) / 2 - 40;
+  const outerRadius = Math.min(dimensions.width, dimensions.height) / 2 - 50; // Increased padding
   
   // Country to continent mapping (unchanged)
   const continentMapping = {
@@ -1474,7 +1474,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
     'oceania': ['aus', 'cok', 'fij', 'fsm', 'kir', 'mhl', 'nru', 'nzl', 'plw', 'png', 'sam', 'sol', 'tga', 'tuv', 'van']
   };
   
-  // Continent display names and icons (unchanged)
+  // Rest of variables and functions remain unchanged
   const continentNames = {
     'africa': 'Africa', 'asia': 'Asia', 'europe': 'Europe',
     'north_america': 'North America', 'south_america': 'South America', 'oceania': 'Oceania'
@@ -1578,19 +1578,19 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
   return (
     <section className="bg-gray-800 p-4 md:p-6 rounded-lg shadow-lg mt-6" ref={containerRef}>
       {/* Header with controls - more responsive layout */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-3">
-        <h2 className="text-xl md:text-2xl font-bold text-white">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
+        <h2 className="text-lg md:text-xl font-bold text-white">
           Medal Distribution by Continent
           {selectedYear && <span className="text-blue-400 ml-2">({selectedYear})</span>}
         </h2>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           <div>
-            <label className="text-white mr-2">Year:</label>
+            <label className="text-white mr-1 text-sm">Year:</label>
             <select 
               value={selectedYear || ''}
               onChange={e => setSelectedYear(parseInt(e.target.value) || null)}
-              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1"
+              className="bg-gray-700 text-white border border-gray-600 rounded px-1 py-1 text-sm"
             >
               <option value="">All Time</option>
               {olympicYears.map(year => (
@@ -1600,11 +1600,11 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
           </div>
           
           <div>
-            <label className="text-white mr-2">Medal:</label>
+            <label className="text-white mr-1 text-sm">Medal:</label>
             <select
               value={medalType}
               onChange={e => setMedalType(e.target.value)}
-              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1"
+              className="bg-gray-700 text-white border border-gray-600 rounded px-1 py-1 text-sm"
             >
               <option value="total">Total</option>
               <option value="gold">Gold</option>
@@ -1615,18 +1615,17 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
         </div>
       </div>
       
-      {/* More responsive layout for chart and details */}
-      <div className={`flex flex-col ${showDetails ? 'lg:flex-row' : 'md:flex-row'} bg-gray-900 p-3 md:p-4 rounded-lg`}>
+      {/* Layout that changes depending on whether details are shown */}
+      <div className={`${showDetails ? 'block' : 'flex flex-col md:flex-row'} bg-gray-900 p-2 md:p-3 rounded-lg`}>
         {/* Chart and Legend Container */}
-        <div className={`flex flex-col md:flex-row ${showDetails ? 'lg:w-1/2' : ''} w-full`}>
+        <div className={`${showDetails ? 'w-full mb-4' : 'w-full'} flex flex-col md:flex-row`}>
           {/* Pie Chart with Gradients - more responsive */}
-          <div className="flex-1 flex justify-center items-center min-h-[300px] max-w-full overflow-visible">
+          <div className={`${showDetails ? 'w-full md:w-1/2' : 'flex-1'} flex justify-center items-center min-h-[280px]`}>
             <svg 
               width={dimensions.width} 
               height={dimensions.height} 
               viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
               preserveAspectRatio="xMidYMid meet"
-              className="overflow-visible"
             >
               <defs>
                 {/* Define gradients for each continent */}
@@ -1683,7 +1682,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
                           textAnchor="middle"
                           fill="#fff"
                           fontWeight="bold"
-                          fontSize={14}
+                          fontSize={12}
                           strokeWidth={0.5}
                           stroke="#00000044"
                         >
@@ -1698,15 +1697,15 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
           </div>
           
           {/* Enhanced Legend & Stats - more compact and responsive */}
-          <div className="w-full md:w-60 mt-4 md:mt-0 md:ml-4 flex flex-col justify-center">
-            <h3 className="text-white font-bold mb-2 text-center text-lg border-b border-gray-700 pb-2">
+          <div className={`${showDetails ? 'w-full md:w-1/2' : 'w-full md:w-60'} mt-4 md:mt-0 md:ml-4`}>
+            <h3 className="text-white font-bold mb-2 text-center text-base border-b border-gray-700 pb-2">
               {medalType.charAt(0).toUpperCase() + medalType.slice(1)} Medals
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-1 overflow-y-auto" style={{maxHeight: showDetails ? '200px' : '300px'}}>
               {continentMedals.map(d => (
                 <div 
                   key={d.continent} 
-                  className={`flex items-center p-2 rounded-md transition-all duration-200 
+                  className={`flex items-center p-1 rounded-md transition-all duration-200 
                   ${d.continent === highlightedContinent ? 'bg-gray-800' : 'hover:bg-gray-800'}`}
                   onMouseEnter={() => handleSliceHover(d.continent)}
                   onMouseLeave={() => handleSliceHover(null)}
@@ -1714,40 +1713,40 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
                   style={{ cursor: 'pointer' }}
                 >
                   <span 
-                    className="w-6 h-6 mr-2 rounded-md flex items-center justify-center"
+                    className="w-5 h-5 mr-1 rounded-md flex items-center justify-center text-xs"
                     style={{ backgroundColor: colorScale(d.continent) }}
                   >
                     {d.icon}
                   </span>
-                  <span className="text-white flex-1 font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+                  <span className="text-white flex-1 font-medium text-xs whitespace-nowrap overflow-hidden text-ellipsis">
                     {d.name}
                   </span>
-                  <span className="text-white font-bold text-sm">{formatNumber(d[medalType])}</span>
-                  <span className="text-gray-400 w-12 text-right text-sm">{d.percentage}%</span>
+                  <span className="text-white font-bold text-xs">{formatNumber(d[medalType])}</span>
+                  <span className="text-gray-400 w-8 text-right text-xs">{d.percentage}%</span>
                 </div>
               ))}
               
-              <div className="pt-3 border-t border-gray-700 mt-2">
+              <div className="pt-2 border-t border-gray-700 mt-1">
                 <div className="flex justify-between items-center">
-                  <span className="text-white">Total:</span>
-                  <span className="text-white font-bold">{formatNumber(totalMedals)}</span>
+                  <span className="text-white text-sm">Total:</span>
+                  <span className="text-white font-bold text-sm">{formatNumber(totalMedals)}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
         
-        {/* Detailed View of Selected Continent - more responsive */}
+        {/* Detailed View of Selected Continent - shown below when active */}
         {showDetails && focusedContinentData && (
-          <div className="lg:w-1/2 mt-6 lg:mt-0 lg:ml-6 bg-gray-850 rounded-md border border-gray-700 p-3 md:p-4 animate-fadeIn">
-            <div className="flex items-center mb-4 pb-2 border-b border-gray-700">
+          <div className="w-full bg-gray-850 rounded-md border border-gray-700 p-3 animate-fadeIn mt-2">
+            <div className="flex items-center mb-3 pb-1 border-b border-gray-700">
               <span 
-                className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xl"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-lg"
                 style={{ backgroundColor: colorScale(focusedContinentData.continent) }}
               >
                 {focusedContinentData.icon}
               </span>
-              <h3 className="text-lg md:text-xl font-bold text-white ml-3">
+              <h3 className="text-lg font-bold text-white ml-3">
                 {focusedContinentData.name}
               </h3>
               <button 
@@ -1761,43 +1760,42 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
               </button>
             </div>
             
-            <div className="flex flex-wrap justify-between mb-4 text-center gap-2">
+            <div className="flex flex-wrap justify-between mb-3 text-center gap-2">
               <div className="flex flex-col items-center">
-                <div className="w-14 h-14 rounded-full bg-yellow-500 flex items-center justify-center text-black font-bold text-lg mb-1">
+                <div className="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center text-black font-bold text-sm mb-1">
                   {formatNumber(focusedContinentData.gold)}
                 </div>
-                <div className="text-yellow-400 text-sm">Gold</div>
+                <div className="text-yellow-400 text-xs">Gold</div>
               </div>
               <div className="flex flex-col items-center">
-                <div className="w-14 h-14 rounded-full bg-gray-300 flex items-center justify-center text-black font-bold text-lg mb-1">
+                <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-black font-bold text-sm mb-1">
                   {formatNumber(focusedContinentData.silver)}
                 </div>
-                <div className="text-gray-300 text-sm">Silver</div>
+                <div className="text-gray-300 text-xs">Silver</div>
               </div>
               <div className="flex flex-col items-center">
-                <div className="w-14 h-14 rounded-full bg-amber-700 flex items-center justify-center text-black font-bold text-lg mb-1">
+                <div className="w-12 h-12 rounded-full bg-amber-700 flex items-center justify-center text-black font-bold text-sm mb-1">
                   {formatNumber(focusedContinentData.bronze)}
                 </div>
-                <div className="text-amber-700 text-sm">Bronze</div>
+                <div className="text-amber-700 text-xs">Bronze</div>
               </div>
               <div className="flex flex-col items-center">
-                <div className="w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-lg mb-1">
+                <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm mb-1">
                   {formatNumber(focusedContinentData.total)}
                 </div>
-                <div className="text-blue-400 text-sm">Total</div>
+                <div className="text-blue-400 text-xs">Total</div>
               </div>
             </div>
             
             <div>
-              <h4 className="text-white font-medium mb-2 text-sm">Medal Distribution</h4>
-              <div className="w-full h-5 bg-gray-800 rounded-full overflow-hidden">
+              <h4 className="text-white font-medium mb-1 text-xs">Medal Distribution</h4>
+              <div className="w-full h-4 bg-gray-800 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-yellow-500"
                   style={{ 
                     width: `${(focusedContinentData.gold / focusedContinentData.total * 100).toFixed(1)}%`,
                     float: 'left'
                   }}
-                  title={`Gold: ${formatNumber(focusedContinentData.gold)} (${(focusedContinentData.gold / focusedContinentData.total * 100).toFixed(1)}%)`}
                 ></div>
                 <div 
                   className="h-full bg-gray-300"
@@ -1805,7 +1803,6 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
                     width: `${(focusedContinentData.silver / focusedContinentData.total * 100).toFixed(1)}%`,
                     float: 'left'
                   }}
-                  title={`Silver: ${formatNumber(focusedContinentData.silver)} (${(focusedContinentData.silver / focusedContinentData.total * 100).toFixed(1)}%)`}
                 ></div>
                 <div 
                   className="h-full bg-amber-700"
@@ -1822,8 +1819,8 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
               </div>
             </div>
             
-            <div className="mt-4 bg-gray-800 p-3 rounded text-xs md:text-sm text-gray-300 leading-relaxed">
-              <p className="mb-2">
+            <div className="mt-3 bg-gray-800 p-2 rounded text-xs text-gray-300 leading-relaxed">
+              <p className="mb-1">
                 <strong className="text-white">{focusedContinentData.name}</strong> has won a total of 
                 <strong className="text-white"> {formatNumber(focusedContinentData.total)}</strong> medals 
                 {selectedYear ? ` in the ${selectedYear} Olympics` : ' throughout Olympic history'}, 
@@ -1841,7 +1838,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
       </div>
       
       {/* Instructions */}
-      <div className="text-gray-400 text-xs mt-4 text-center">
+      <div className="text-gray-400 text-xs mt-2 text-center">
         Click on a continent in the chart or legend to see detailed statistics
       </div>
 
@@ -1857,7 +1854,6 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
     </section>
   );
 }
-
 
 // --- Top Countries Table Visualization ---
 function TopCountriesTable({ countries, selectedYear, yearData, olympicYears, setSelectedYear }) {
