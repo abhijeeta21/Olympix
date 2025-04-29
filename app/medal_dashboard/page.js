@@ -1116,13 +1116,34 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
   const [medalType, setMedalType] = useState('total');
   const [topCount, setTopCount] = useState(10);
   const [sortBy, setSortBy] = useState('desc');
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 500 });
   
-  const width = 1500; // 90% of screen width
-  const height = 700; // You can go taller too
-
+  // Create refs for container measurement
+  const chartContainerRef = useRef(null);
+  
+  // Update dimensions based on container size
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (chartContainerRef.current) {
+        const containerWidth = chartContainerRef.current.clientWidth;
+        setDimensions({
+          width: containerWidth - 40, // Account for padding
+          height: Math.min(500, window.innerHeight * 0.6) // Responsive height
+        });
+      }
+    };
+    
+    // Initial update
+    updateDimensions();
+    
+    // Update on window resize
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+  
   const margin = { top: 30, right: 30, bottom: 70, left: 100 };
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
+  const innerWidth = dimensions.width - margin.left - margin.right;
+  const innerHeight = dimensions.height - margin.top - margin.bottom;
   
   // Get data source based on year selection
   let dataToUse = countries;
@@ -1140,9 +1161,9 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
     })
     .slice(0, topCount);
   
-  // Calculate scales - Fix the undefined filteredYears error
+  // Calculate scales
   const xScale = scaleLinear()
-    .domain([0, Math.max(...topCountries.map(c => c[medalType] || 0), 1)]) // Add fallback of 1 to prevent empty domain
+    .domain([0, Math.max(...topCountries.map(c => c[medalType] || 0), 1)])
     .range([0, innerWidth]);
   
   const barHeight = innerHeight / topCountries.length * 0.7;
@@ -1156,8 +1177,8 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
   };
   
   return (
-    <section className="bg-gray-800 p-8 rounded-lg shadow-md mt-8 w-full max-w-[1800px] mx-auto">
-      <div className="flex justify-between items-center mb-4">
+    <section className="bg-gray-800 p-4 md:p-8 rounded-lg shadow-md mt-8 w-full max-w-full mx-auto">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-4">
         <h2 className="text-xl font-bold text-white">
           Top Medal-Winning Countries
           {selectedYear && <span className="text-blue-400 ml-2">({selectedYear})</span>}
@@ -1178,7 +1199,7 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
           </div>
           
           <div>
-            <label className="text-white mr-2">Medal Type:</label>
+            <label className="text-white mr-2">Medal:</label>
             <select
               value={medalType}
               onChange={e => setMedalType(e.target.value)}
@@ -1219,8 +1240,13 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
         </div>
       </div>
       
-      <div className="bg-gray-900 p-4 rounded">
-        <svg width={width} height={height}>
+      <div className="bg-gray-900 p-2 md:p-4 rounded overflow-x-auto" ref={chartContainerRef}>
+        <svg 
+          width="100%" 
+          height={dimensions.height}
+          viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
+          preserveAspectRatio="xMinYMin meet"
+        >
           <g transform={`translate(${margin.left},${margin.top})`}>
             {/* X Axis */}
             {xScale.ticks(5).map(tick => (
@@ -1250,9 +1276,13 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
                   y={barHeight / 2 + 5}
                   textAnchor="end"
                   fill="#fff"
-                  fontSize={12}
+                  fontSize={10}
                 >
-                  {country.name ? (country.name.length > 15 ? country.name.substring(0, 15) + '...' : country.name) : 'Unknown'}
+                  {(country.name || country.region) && (country.name || country.region).trim() !== '' 
+                    ? ((country.name || country.region).length > 15 
+                        ? `${(country.name || country.region).substring(0, 15)}...` 
+                        : (country.name || country.region)) 
+                    : 'No Data'}
                 </text>
               </g>
             ))}
@@ -1288,17 +1318,17 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
               transform={`translate(${innerWidth / 2}, ${innerHeight + 45})`}
               textAnchor="middle"
               fill="#fff"
-              fontSize={20}
+              fontSize={16}
             >
               {medalType.charAt(0).toUpperCase() + medalType.slice(1)} Medals
             </text>
             
             {/* Y Axis Title */}
             <text
-              transform={`translate(-70, ${innerHeight / 2}) rotate(-90)`}
+              transform={`translate(-60, ${innerHeight / 2}) rotate(-90)`}
               textAnchor="middle"
               fill="#fff"
-              fontSize={20}
+              fontSize={16}
             >
               Countries
             </text>
@@ -1308,7 +1338,6 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
     </section>
   );
 }
-
 // --- Medal Distribution by Continent Pie Chart ---
 // --- Medal Distribution by Continent Pie Chart (Enhanced) ---
 function ContinentDistributionChart({ countries, selectedYear, yearData, olympicYears, setSelectedYear }) {
@@ -1811,16 +1840,16 @@ function TopCountriesTable({ countries, selectedYear, yearData, olympicYears, se
     
   return (
     <section className="bg-gray-800 p-4 rounded-lg shadow-md mt-6">
-      <div className="flex justify-between items-center mb-3">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-3">
         <h2 className="text-xl font-bold text-white">
           Top {topN} Countries by Medal Count
           {selectedYear && <span className="text-blue-400 ml-2">({selectedYear})</span>}
         </h2>
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2 mt-2 md:mt-0">
           <label className="text-white">Year:</label>
           <select 
             value={selectedYear || ''}
-            onChange={e => setSelectedYear(parseInt(e.target.value))}
+            onChange={e => setSelectedYear(parseInt(e.target.value) || null)}
             className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1"
           >
             <option value="">All Time</option>
@@ -1828,7 +1857,7 @@ function TopCountriesTable({ countries, selectedYear, yearData, olympicYears, se
               <option key={year} value={year}>{year}</option>
             ))}
           </select>
-          <label className="text-white ml-4">Sort by:</label>
+          <label className="text-white ml-2">Sort by:</label>
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value)}
@@ -1839,7 +1868,7 @@ function TopCountriesTable({ countries, selectedYear, yearData, olympicYears, se
             <option value="bronze">Bronze Medals</option>
             <option value="total">Total Medals</option>
           </select>
-          <label className="text-white ml-4">Show:</label>
+          <label className="text-white ml-2">Show:</label>
           <select
             value={topN}
             onChange={e => setTopN(Number(e.target.value))}
@@ -1879,19 +1908,29 @@ function TopCountriesTable({ countries, selectedYear, yearData, olympicYears, se
                 className={index % 2 === 0 ? "bg-gray-900" : "bg-gray-800"}
               >
                 <td className="py-2 px-3">{index + 1}</td>
-                <td className="py-2 px-3 font-medium">{country.name}</td>
-                <td className="py-2 px-3 text-center">{country.gold}</td>
-                <td className="py-2 px-3 text-center">{country.silver}</td>
-                <td className="py-2 px-3 text-center">{country.bronze}</td>
-                <td className="py-2 px-3 text-center font-bold">{country.total}</td>
+                <td className="py-2 px-3 font-medium">
+                  {(country.name || country.region) && (country.name || country.region).trim() !== '' 
+                    ? (country.name || country.region)
+                    : 'Unknown Country'}
+                </td>
+                <td className="py-2 px-3 text-center">{country.gold || 0}</td>
+                <td className="py-2 px-3 text-center">{country.silver || 0}</td>
+                <td className="py-2 px-3 text-center">{country.bronze || 0}</td>
+                <td className="py-2 px-3 text-center font-bold">{country.total || 0}</td>
               </tr>
             ))}
+            {topCountries.length === 0 && (
+              <tr>
+                <td colSpan={6} className="py-4 text-center text-gray-400">No medal data available</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
     </section>
   );
 }
+
 
 export default function MedalDashboard() {
   const [mapZoom, setMapZoom] = useState(1);
