@@ -755,20 +755,28 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
   const svgRef = useRef(null);
   const brushRef = useRef(null);
   const containerRef = useRef(null);
+  const chartRef = useRef(null);
 
   const [dimensions, setDimensions] = useState({
-    width: Math.min(1200, window.innerWidth - 40),
+    width: 800,
     height: 400
   });
 
   useEffect(() => {
     const handleResize = () => {
-      setDimensions({
-        width: Math.min(1200, window.innerWidth - 40),
-        height: 400
-      });
+      if (containerRef.current && chartRef.current) {
+        const containerWidth = chartRef.current.clientWidth;
+        // Adjust width to account for padding and ensure it fits within the container
+        setDimensions({
+          width: Math.max(300, containerWidth - 40),
+          height: 400
+        });
+      }
     };
 
+    // Initial measurement after component mounts
+    setTimeout(handleResize, 0);
+    
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -794,9 +802,13 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
     return colors;
   }, [selectedCountries]);
   
+  // Chart dimensions calculated based on container size
+  const margin = { top: 40, right: 80, bottom: 80, left: 80 };
+  const chartWidth = dimensions.width - margin.left - margin.right;
+  const chartHeight = dimensions.height - margin.top - margin.bottom;
 
   useEffect(() => {
-    if (svgRef.current && brushRef.current && olympicYears.length > 0) {
+    if (brushRef.current && olympicYears.length > 0) {
       const svg = select(brushRef.current);
       
       // Clear previous brush
@@ -805,11 +817,11 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
       // Create x scale for the brush
       const xScale = scaleLinear()
         .domain([0, olympicYears.length - 1]) // Use indices instead of years
-        .range([0, dimensions.width - 80]);
+        .range([0, chartWidth]);
       
       // Setup brush
       const brush = brushX()
-        .extent([[0, 0], [dimensions.width - 80, 30]])
+        .extent([[0, 0], [chartWidth, 30]])
         .on("end", (event) => {
           if (!event.selection) return;
           
@@ -836,7 +848,7 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
           xScale(olympicYears.indexOf(brushRange[1]))
         ]);
     }
-  }, [dimensions.width, olympicYears]); // Remove brushRange from dependencies
+  }, [dimensions.width, olympicYears, chartWidth, brushRange]);
 
   const toggleCountry = (country) => {
     if (selectedCountries.some(c => c.noc === country.noc)) {
@@ -857,7 +869,7 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
   // X scale maps year indices to x positions
   const xScale = scaleLinear()
     .domain([0, filteredYears.length - 1])
-    .range([0, dimensions.width - 80]);
+    .range([0, chartWidth]);
 
   // Find the maximum medal count for y scale
   let maxMedals = 10;  // Default minimum
@@ -875,11 +887,25 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
   // Y scale maps medal counts to y positions
   const yScale = scaleLinear()
     .domain([0, maxMedals])
-    .range([dimensions.height - 80, 0]);
+    .range([chartHeight, 0]);
+
+  // Calculate tooltip positioning to prevent overflow
+  const getTooltipTransform = (x, y) => {
+    // Check if tooltip would overflow to the right
+    const rightOverflow = x + 190 > chartWidth;
+    // Check if tooltip would overflow to the top
+    const topOverflow = y - 40 < 0;
+    
+    // Adjust position based on overflow
+    const adjustedX = rightOverflow ? x - 200 : x + 10;
+    const adjustedY = topOverflow ? y + 10 : y - 40;
+    
+    return `translate(${adjustedX}, ${adjustedY})`;
+  };
 
   return (
     <section className="bg-gray-800 p-4 rounded-lg shadow-md mt-6" ref={containerRef}>
-      <div className="flex justify-between items-center mb-3">
+      <div className="flex flex-wrap justify-between items-center mb-3">
         <h2 className="text-xl font-bold text-white">
           Medal Trends Over Time
           <span className="text-blue-400 ml-2">
@@ -899,7 +925,7 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
 
       <div className="flex flex-col lg:flex-row">
         {/* Country Selection */}
-        <div className="w-full lg:w-64 bg-gray-900 p-2 rounded mr-4 mb-4 lg:mb-0 overflow-y-auto h-64 lg:h-[400px]">
+        <div className="w-full lg:w-64 bg-gray-900 p-2 rounded lg:mr-4 mb-4 lg:mb-0 overflow-y-auto h-64 lg:h-[400px] flex-shrink-0">
           <h3 className="text-white font-bold mb-2">Select Countries (max 6):</h3>
           <ul className="space-y-1">
             {filteredCountries.map(country => {
@@ -921,7 +947,7 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
                       className="w-3 h-3 rounded-full mr-2" 
                       style={{ backgroundColor: color }}
                     ></span>
-                    <span className="text-sm text-white">{country.name}</span>
+                    <span className="text-sm text-white truncate">{country.name}</span>
                   </label>
                 </li>
               );
@@ -930,22 +956,24 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
         </div>
 
         {/* Chart */}
-        <div className="flex-1 bg-gray-900 rounded relative overflow-hidden">
-          <div className="w-full overflow-x-auto">
+        <div className="flex-1 flex flex-col bg-gray-900 rounded overflow-hidden min-w-0" ref={chartRef}>
+          {/* Chart SVG Container */}
+          <div className="relative w-full overflow-hidden" style={{ height: dimensions.height }}>
             <svg
+              ref={svgRef}
               width="100%"
               height={dimensions.height}
               viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
               preserveAspectRatio="xMidYMid meet"
-              className="overflow-hidden rounded-lg"
+              className="overflow-visible"
             >
-              <g transform={`translate(80,40)`}>
+              <g transform={`translate(${margin.left},${margin.top})`}>
                 {/* Y-axis */}
                 {yScale.ticks(5).map(tick => (
                   <g key={tick} transform={`translate(0,${yScale(tick)})`}>
                     <line
                       x1={0}
-                      x2={dimensions.width - 80}
+                      x2={chartWidth}
                       stroke="#444"
                       strokeWidth={0.5}
                     />
@@ -959,12 +987,11 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
                       {tick}
                     </text>
                   </g>
-                ))} {/* <-- Correctly close the map function here */}
+                ))}
                 
-                {/* X-axis (just tick marks, no labels) */}
                 {/* X-axis (tick marks and year labels) */}
                 {filteredYears.map((year, i) => (
-                  <g key={year} transform={`translate(${xScale(i)},${dimensions.height - 80})`}>
+                  <g key={year} transform={`translate(${xScale(i)},${chartHeight})`}>
                     <line
                       y1={0}
                       y2={5}
@@ -976,6 +1003,9 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
                       fontSize={12}
                       textAnchor="middle"
                       fill="#aaa"
+                      style={{
+                        display: i % Math.max(1, Math.floor(filteredYears.length / 10)) === 0 ? 'block' : 'none'
+                      }}
                     >
                       {year}
                     </text>
@@ -1030,30 +1060,29 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
                   );
                 })}
                 
-                {/* Legend */}
-                <g transform={`translate(${dimensions.width - 60}, 0)`}>
-                  {selectedCountries.map((country, i) => (
-                    <g key={country.noc} transform={`translate(0, ${i * 25})`}>
-                      <rect
-                        width={15}
-                        height={15}
-                        fill={countryColors[country.noc]}
-                      />
-                      <text
-                        x={20}
-                        y={12}
-                        fontSize={12}
-                        fill="#fff"
-                      >
-                        {country.name}
-                      </text>
-                    </g>
-                  ))}
-                </g>
+                {/* Y-axis label */}
+                <text
+                  transform={`translate(-50, ${chartHeight / 2}) rotate(-90)`}
+                  textAnchor="middle"
+                  fill="#fff"
+                  fontSize={14}
+                >
+                  Total Medals
+                </text>
                 
-                {/* Hover tooltip */}
+                {/* X-axis label */}
+                <text
+                  transform={`translate(${chartWidth / 2}, ${chartHeight + 45})`}
+                  textAnchor="middle"
+                  fill="#fff"
+                  fontSize={14}
+                >
+                  Olympic Year
+                </text>
+                
+                {/* Hover tooltip with overflow prevention */}
                 {hoverData && (
-                  <g transform={`translate(${hoverData.x + 10}, ${hoverData.y - 40})`}>
+                  <g transform={getTooltipTransform(hoverData.x, hoverData.y)}>
                     <rect
                       width={180}
                       height={60}
@@ -1069,34 +1098,29 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
                     </text>
                   </g>
                 )}
-                
-                {/* Y-axis label */}
-                <text
-                  transform={`translate(-50, ${dimensions.height / 2 - 40}) rotate(-90)`}
-                  textAnchor="middle"
-                  fill="#fff"
-                  fontSize={18}
-                >
-                  Total Medals
-                </text>
-                
-                {/* X-axis label */}
-                <text
-                  transform={`translate(${dimensions.width / 2 - 40}, ${dimensions.height - 20})`}
-                  textAnchor="middle"
-                  fill="#fff"
-                  fontSize={18}
-                >
-                  Olympic Year
-                </text>
               </g>
             </svg>
+            
+            {/* Legend overlay - positioned in top right corner */}
+            <div className="absolute top-2 right-2 bg-gray-800 bg-opacity-80 p-2 rounded">
+              {selectedCountries.map((country, i) => (
+                <div key={country.noc} className="flex items-center mb-1">
+                  <div 
+                    className="w-3 h-3 rounded-full mr-2" 
+                    style={{ backgroundColor: countryColors[country.noc] }}
+                  ></div>
+                  <span className="text-xs text-white truncate max-w-[100px]">
+                    {country.name}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
           
           {/* Brush control below chart (no year labels, just ticks and brush) */}
-          <div className="mt-4 px-12">
-            <svg width={dimensions.width} height={50}>
-              <g transform={`translate(80, 10)`}>
+          <div className="mt-2 px-4 pb-2">
+            <svg width="100%" height={50} preserveAspectRatio="xMidYMid meet">
+              <g transform={`translate(${margin.left}, 10)`}>
                 <g ref={brushRef}></g>
               </g>
             </svg>
