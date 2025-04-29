@@ -26,14 +26,16 @@ export default function Sports() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchContainerRef = useRef(null);
   const [selectedSports, setSelectedSports] = useState([]);
+  const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(-1);
+  const [selectedSport, setSelectedSport] = useState(null);
 
   useEffect(() => {
     async function fetchDataAndProcess() {
       setIsLoading(true);
       try {
         const [athleteRes, nocRes, geoRes] = await Promise.all([
-          fetch('./data/athlete_events.csv'),
-          fetch('./data/noc_regions.csv'),
+          fetch('/data/athlete_events.csv'),
+          fetch('/data/noc_regions.csv'),
           fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
         ]);
 
@@ -238,13 +240,25 @@ export default function Sports() {
       .x(d => xScale(d.year) + xScale.bandwidth() / 2)
       .y(d => yScale(d.sportsHeld));
 
-    svg
+    // Append the path for the line chart
+    const path = svg
       .append('path')
       .datum(filteredLineChartData)
       .attr('fill', 'none')
       .attr('stroke', '#4F46E5')
       .attr('stroke-width', 2)
       .attr('d', line);
+
+    // Add animation to the line being drawn
+    const totalLength = path.node().getTotalLength();
+
+    path
+      .attr('stroke-dasharray', `${totalLength} ${totalLength}`)
+      .attr('stroke-dashoffset', totalLength)
+      .transition()
+      .duration(2000) // Animation duration in milliseconds
+      .ease(d3.easeLinear) // Linear easing for smooth animation
+      .attr('stroke-dashoffset', 0);
 
     svg
       .selectAll('.dot')
@@ -253,18 +267,28 @@ export default function Sports() {
       .append('circle')
       .attr('cx', d => xScale(d.year) + xScale.bandwidth() / 2)
       .attr('cy', d => yScale(d.sportsHeld))
-      .attr('r', 4)
+      .attr('r', 6) // Slightly larger radius for better visibility
       .attr('fill', '#4F46E5')
-      .style('cursor', 'pointer')
+      .style('cursor', 'pointer') // Make the cursor a pointer
       .on('click', function (event, d) {
         const fullYearData = olympicData.find(item => item.year === d.year);
         setSelectedYearData(fullYearData);
+
+        // Scroll to the details section
+        const detailsSection = document.querySelector('.details-section');
+        if (detailsSection) {
+          detailsSection.scrollIntoView({ behavior: 'smooth' });
+        }
       })
       .on('mouseover', function () {
-        d3.select(this).attr('r', 6).attr('fill', '#FFFFFF');
+        d3.select(this)
+          .attr('r', 8) // Increase the radius on hover
+          .attr('fill', '#FFFFFF'); // Change the color on hover
       })
       .on('mouseout', function () {
-        d3.select(this).attr('r', 4).attr('fill', '#4F46E5');
+        d3.select(this)
+          .attr('r', 6) // Reset the radius
+          .attr('fill', '#4F46E5'); // Reset the color
       });
   };
 
@@ -385,6 +409,14 @@ export default function Sports() {
         clearSearchHighlight();
         setSearchQuery('');
         setShowSuggestions(false);
+        
+        // Add scroll behavior - wait briefly for the state update to render the details
+        setTimeout(() => {
+          const detailsSection = document.querySelector('.mt-6.bg-gray-700.p-4.rounded-lg');
+          if (detailsSection) {
+            detailsSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
       });
 
     const controls = container
@@ -518,6 +550,11 @@ export default function Sports() {
     }
   }, [selectedCountryData]);
 
+  // Add this useEffect to reset the focused suggestion index when suggestions change
+  useEffect(() => {
+    setFocusedSuggestionIndex(-1);
+  }, [searchSuggestions]);
+
   if (isLoading) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4 flex justify-center items-center">
@@ -574,7 +611,7 @@ export default function Sports() {
             <section className="bg-gray-800 p-4 rounded-lg shadow-md">
               <h2 className="text-2xl font-bold text-white mb-4">Number of Unique Sports Held Over the Years</h2>
               <p className="text-gray-300 mb-4">
-                Below is a visualization of the number of unique sports held in the Summer Olympics over the selected year range. Click on a data point to see the list of sports held that year, sorted by the number of events.
+                Below is a visualization of the number of unique sports held in the Summer Olympics over the selected year range.
               </p>
 
               <div className="flex flex-wrap justify-center gap-4 mb-6 items-center">
@@ -590,6 +627,8 @@ export default function Sports() {
                       if (endYear < newStartYear) {
                         setEndYear(newStartYear);
                       }
+                      // Reset selected year data to close the horizontal bar chart
+                      setSelectedYearData(null);
                     }}
                     className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5"
                     disabled={!availableYears.length}
@@ -598,11 +637,14 @@ export default function Sports() {
                   </select>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label htmlFor="end-year-select-overview" className="text-sm font-medium text-gray-300">To:</label>
                   <select
                     id="end-year-select-overview"
                     value={endYear ?? ''}
-                    onChange={(e) => setEndYear(parseInt(e.target.value, 10))}
+                    onChange={(e) => {
+                      setEndYear(parseInt(e.target.value, 10));
+                      // Reset selected year data to close the horizontal bar chart
+                      setSelectedYearData(null);
+                    }}
                     className="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5"
                     disabled={!availableYears.length}
                   >
@@ -619,37 +661,115 @@ export default function Sports() {
 
               <div ref={chartRef} className="w-full h-96"></div>
               {selectedYearData && (
-                <div className="mt-6 bg-gray-700 p-4 rounded-lg">
+                // Replace the table with this visualization
+                <div className="mt-6 bg-gray-700 p-4 rounded-lg details-section">
                   <h3 className="text-xl font-bold text-white mb-4">
                     Sports & Events in {selectedYearData.year} ({selectedYearData.sportsHeld} total sports)
                   </h3>
-                  <table className="table-auto w-full text-left text-gray-300 border-collapse rounded-lg overflow-hidden">
-                    <thead>
-                      <tr className="bg-black">
-                        <th className="px-6 py-3 text-sm font-semibold text-gray-100 uppercase tracking-wider">
-                          Sport (Discipline)
-                        </th>
-                        <th className="px-6 py-3 text-sm font-semibold text-gray-100 uppercase tracking-wider text-right">
-                          Number of Events
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(selectedYearData.disciplines)
+                  
+                  <div className="w-full " ref={(ref) => {
+                    if (ref) {
+                      // Clear any existing content
+                      d3.select(ref).selectAll('*').remove();
+                      
+                      // Get data sorted by count
+                      const data = Object.entries(selectedYearData.disciplines)
                         .sort(([, countA], [, countB]) => countB - countA)
-                        .map(([discipline, eventCount], index) => (
-                        <tr
-                          key={index}
-                          className={`${
-                            index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'
-                          }`}
-                        >
-                          <td className="px-6 py-4">{discipline}</td>
-                          <td className="px-6 py-4 text-right">{eventCount}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                        .map(([sport, count]) => ({ sport, count }));
+                      
+                      const margin = { top: 20, right: 30, bottom: 40, left: 180 };
+                      const width = ref.offsetWidth - margin.left - margin.right;
+                      const height = 20 * data.length + margin.top + margin.bottom;
+                      
+                      const svg = d3.select(ref)
+                        .append('svg')
+                        .attr('width', ref.offsetWidth)
+                        .attr('height', height)
+                        .append('g')
+                        .attr('transform', `translate(${margin.left},${margin.top})`);
+                      
+                      // Scales
+                      const xScale = d3.scaleLinear()
+                        .domain([0, d3.max(data, d => d.count)])
+                        .range([0, width]);
+                      
+                      const yScale = d3.scaleBand()
+                        .domain(data.map(d => d.sport))
+                        .range([0, height - margin.top - margin.bottom])
+                        .padding(0.3);
+                      
+                      // Bars with animation
+                      svg.selectAll('.bar')
+                        .data(data)
+                        .enter()
+                        .append('rect')
+                        .attr('class', 'bar')
+                        .attr('x', 0)
+                        .attr('y', d => yScale(d.sport))
+                        .attr('width', 0) // Start with zero width
+                        .attr('height', yScale.bandwidth())
+                        .attr('fill', '#4F46E5')
+                        .attr('rx', 3)
+                        .attr('ry', 3)
+                        .on('mouseover', function() {
+                          d3.select(this).attr('fill', '#6366F1');
+                        })
+                        .on('mouseout', function() {
+                          d3.select(this).attr('fill', '#4F46E5');
+                        })
+                        // Add the animation
+                        .transition()
+                        .duration(800) // Animation duration in milliseconds
+                        .delay((d, i) => i * 50) // Stagger the animations
+                        .attr('width', d => xScale(d.count)); // Animate to final width
+                      
+                      // Adjust value labels to appear after animation
+                      svg.selectAll('.label')
+                        .data(data)
+                        .enter()
+                        .append('text')
+                        .attr('class', 'label')
+                        .attr('x', 0) // Start at zero
+                        .attr('y', d => yScale(d.sport) + yScale.bandwidth() / 2 + 5)
+                        .attr('fill', 'white')
+                        .attr('opacity', 0) // Start invisible
+                        .text(d => d.count)
+                        // Add animation
+                        .transition()
+                        .duration(800)
+                        .delay((d, i) => i * 50 + 400) // Appear after bar animation starts
+                        .attr('x', d => xScale(d.count) + 5) // Move to final position
+                        .attr('opacity', 1); // Fade in
+                      
+                      // Sport labels
+                      svg.selectAll('.sport-label')
+                        .data(data)
+                        .enter()
+                        .append('text')
+                        .attr('class', 'sport-label')
+                        .attr('x', -5)
+                        .attr('y', d => yScale(d.sport) + yScale.bandwidth() / 2 + 5)
+                        .attr('fill', 'white')
+                        .attr('text-anchor', 'end')
+                        .text(d => d.sport);
+                      
+                      // X axis
+                      svg.append('g')
+                        .attr('transform', `translate(0,${height - margin.top - margin.bottom})`)
+                        .call(d3.axisBottom(xScale))
+                        .selectAll('text')
+                        .style('fill', 'white');
+
+                      // Add X axis label
+                      svg.append('text')
+                        .attr('x', width / 2)
+                        .attr('y', height - margin.top) // Position it below the axis
+                        .attr('text-anchor', 'middle')
+                        .style('fill', 'white')
+                        .style('font-size', '14px')
+                        .text('Number of Events');
+                    }
+                  }}></div>
                 </div>
               )}
             </section>
@@ -659,7 +779,10 @@ export default function Sports() {
             <section className="bg-gray-800 p-4 rounded-lg shadow-md">
               <h2 className="text-2xl font-bold text-white mb-4">Countries Participation by Number of Sports</h2>
               <p className="text-gray-300 mb-4">
-                Heat map showing the number of unique sports each country participated in for the selected Summer Olympics year. Click on a country or use the search bar to see the events participated in per sport.
+                Heat map showing the number of sports each country participated in for the selected Summer Olympics year.
+              </p>
+              <p className="text-center text-sm text-gray-400 mb-4">
+                Click on a country or use the search bar to see the events participated in per sport.
               </p>
 
               <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
@@ -740,71 +863,161 @@ export default function Sports() {
                   {selectedCountryData.sportsWithEvents.length > 0 ? (
                     <>
                       <div className="mb-6">
-                        <h4 className="text-lg font-semibold text-white mb-2">Select Sports to Display:</h4>
+                        <div className="flex justify-between items-center">
+                          <h4 className="text-lg font-semibold text-white mb-2">Select Sports to Display:</h4>
+                          <div className="flex gap-2">
+                            <button
+                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm"
+                              onClick={() =>
+                                setSelectedSports(
+                                  selectedCountryData.sportsWithEvents.map((sportData) => sportData.sport)
+                                )
+                              }
+                            >
+                              Select All
+                            </button>
+                            <button
+                              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm"
+                              onClick={() => setSelectedSports([])}
+                            >
+                              Deselect All
+                            </button>
+                          </div>
+                        </div>
                         <div className="bg-gray-800 p-4 rounded-lg shadow-md border border-gray-600 flex gap-4 items-start">
                           {/* Search Sport Feature */}
                           <div className="w-1/3">
-                            <input
-                              type="text"
-                              placeholder="Search Sport..."
-                              className="w-full bg-gray-700 text-white px-3 py-2 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                              onChange={(e) => {
-                                const query = e.target.value.toLowerCase();
-                                setSelectedSports(
-                                  selectedCountryData.sportsWithEvents
-                                    .filter((sportData) => sportData.sport.toLowerCase().includes(query))
-                                    .map((sportData) => sportData.sport)
-                                );
-                              }}
-                            />
+                            <div className="flex flex-wrap gap-2 bg-gray-700 p-2 rounded-lg border border-gray-600">
+                              {selectedSports.map((sport, index) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center gap-2 bg-blue-600 text-white px-3 py-1 rounded-full text-sm"
+                                >
+                                  {sport}
+                                  <button
+                                    className="text-white hover:text-gray-300"
+                                    onClick={() =>
+                                      setSelectedSports((prev) => prev.filter((s) => s !== sport))
+                                    }
+                                  >
+                                    &times;
+                                  </button>
+                                </div>
+                              ))}
+                              <input
+                                type="text"
+                                placeholder="Add a sport..."
+                                value={searchQuery}
+                                onChange={(e) => {
+                                  const query = e.target.value;
+                                  setSearchQuery(query);
+
+                                  // Filter suggestions based on the query
+                                  if (query.trim() !== "") {
+                                    const filteredSuggestions = selectedCountryData.sportsWithEvents
+                                      .map((sportData) => sportData.sport)
+                                      .filter((sport) =>
+                                        sport.toLowerCase().includes(query.toLowerCase())
+                                      )
+                                      .slice(0, 5); // Limit suggestions to 5
+                                    setSearchSuggestions(filteredSuggestions);
+                                  } else {
+                                    setSearchSuggestions([]);
+                                  }
+                                }}
+                                onKeyDown={(e) => {
+                                  if (searchSuggestions.length > 0) {
+                                    if (e.key === "ArrowDown") {
+                                      // Move selection down
+                                      e.preventDefault();
+                                      setFocusedSuggestionIndex(prev => 
+                                        prev < searchSuggestions.length - 1 ? prev + 1 : 0
+                                      );
+                                    } else if (e.key === "ArrowUp") {
+                                      // Move selection up
+                                      e.preventDefault();
+                                      setFocusedSuggestionIndex(prev => 
+                                        prev > 0 ? prev - 1 : searchSuggestions.length - 1
+                                      );
+                                    } else if (e.key === "Enter") {
+                                      e.preventDefault();
+                                      // Use focused suggestion if available, otherwise use first suggestion
+                                      const suggestionIndex = focusedSuggestionIndex >= 0 ? focusedSuggestionIndex : 0;
+                                      const selectedSuggestion = searchSuggestions[suggestionIndex];
+                                      
+                                      if (selectedSuggestion && !selectedSports.includes(selectedSuggestion)) {
+                                        setSelectedSports(prev => [...prev, selectedSuggestion]);
+                                      }
+                                      setSearchQuery("");
+                                      setSearchSuggestions([]);
+                                      setFocusedSuggestionIndex(-1);
+                                    } else if (e.key === "Escape") {
+                                      // Clear suggestions on Escape
+                                      setSearchSuggestions([]);
+                                      setFocusedSuggestionIndex(-1);
+                                    }
+                                  }
+                                }}
+                                className="flex-grow bg-gray-700 text-white px-3 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                              />
+                            </div>
+                            {searchSuggestions.length > 0 && (
+                              <ul className="bg-gray-800 border border-gray-600 rounded-lg mt-2 max-h-40 overflow-y-auto">
+                                {searchSuggestions.map((suggestion, index) => (
+                                  <li
+                                    key={index}
+                                    className={`px-3 py-2 text-white cursor-pointer ${
+                                      index === focusedSuggestionIndex 
+                                        ? "bg-gray-600" 
+                                        : "hover:bg-gray-600"
+                                    }`}
+                                    onClick={() => {
+                                      if (!selectedSports.includes(suggestion)) {
+                                        setSelectedSports((prev) => [...prev, suggestion]);
+                                      }
+                                      setSearchQuery("");
+                                      setSearchSuggestions([]);
+                                      setFocusedSuggestionIndex(-1);
+                                    }}
+                                  >
+                                    {suggestion}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
                           </div>
 
-                          {/* Checkbox List with Select/Deselect All */}
-                          <div className="w-2/3">
-                            <div className="flex justify-end gap-2 mb-2">
-                              <button
-                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm"
-                                onClick={() =>
-                                  setSelectedSports(selectedCountryData.sportsWithEvents.map((sportData) => sportData.sport))
-                                }
-                              >
-                                Select All
-                              </button>
-                              <button
-                                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm"
-                                onClick={() => setSelectedSports([])}
-                              >
-                                Deselect All
-                              </button>
-                            </div>
-                            <div className="max-h-40 overflow-y-auto">
-                              <div className="flex flex-wrap gap-2">
-                                {selectedCountryData.sportsWithEvents.map((sportData) => (
-                                  <label
-                                    key={sportData.sport}
-                                    className="flex items-center gap-2 text-gray-300 bg-gray-700 px-3 py-2 rounded-lg hover:bg-gray-600 cursor-pointer transition"
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      value={sportData.sport}
-                                      checked={selectedSports.includes(sportData.sport)}
-                                      onChange={(e) => {
-                                        const sport = e.target.value;
-                                        setSelectedSports((prev) =>
-                                          e.target.checked
-                                            ? [...prev, sport]
-                                            : prev.filter((s) => s !== sport)
-                                        );
-                                      }}
-                                      className="form-checkbox text-blue-500"
-                                    />
-                                    {sportData.sport}
-                                  </label>
-                                ))}
-                              </div>
+                          {/* Checkbox List */}
+                          <div className="w-2/3 overflow-y-auto">
+                            <div className="flex flex-wrap gap-2">
+                              {selectedCountryData.sportsWithEvents.map((sportData) => (
+                                <label
+                                  key={sportData.sport}
+                                  className="flex items-center gap-2 text-gray-300 bg-gray-700 px-3 py-2 rounded-lg border border-gray-600 hover:bg-gray-600 cursor-pointer transition"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    value={sportData.sport}
+                                    checked={selectedSports.includes(sportData.sport)}
+                                    onChange={(e) => {
+                                      const sport = e.target.value;
+                                      setSelectedSports((prev) =>
+                                        e.target.checked
+                                          ? [...prev, sport]
+                                          : prev.filter((s) => s !== sport)
+                                      );
+                                    }}
+                                    className="form-checkbox text-blue-500"
+                                  />
+                                  {sportData.sport}
+                                </label>
+                              ))}
                             </div>
                           </div>
                         </div>
+                      </div>
+                      <div className="text-center text-sm text-gray-400 mb-3">
+                        <p>Click on any bar in the chart to view information for that sport.</p>
                       </div>
 
                       <div ref={(ref) => {
@@ -828,7 +1041,7 @@ export default function Sports() {
 
                           const width = ref.offsetWidth;
                           const height = 400;
-                          const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+                          const margin = { top: 20, right: 30, bottom: 100, left: 50 };
 
                           const svg = d3.select(ref)
                             .append("svg")
@@ -841,28 +1054,48 @@ export default function Sports() {
                           const g = svg.append("g")
                             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-                          // Filter data based on selected sports
-                          const filteredData = selectedCountryData.sportsWithEvents.filter((d) =>
-                            selectedSports.includes(d.sport)
-                          );
+                          // Filter data based on selected sports and sort by participation (descending)
+                          const filteredData = selectedCountryData.sportsWithEvents
+                            .filter((d) => selectedSports.includes(d.sport))
+                            .sort((a, b) => b.participatedEvents - a.participatedEvents); // Sort in descending order
+
+                          // Prepare data for stacking
+                          const stackData = filteredData.map((d) => ({
+                            sport: d.sport,
+                            participated: d.participatedEvents,
+                            remaining: d.totalEvents - d.participatedEvents
+                          }));
 
                           const xScale = d3.scaleBand()
-                            .domain(filteredData.map((d) => d.sport))
+                            .domain(stackData.map((d) => d.sport))
                             .range([0, chartWidth])
                             .padding(0.2);
 
                           const yScale = d3.scaleLinear()
-                            .domain([0, d3.max(filteredData, (d) => d.totalEvents)])
+                            .domain([0, d3.max(stackData, (d) => d.participated + d.remaining)])
                             .range([chartHeight, 0]);
+
+                          // Define the stack generator
+                          const stack = d3.stack()
+                            .keys(["participated", "remaining"]);
+
+                          // Generate the stacked data
+                          const stackedData = stack(stackData);
+
+                          // Define colors for the stacks
+                          const colors = ["#4F46E5", "#9CA3AF"];
 
                           // X-axis
                           g.append("g")
                             .attr("transform", `translate(0,${chartHeight})`)
                             .call(d3.axisBottom(xScale))
                             .selectAll("text")
-                            .attr("transform", "rotate(-45)")
+                            .attr("transform", "rotate(-65)")  // Increase rotation angle
                             .style("text-anchor", "end")
-                            .style("fill", "#FFFFFF");
+                            .attr("dy", "0.5em")               // Adjust vertical offset
+                            .attr("dx", "-0.8em")
+                            .style("fill", "#FFFFFF")
+                            .style("font-size", "10px");       // Reduce font size for better fit
 
                           // Y-axis
                           g.append("g")
@@ -870,31 +1103,147 @@ export default function Sports() {
                             .selectAll("text")
                             .style("fill", "#FFFFFF");
 
-                          // Bars
-                          g.selectAll(".bar")
-                            .data(filteredData)
+                          // Adjust the position of the "Sports" label
+                          g.append("text")
+                            .attr("text-anchor", "middle")
+                            .attr("x", chartWidth / 2)
+                            .attr("y", chartHeight + margin.bottom - 15)  // Move label up a bit
+                            .style("fill", "#FFFFFF")
+                            .text("Sports");
+
+                          g.append("text")
+                            .attr("text-anchor", "middle")
+                            .attr("transform", "rotate(-90)")
+                            .attr("y", -margin.left + 20)
+                            .attr("x", -chartHeight / 2)
+                            .style("fill", "#FFFFFF")
+                            .text("Number of Events");
+
+                          // Create stacked bars
+                          const layer = g.selectAll(".layer")
+                            .data(stackedData)
+                            .enter()
+                            .append("g")
+                            .attr("class", "layer")
+                            .attr("fill", (d, i) => colors[i]);
+
+                          // Update the bar creation code with click event handlers
+                          layer.selectAll("rect")
+                            .data(d => d)
                             .enter()
                             .append("rect")
-                            .attr("class", "bar")
-                            .attr("x", (d) => xScale(d.sport))
-                            .attr("y", (d) => yScale(d.participatedEvents))
+                            .attr("x", d => xScale(d.data.sport))
+                            .attr("y", d => yScale(d[1]))
+                            .attr("height", d => yScale(d[0]) - yScale(d[1]))
                             .attr("width", xScale.bandwidth())
-                            .attr("height", (d) => chartHeight - yScale(d.participatedEvents))
-                            .attr("fill", "#4F46E5");
+                            .style("cursor", "pointer") // Add pointer cursor to indicate clickable element
+                            .on("click", function(event, d) {
+                              // Get the sport name from the data
+                              const sportName = d.data.sport;
+                              
+                              // Find the detailed sport data
+                              const sportData = selectedCountryData.sportsWithEvents.find(
+                                sport => sport.sport === sportName
+                              );
+                              
+                              // Update the selected sport state instead of showing modal
+                              setSelectedSport(sportData);
+                              
+                              // Scroll to the table after a short delay
+                              setTimeout(() => {
+                                const tableElement = document.getElementById('sport-events-table');
+                                if (tableElement) {
+                                  tableElement.scrollIntoView({ behavior: 'smooth' });
+                                }
+                              }, 100);
+                            });
 
-                          // Add labels for total events
-                          g.selectAll(".label")
-                            .data(filteredData)
+                          // Add legend - shift more to the right
+                          const legend = g.append("g")
+                            .attr("transform", `translate(${chartWidth - 130}, 10)`);
+
+                          ["Participated Events", "Remaining Events"].forEach((text, i) => {
+                            const legendRow = legend.append("g")
+                              .attr("transform", `translate(0, ${i * 20})`);
+                              
+                            legendRow.append("rect")
+                              .attr("width", 15)
+                              .attr("height", 15)
+                              .attr("fill", colors[i]);
+                              
+                            legendRow.append("text")
+                              .attr("x", 20)
+                              .attr("y", 12.5)
+                              .attr("fill", "#FFFFFF")
+                              .style("font-size", "12px")
+                              .text(text);
+                          });
+
+                          // Add labels showing participated/total for each sport
+                          g.selectAll(".stack-label")
+                            .data(stackData)
                             .enter()
                             .append("text")
-                            .attr("x", (d) => xScale(d.sport) + xScale.bandwidth() / 2)
-                            .attr("y", (d) => yScale(d.participatedEvents) - 5)
+                            .attr("class", "stack-label")
+                            .attr("x", d => xScale(d.sport) + xScale.bandwidth() / 2)
+                            .attr("y", d => yScale(d.participated + d.remaining) - 5)
                             .attr("text-anchor", "middle")
                             .style("fill", "#FFFFFF")
                             .style("font-size", "10px")
-                            .text((d) => `${d.participatedEvents}/${d.totalEvents}`);
+                            .text(d => `${d.participated}/${d.participated + d.remaining}`);
                         }
                       }} className="w-full h-[400px]"></div>
+
+                      {/* Add events table here, directly below the bar graph */}
+                      {selectedSport && (
+                        <div id="sport-events-table" className="mt-6 bg-gray-800 p-4 rounded-lg border border-gray-600">
+                          <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-xl font-semibold text-white">
+                              {selectedSport.sport} Events
+                            </h3>
+                            <button
+                              onClick={() => setSelectedSport(null)}
+                              className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded"
+                            >
+                              Close
+                            </button>
+                          </div>
+                          
+                          <div className="mb-4">
+                            <p className="text-gray-300">
+                              {selectedSport.sport} had {selectedSport.totalEvents} total events in the {selectedYear} Olympics.
+                            </p>
+                            <p className="text-gray-300">
+                              {selectedCountryData.countryName} participated in {selectedSport.participatedEvents} of these events.
+                            </p>
+                          </div>
+                          
+                          <table className="w-full text-left text-gray-300 border-collapse rounded-lg overflow-hidden">
+                            <thead>
+                              <tr className="bg-gray-900">
+                                <th className="px-4 py-2 border-b border-gray-700">Metric</th>
+                                <th className="px-4 py-2 border-b border-gray-700">Value</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td className="px-4 py-2 border-b border-gray-700">Total Events</td>
+                                <td className="px-4 py-2 border-b border-gray-700">{selectedSport.totalEvents}</td>
+                              </tr>
+                              <tr>
+                                <td className="px-4 py-2 border-b border-gray-700">Events Participated</td>
+                                <td className="px-4 py-2 border-b border-gray-700">{selectedSport.participatedEvents}</td>
+                              </tr>
+                              <tr>
+                                <td className="px-4 py-2 border-b border-gray-700">Participation Rate</td>
+                                <td className="px-4 py-2 border-b border-gray-700">
+                                  {Math.round((selectedSport.participatedEvents / selectedSport.totalEvents) * 100)}%
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
                     </>
                   ) : (
                     <p className="text-gray-400">No participation data found for {selectedCountryData.countryName} in {selectedYear}.</p>
