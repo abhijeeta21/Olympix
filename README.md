@@ -165,10 +165,12 @@ yarn start
 
 ## Contributors
 
-- Abhijeet Agarwal
-- [Add additional contributor names here]
-- [Add additional contributor names here]
-- [Add additional contributor names here]
+- Abhijeet Agarwal(210025)
+- Akshat Singh Tiwari
+- Asjad Raza
+- Bedant Sharma
+- Havi Bohra
+- Harsh Verma
 
 ## Acknowledgements
 
