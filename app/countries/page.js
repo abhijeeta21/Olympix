@@ -1,52 +1,52 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-
 
 export default function Countries() {
   const [countries, setCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  
-  const mapRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/noc_summary.json');
+        const response = await fetch('/country_data.json'); // Fetch from public folder
         const data = await response.json();
         
+        // Convert object to an array if needed
         const nocArray = Object.entries(data).map(([noc, details]) => ({
           noc,
           ...details
         }));
 
-        // Fix for Canada - ensure we use "CAN" instead of "NFL" for Canadian data
-        const canadaData = nocArray.find(country => country.noc === "CAN");
-        if (canadaData && nocArray.find(country => country.noc === "NFL" && country.region === "Canada")) {
-          console.log("Fixing Canada data - using CAN instead of NFL");
-          // Remove any data incorrectly labeled as NFL for Canada
-          const filteredArray = nocArray.filter(country => !(country.noc === "NFL" && country.region === "Canada"));
-          setCountries(filteredArray);
-        } else {
-          setCountries(nocArray);
-        }
-        
-        setIsLoading(false);
-        
-        // Create map after data is loaded (Note: createWorldMap function is not included in this snippet)
-        // If createWorldMap relies on D3 or similar, ensure the library is loaded and the function is defined elsewhere
-        // if (nocArray.length > 0) {
-        //   setTimeout(() => createWorldMap(nocArray), 500);
-        // }
+        setCountries(nocArray);
       } catch (error) {
         console.error('Error fetching countries data:', error);
+      } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
   }, []);
+
+  // Filter countries based on search query
+  const filteredCountries = countries.filter(country => {
+    if (!searchQuery) return true; // Show all countries when search is empty
+    
+    const region = country.region?.toLowerCase() || '';
+    const noc = country.noc?.toLowerCase() || '';
+    const query = searchQuery.toLowerCase();
+    
+    return region.includes(query) || noc.includes(query);
+  });
+
+  // Sort countries by total medals (descending)
+  const sortedCountries = [...filteredCountries].sort((a, b) => {
+    const aTotal = (a.medals?.gold || 0) + (a.medals?.silver || 0) + (a.medals?.bronze || 0);
+    const bTotal = (b.medals?.gold || 0) + (b.medals?.silver || 0) + (b.medals?.bronze || 0);
+    return bTotal - aTotal;
+  });
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4">
@@ -100,22 +100,8 @@ export default function Countries() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {countries.filter(country =>
-              !searchQuery || (country?.region?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                country?.noc?.toLowerCase().includes(searchQuery.toLowerCase()))
-            ).length > 0 ? (
-              countries
-                .filter(country =>
-                  !searchQuery || (country?.region?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    country?.noc?.toLowerCase().includes(searchQuery.toLowerCase()))
-                )
-                .sort((a, b) => {
-                  // Default sort by total medals (descending)
-                  const aTotal = a.medals.gold + a.medals.silver + a.medals.bronze;
-                  const bTotal = b.medals.gold + b.medals.silver + b.medals.bronze;
-                  return bTotal - aTotal;
-                })
-                .map((country) => (
+            {sortedCountries.length > 0 ? (
+              sortedCountries.map((country) => (
                 <Link key={country.noc} href={`/countries/${country.noc.toLowerCase()}`}>
                   <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all hover:shadow-blue-900/20 hover:shadow-lg cursor-pointer">
                     <div className="p-6">
@@ -125,7 +111,7 @@ export default function Countries() {
                           <p className="text-gray-400 text-sm">{country.noc}</p>
                         </div>
                         <div className="bg-blue-900 text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
-                          {country.medals.gold + country.medals.silver + country.medals.bronze} Medals
+                          {(country.medals?.gold || 0) + (country.medals?.silver || 0) + (country.medals?.bronze || 0)} Medals
                         </div>
                       </div>
                       
@@ -134,19 +120,19 @@ export default function Countries() {
                         <div className="flex space-x-4">
                           <div className="flex flex-col items-center">
                             <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center text-gray-800 font-bold">
-                              {country.medals.gold}
+                              {country.medals?.gold || 0}
                             </div>
                             <span className="text-xs mt-1 text-gray-400">Gold</span>
                           </div>
                           <div className="flex flex-col items-center">
                             <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-800 font-bold">
-                              {country.medals.silver}
+                              {country.medals?.silver || 0}
                             </div>
                             <span className="text-xs mt-1 text-gray-400">Silver</span>
                           </div>
                           <div className="flex flex-col items-center">
                             <div className="w-10 h-10 rounded-full bg-amber-700 flex items-center justify-center text-gray-800 font-bold">
-                              {country.medals.bronze}
+                              {country.medals?.bronze || 0}
                             </div>
                             <span className="text-xs mt-1 text-gray-400">Bronze</span>
                           </div>
@@ -157,11 +143,11 @@ export default function Countries() {
                         <div className="flex justify-between">
                           <div>
                             <p className="text-sm text-gray-400">Top Sport</p>
-                            <p className="font-medium text-gray-300">{country.topSport}</p>
+                            <p className="font-medium text-gray-300">{country.topSport || 'N/A'}</p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-400">Athletes</p>
-                            <p className="font-medium text-gray-300">{country.totalAthletes}</p>
+                            <p className="font-medium text-gray-300">{country.totalAthletes || 0}</p>
                           </div>
                         </div>
                       </div>
@@ -189,7 +175,7 @@ export default function Countries() {
         {/* Footer */}
         <footer className="text-center text-gray-500 text-sm mt-12 pt-6">
           <p>Olympic Data Analysis Project - {new Date().getFullYear()}</p>
-          <p className="mt-2">Built with D3.js and React</p>
+          <p className="mt-2">Built with React</p>
         </footer>
       </div>
     </main>
