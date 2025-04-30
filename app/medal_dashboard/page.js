@@ -2223,25 +2223,11 @@ export default function MedalDashboard() {
             Continent Analysis
           </button>
           <button 
-<<<<<<< HEAD
             className={`px-4 py-2 focus:outline-none ${activeTab === 'data' ? 'bg-blue-500 text-white' : 'text-gray-400 hover:text-white'}`}
             onClick={() => setActiveTab('data')}
           >
             Data Tables
           </button>
-=======
-  className={`px-4 py-2 focus:outline-none ${activeTab === 'data' ? 'bg-blue-500 text-white' : 'text-gray-400 hover:text-white'}`}
-  onClick={() => setActiveTab('data')}
->
-  Data Tables
-</button>
-<button 
-  className={`px-4 py-2 focus:outline-none ${activeTab === 'ranks' ? 'bg-blue-500 text-white' : 'text-gray-400 hover:text-white'}`}
-  onClick={() => setActiveTab('ranks')}
->
-  Time vs Rank
-</button>
->>>>>>> 7a8993c (final)
         </div>
         
         {/* Content based on active tab */}
