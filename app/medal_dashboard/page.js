@@ -9,7 +9,7 @@ import {
   Sphere,
   Graticule
 } from "react-simple-maps";
-import { scaleLinear, scaleOrdinal } from "d3-scale";
+import { scaleLinear, scaleOrdinal,scalePoint } from "d3-scale";
 import { arc, pie } from "d3-shape";
 import { format } from "d3-format";
 import { select, selectAll } from "d3-selection";
@@ -1203,12 +1203,15 @@ function MultiCountryTrendChart({ yearData, olympicYears, countries, selectedYea
   );
 }
 
-// --- Top Medal-Winning Countries Bar Chart ---
+// --- Enhanced Top Medal-Winning Countries Bar Chart ---
+// --- Enhanced Top Medal-Winning Countries Bar Chart ---
 function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicYears, setSelectedYear }) {
   const [medalType, setMedalType] = useState('total');
   const [topCount, setTopCount] = useState(10);
   const [sortBy, setSortBy] = useState('desc');
   const [dimensions, setDimensions] = useState({ width: 1000, height: 500 });
+  const [hoveredCountry, setHoveredCountry] = useState(null);
+  const [showMedalBreakdown, setShowMedalBreakdown] = useState(false);
   
   // Create refs for container measurement
   const chartContainerRef = useRef(null);
@@ -1219,16 +1222,13 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
       if (chartContainerRef.current) {
         const containerWidth = chartContainerRef.current.clientWidth;
         setDimensions({
-          width: containerWidth - 40, // Account for padding
-          height: Math.min(500, window.innerHeight * 0.6) // Responsive height
+          width: containerWidth - 40,
+          height: Math.min(500, window.innerHeight * 0.6)
         });
       }
     };
     
-    // Initial update
     updateDimensions();
-    
-    // Update on window resize
     window.addEventListener('resize', updateDimensions);
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
@@ -1237,51 +1237,103 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
   const innerWidth = dimensions.width - margin.left - margin.right;
   const innerHeight = dimensions.height - margin.top - margin.bottom;
   
-  // Get data source based on year selection
-  let dataToUse = countries;
-  if (selectedYear && yearData[selectedYear]) {
-    dataToUse = Object.values(yearData[selectedYear])
-      .filter(c => c && typeof c === 'object');
-  }
-  
-  // Sort and filter top countries
-  const topCountries = [...dataToUse]
-    .sort((a, b) => {
-      const valA = a?.[medalType] || 0;
-      const valB = b?.[medalType] || 0;
-      return sortBy === 'desc' ? valB - valA : valA - valB;
-    })
-    .slice(0, topCount);
+  // Get data source based on year selection and ensure each country has a proper ID
+  // Within the TopMedalCountriesBarChart function, update the data processing code:
+
+// Get data source based on year selection and ensure each country has a proper ID and NAME
+// Get data source based on year selection and ensure each country has a proper ID and NAME
+// Update the dataToUse code in the TopCountriesTable component:
+
+let dataToUse = countries;
+if (selectedYear && yearData[selectedYear]) {
+  dataToUse = Object.entries(yearData[selectedYear])
+    .filter(([_, c]) => c && typeof c === 'object')
+    .map(([noc, data]) => {
+      // First look for a matching country in the all-time data to get its name
+      const matchingCountry = countries.find(c => 
+        c.noc?.toLowerCase() === noc.toLowerCase() || 
+        c.id?.toLowerCase() === noc.toLowerCase()
+      );
+      
+      return {
+        ...data,
+        noc: noc,
+        // Use a more robust name resolution approach
+        name: data.name || 
+              data.region || 
+              matchingCountry?.name || 
+              yearData[selectedYear][noc]?.region || 
+              `Country ${noc.toUpperCase()}`,
+        id: noc || `unknown-${Math.random().toString(36).substr(2, 9)}`
+      };
+    });
+}
+
+// Sort and filter top countries
+const topCountries = [...dataToUse]
+  .sort((a, b) => {
+    const valA = a?.[medalType] || 0;
+    const valB = b?.[medalType] || 0;
+    return sortBy === 'desc' ? valB - valA : valA - valB;
+  })
+  .slice(0, topCount)
+  .map((country, index) => {
+    // Look for matching country again to ensure we have the best name
+    const matchingCountry = countries.find(c => 
+      c.noc?.toLowerCase() === country.noc?.toLowerCase() || 
+      c.id?.toLowerCase() === country.noc?.toLowerCase()
+    );
+    
+    return {
+      ...country,
+      id: country.noc || country.id || `country-${index}`,
+      name: country.name || 
+            country.region || 
+            matchingCountry?.name || 
+            `Country ${country.noc?.toUpperCase() || index + 1}`
+    };
+  });
   
   // Calculate scales
+    // Calculate scales
+    const maxValue = showMedalBreakdown 
+    ? Math.max(...topCountries.map(c => c.total || 0), 1) // Use total medals for breakdown view
+    : Math.max(...topCountries.map(c => c[medalType] || 0), 1);
+  
   const xScale = scaleLinear()
-    .domain([0, Math.max(...topCountries.map(c => c[medalType] || 0), 1)])
+    .domain([0, maxValue])
     .range([0, innerWidth]);
   
   const barHeight = innerHeight / topCountries.length * 0.7;
+  const barPadding = innerHeight / topCountries.length * 0.3;
   
-  // Color mapping for medal types
+  // Enhanced color mapping for medal types with gradients
   const medalColors = {
-    gold: "#fbbf24",
-    silver: "#d1d5db", 
-    bronze: "#92400e",
-    total: "#3b82f6"
+    gold: { main: "#fbbf24", gradient: ["#fef3c7", "#f59e0b", "#92400e"] },
+    silver: { main: "#d1d5db", gradient: ["#f3f4f6", "#9ca3af", "#4b5563"] },
+    bronze: { main: "#92400e", gradient: ["#fed7aa", "#c2410c", "#7c2d12"] },
+    total: { main: "#3b82f6", gradient: ["#dbeafe", "#2563eb", "#1e40af"] }
   };
+  
+  // Grid lines to improve readability
+  const gridLines = xScale.ticks(5);
   
   return (
     <section className="bg-gray-800 p-4 md:p-8 rounded-lg shadow-md mt-8 w-full max-w-full mx-auto">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-4">
-        <h2 className="text-xl font-bold text-white">
+        <h2 className="text-xl font-bold text-white flex items-center">
+          <span className="mr-2">🏅</span>
           Top Medal-Winning Countries
           {selectedYear && <span className="text-blue-400 ml-2">({selectedYear})</span>}
         </h2>
+        
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <label className="text-white mr-2">Year:</label>
+            <label className="text-white mr-2 text-sm">Year:</label>
             <select 
               value={selectedYear || ''}
               onChange={e => setSelectedYear(parseInt(e.target.value) || null)}
-              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1"
+              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 hover:border-blue-400 focus:border-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-40"
             >
               <option value="">All Time</option>
               {olympicYears.map(year => (
@@ -1291,11 +1343,11 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
           </div>
           
           <div>
-            <label className="text-white mr-2">Medal:</label>
+            <label className="text-white mr-2 text-sm">Medal:</label>
             <select
               value={medalType}
               onChange={e => setMedalType(e.target.value)}
-              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1"
+              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 hover:border-blue-400 focus:border-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-40"
             >
               <option value="total">Total</option>
               <option value="gold">Gold</option>
@@ -1305,11 +1357,11 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
           </div>
           
           <div>
-            <label className="text-white mr-2">Show:</label>
+            <label className="text-white mr-2 text-sm">Show:</label>
             <select
               value={topCount}
               onChange={e => setTopCount(Number(e.target.value))}
-              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1"
+              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 hover:border-blue-400 focus:border-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-40"
             >
               <option value={5}>Top 5</option>
               <option value={10}>Top 10</option>
@@ -1319,15 +1371,28 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
           </div>
           
           <div>
-            <label className="text-white mr-2">Sort:</label>
+            <label className="text-white mr-2 text-sm">Sort:</label>
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value)}
-              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1"
+              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 hover:border-blue-400 focus:border-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-40"
             >
               <option value="desc">Highest First</option>
               <option value="asc">Lowest First</option>
             </select>
+          </div>
+          
+          <div>
+            <label className="inline-flex items-center cursor-pointer">
+              <input 
+                type="checkbox" 
+                className="sr-only peer" 
+                checked={showMedalBreakdown}
+                onChange={() => setShowMedalBreakdown(!showMedalBreakdown)}
+              />
+              <div className="relative w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+              <span className="ms-3 text-sm font-medium text-white">Medal Breakdown</span>
+            </label>
           </div>
         </div>
       </div>
@@ -1338,72 +1403,273 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
           height={dimensions.height}
           viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
           preserveAspectRatio="xMinYMin meet"
+          className="overflow-visible"
         >
+          <defs>
+            {/* Define gradients for bars */}
+            {Object.entries(medalColors).map(([type, colors]) => (
+              <linearGradient
+                key={`gradient-${type}`}
+                id={`gradient-${type}`}
+                x1="0%" y1="0%" x2="100%" y2="0%"
+              >
+                <stop offset="0%" stopColor={colors.gradient[0]} stopOpacity={0.8} />
+                <stop offset="50%" stopColor={colors.main} stopOpacity={0.9} />
+                <stop offset="100%" stopColor={colors.gradient[2]} stopOpacity={1} />
+              </linearGradient>
+            ))}
+            
+            {/* Shadow filter for hover effect */}
+            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#3b82f6" floodOpacity="0.6"/>
+            </filter>
+          </defs>
+          
           <g transform={`translate(${margin.left},${margin.top})`}>
-            {/* X Axis */}
+            {/* Grid lines for better readability */}
+            {gridLines.map(tick => (
+              <line
+                key={`grid-${tick}`}
+                x1={xScale(tick)}
+                y1={0}
+                x2={xScale(tick)}
+                y2={innerHeight}
+                stroke="#333"
+                strokeWidth={1}
+                strokeDasharray="5,5"
+                opacity={0.5}
+              />
+            ))}
+            
+            {/* X Axis with improved styling */}
+            <line
+              x1={0}
+              y1={innerHeight}
+              x2={innerWidth}
+              y2={innerHeight}
+              stroke="#666"
+              strokeWidth={1}
+            />
+            
             {xScale.ticks(5).map(tick => (
               <g key={tick} transform={`translate(${xScale(tick)},0)`}>
                 <line
-                  y1={0}
-                  y2={innerHeight}
-                  stroke="#444"
-                  strokeWidth={0.5}
+                  y1={innerHeight}
+                  y2={innerHeight + 5}
+                  stroke="#666"
+                  strokeWidth={1}
                 />
                 <text
                   y={innerHeight + 20}
                   textAnchor="middle"
-                  fill="#aaa"
+                  fill="#bbb"
                   fontSize={12}
+                  fontWeight="light"
                 >
                   {tick}
                 </text>
               </g>
             ))}
             
-            {/* Y Axis (Countries) */}
-            {topCountries.map((country, i) => (
-              <g key={country.noc || i} transform={`translate(0,${i * (innerHeight / topCountries.length)})`}>
-                <text
-                  x={-10}
-                  y={barHeight / 2 + 5}
-                  textAnchor="end"
-                  fill="#fff"
-                  fontSize={10}
-                >
-                  {(country.name || country.region) && (country.name || country.region).trim() !== '' 
-                    ? ((country.name || country.region).length > 15 
-                        ? `${(country.name || country.region).substring(0, 15)}...` 
-                        : (country.name || country.region)) 
-                    : 'No Data'}
-                </text>
-              </g>
-            ))}
+            {/* Y Axis (Countries) with improved styling */}
+            <line
+              x1={0}
+              y1={0}
+              x2={0}
+              y2={innerHeight}
+              stroke="#666"
+              strokeWidth={1}
+            />
             
-            {/* Bars */}
-            {topCountries.map((country, i) => (
-              <g 
-                key={country.noc || i} 
-                transform={`translate(0,${i * (innerHeight / topCountries.length)})`}
-              >
-                <rect
-                  y={barHeight * 0.15}
-                  width={xScale(country[medalType] || 0)}
-                  height={barHeight}
-                  fill={medalColors[medalType]}
-                  opacity={0.8}
+            {/* Countries and Bars with improved styling and animations */}
+            {topCountries.map((country, i) => {
+              // Use the unique ID to track hover state
+              const isHovered = hoveredCountry === country.id;
+              const barY = i * (innerHeight / topCountries.length) + barPadding / 2;
+              
+              return (
+                <g 
+                  key={country.id} 
+                  className="transition-all duration-300 ease-in-out"
+                  onMouseEnter={() => setHoveredCountry(country.id)}
+                  onMouseLeave={() => setHoveredCountry(null)}
+                  style={{ cursor: 'pointer' }}
                 >
-                  <title>{country.name}: {country[medalType] || 0} {medalType === 'total' ? 'total medals' : `${medalType} medals`}</title>
-                </rect>
-                <text
-                  x={xScale(country[medalType] || 0) + 5}
-                  y={barHeight / 2 + 5}
-                  fill="#fff"
-                  fontSize={12}
-                >
-                  {country[medalType] || 0}
-                </text>
-              </g>
-            ))}
+                  {/* Country name */}
+                  <text
+                    x={-10}
+                    y={barY + barHeight / 2}
+                    textAnchor="end"
+                    alignmentBaseline="middle"
+                    fill={isHovered ? "#fff" : "#ccc"}
+                    fontSize={isHovered ? 12 : 11}
+                    fontWeight={isHovered ? "bold" : "normal"}
+                    className="transition-all duration-300"
+                  >
+                    {country.name.length > 15 
+                      ? `${country.name.substring(0, 13)}...` 
+                      : country.name}
+                  </text>
+                  
+                  {showMedalBreakdown ? (
+                    // Show stacked bars with medal breakdown
+                    <g>
+                      {/* Gold */}
+                      <rect
+                        y={barY}
+                        width={xScale(country.gold || 0)}
+                        height={barHeight}
+                        fill="url(#gradient-gold)"
+                        rx={3}
+                        opacity={isHovered ? 1 : 0.85}
+                        className="transition-all duration-300"
+                        filter={isHovered ? "url(#shadow)" : ""}
+                        transform={isHovered ? "scale(1.02)" : ""}
+                      >
+                        <title>{country.name}: {country.gold || 0} gold medals</title>
+                      </rect>
+                      
+                      {/* Silver */}
+                      <rect
+                        y={barY}
+                        x={xScale(country.gold || 0)}
+                        width={xScale(country.silver || 0)}
+                        height={barHeight}
+                        fill="url(#gradient-silver)"
+                        rx={3}
+                        opacity={isHovered ? 1 : 0.85}
+                        className="transition-all duration-300"
+                      >
+                        <title>{country.name}: {country.silver || 0} silver medals</title>
+                      </rect>
+                      
+                      {/* Bronze */}
+                      <rect
+                        y={barY}
+                        x={xScale((country.gold || 0) + (country.silver || 0))}
+                        width={xScale(country.bronze || 0)}
+                        height={barHeight}
+                        fill="url(#gradient-bronze)"
+                        rx={3}
+                        opacity={isHovered ? 1 : 0.85}
+                        className="transition-all duration-300"
+                      >
+                        <title>{country.name}: {country.bronze || 0} bronze medals</title>
+                      </rect>
+                      
+                      {/* Medal count labels (show on hover) */}
+                      {isHovered && (
+                        <g className="transition-opacity duration-300">
+                          <text
+                            x={xScale(country.gold / 2 || 0)}
+                            y={barY + barHeight / 2}
+                            textAnchor="middle"
+                            alignmentBaseline="middle"
+                            fill="#000"
+                            fontSize={10}
+                            fontWeight="bold"
+                            opacity={country.gold > maxValue * 0.05 ? 1 : 0}
+                          >
+                            {country.gold || 0}
+                          </text>
+                          <text
+                            x={xScale(country.gold || 0) + xScale(country.silver / 2 || 0)}
+                            y={barY + barHeight / 2}
+                            textAnchor="middle"
+                            alignmentBaseline="middle"
+                            fill="#000"
+                            fontSize={10}
+                            fontWeight="bold"
+                            opacity={country.silver > maxValue * 0.05 ? 1 : 0}
+                          >
+                            {country.silver || 0}
+                          </text>
+                          <text
+                            x={xScale((country.gold || 0) + (country.silver || 0)) + xScale(country.bronze / 2 || 0)}
+                            y={barY + barHeight / 2}
+                            textAnchor="middle"
+                            alignmentBaseline="middle"
+                            fill="#fff"
+                            fontSize={10}
+                            fontWeight="bold"
+                            opacity={country.bronze > maxValue * 0.05 ? 1 : 0}
+                          >
+                            {country.bronze || 0}
+                          </text>
+                        </g>
+                      )}
+                      
+                      {/* Total medal count (always visible) */}
+                      <text
+                        x={xScale(country.total || 0) + 8}
+                        y={barY + barHeight / 2}
+                        alignmentBaseline="middle"
+                        fill="#fff"
+                        fontSize={isHovered ? 13 : 12}
+                        fontWeight="bold"
+                        className="transition-all duration-300"
+                      >
+                        {country.total || 0}
+                      </text>
+                    </g>
+                  ) : (
+                    // Show single bar based on selected medal type
+                    <g>
+                      <rect
+                        y={barY}
+                        width={xScale(country[medalType] || 0)}
+                        height={barHeight}
+                        fill={`url(#gradient-${medalType})`}
+                        rx={3}
+                        opacity={isHovered ? 1 : 0.85}
+                        className="transition-all duration-300"
+                        filter={isHovered ? "url(#shadow)" : ""}
+                        transform={isHovered ? "scale(1.02)" : ""}
+                      >
+                        <title>{country.name}: {country[medalType] || 0} {medalType} medals</title>
+                      </rect>
+                      
+                      <text
+                        x={xScale(country[medalType] || 0) + 8}
+                        y={barY + barHeight / 2}
+                        alignmentBaseline="middle"
+                        fill="#fff"
+                        fontSize={isHovered ? 13 : 12}
+                        fontWeight="bold"
+                        className="transition-all duration-300"
+                      >
+                        {country[medalType] || 0}
+                        
+                        {/* Show percentage for top 3 countries
+                        {i < 3 && (
+                          <tspan 
+                            fill="#aaa" 
+                            fontSize={isHovered ? 11 : 10}
+                            dx={4}
+                          >
+                            ({((country[medalType] || 0) / topCountries.reduce((sum, c) => sum + (c[medalType] || 0), 0) * 100).toFixed(1)}%)
+                          </tspan>
+                        )} */}
+                      </text>
+                      
+                      {isHovered && (
+                        <g className="animate-fade-in">
+                          <text
+                            x={Math.min(innerWidth - 100, xScale(country[medalType] || 0) + 60)}
+                            y={barY + barHeight / 2}
+                            alignmentBaseline="middle"
+                            fill="#9ca3af"
+                            fontSize={10}
+                          >
+                            {/* 🥇 {country.gold || 0} &nbsp; 🥈 {country.silver || 0} &nbsp; 🥉 {country.bronze || 0} */}
+                          </text>
+                        </g>
+                      )}
+                    </g>
+                  )}
+                </g>
+              );
+            })}
             
             {/* X Axis Title */}
             <text
@@ -1411,6 +1677,7 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
               textAnchor="middle"
               fill="#fff"
               fontSize={16}
+              fontWeight="bold"
             >
               {medalType.charAt(0).toUpperCase() + medalType.slice(1)} Medals
             </text>
@@ -1421,12 +1688,39 @@ function TopMedalCountriesBarChart({ countries, selectedYear, yearData, olympicY
               textAnchor="middle"
               fill="#fff"
               fontSize={16}
+              fontWeight="bold"
             >
               Countries
             </text>
+            
+            {/* Medal type legend for stacked bars */}
+            {showMedalBreakdown && (
+              <g transform={`translate(${innerWidth - 180}, ${innerHeight + 45})`}>
+                <text textAnchor="middle" fontSize={12} fill="#fff" fontWeight="bold">Medal Types</text>
+                <rect x="-80" y="10" width="15" height="15" fill="url(#gradient-gold)" rx={2} />
+                <text x="-60" y="22" fontSize={10} fill="#fff">Gold</text>
+                <rect x="-30" y="10" width="15" height="15" fill="url(#gradient-silver)" rx={2} />
+                <text x="-10" y="22" fontSize={10} fill="#fff">Silver</text>
+                <rect x="20" y="10" width="15" height="15" fill="url(#gradient-bronze)" rx={2} />
+                <text x="40" y="22" fontSize={10} fill="#fff">Bronze</text>
+              </g>
+            )}
           </g>
         </svg>
       </div>
+      
+      {/* Additional context and insights */}
+      {topCountries.length > 0 && (
+        <div className="mt-3 text-sm text-gray-300 p-2">
+          <p>
+            <span className="font-medium">{topCountries[0]?.name || 'Unknown'}</span> leads with 
+            <span className="font-bold text-blue-300"> {topCountries[0]?.[medalType] || 0}</span> {medalType} medals
+            {selectedYear ? ` in the ${selectedYear} Olympics` : ''}, followed by 
+            <span className="font-medium"> {topCountries[1]?.name || 'Unknown'}</span> with 
+            <span className="font-bold text-blue-300"> {topCountries[1]?.[medalType] || 0}</span> medals.
+          </p>
+        </div>
+      )}
     </section>
   );
 }
@@ -1437,34 +1731,48 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
   const [medalType, setMedalType] = useState('total');
   const [highlightedContinent, setHighlightedContinent] = useState(null);
   const [focusedContinent, setFocusedContinent] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
+  const [sliderValue, setSliderValue] = useState(olympicYears.indexOf(selectedYear) !== -1 ? 
+    olympicYears.indexOf(selectedYear) : olympicYears.length - 1);
   
-  // Container ref and responsive dimensions
+  // Container ref for responsive sizing
   const containerRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: 400, height: 350 }); // Reduced default size
+  const [dimensions, setDimensions] = useState({ width: 800, height: 400 });
   
   // Update dimensions based on container size
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.clientWidth;
-        const containerHeight = window.innerHeight * 0.5; // Reduced from 0.6
         setDimensions({
-          width: Math.min(400, containerWidth - 60), // Reduced from 500 and increased padding
-          height: Math.min(350, containerHeight) // Reduced from 400
+          width: containerWidth - 40,
+          height: 400
         });
       }
     };
     
-    // Initial update and window resize listener
     updateDimensions();
     window.addEventListener('resize', updateDimensions);
     return () => window.removeEventListener('resize', updateDimensions);
-  }, [showDetails]);
+  }, []);
   
-  const outerRadius = Math.min(dimensions.width, dimensions.height) / 2 - 50; // Increased padding
+  // Sync slider with selectedYear prop changes
+  useEffect(() => {
+    if (selectedYear) {
+      const yearIndex = olympicYears.indexOf(selectedYear);
+      if (yearIndex !== -1) {
+        setSliderValue(yearIndex);
+      }
+    }
+  }, [selectedYear, olympicYears]);
+
+  // Handle slider change
+  const handleSliderChange = (e) => {
+    const newIndex = parseInt(e.target.value, 10);
+    setSliderValue(newIndex);
+    setSelectedYear(olympicYears[newIndex]);
+  };
   
-  // Country to continent mapping (unchanged)
+  // Continent mapping remains the same
   const continentMapping = {
     'africa': ['alg', 'ang', 'ben', 'bot', 'bur', 'bdi', 'cmr', 'cgo', 'civ', 'dji', 'egy', 'eri', 'eth', 'gab', 'gam', 'gha', 'gui', 'ken', 'les', 'lbr', 'lba', 'mad', 'maw', 'mli', 'mtn', 'mri', 'mar', 'moz', 'nam', 'nig', 'ngr', 'rsa', 'rwa', 'sen', 'sey', 'sle', 'som', 'ssd', 'sud', 'swz', 'tan', 'tog', 'tun', 'uga', 'zam', 'zim', 'com', 'cpv', 'caf', 'tcd', 'cod', 'gnq', 'gnb', 'stp'],
     'asia': ['afg', 'bah', 'ban', 'bhu', 'bru', 'cam', 'chn', 'hkg', 'ind', 'ina', 'irq', 'iri', 'jpn', 'jor', 'kaz', 'prk', 'kor', 'kuw', 'kgz', 'lao', 'lbn', 'mas', 'mdv', 'mgl', 'mya', 'nep', 'oma', 'pak', 'ple', 'phi', 'qat', 'ksa', 'sin', 'sri', 'syr', 'tpe', 'tjk', 'tha', 'tkm', 'uae', 'uzb', 'vie', 'yem'],
@@ -1474,7 +1782,6 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
     'oceania': ['aus', 'cok', 'fij', 'fsm', 'kir', 'mhl', 'nru', 'nzl', 'plw', 'png', 'sam', 'sol', 'tga', 'tuv', 'van']
   };
   
-  // Rest of variables and functions remain unchanged
   const continentNames = {
     'africa': 'Africa', 'asia': 'Asia', 'europe': 'Europe',
     'north_america': 'North America', 'south_america': 'South America', 'oceania': 'Oceania'
@@ -1485,7 +1792,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
     'north_america': '🌎', 'south_america': '🌎', 'oceania': '🏝️'
   };
   
-  // Get the appropriate data source with proper NOC formatting
+  // Get data source based on year selection
   let dataToUse = countries;
   if (selectedYear && yearData[selectedYear]) {
     dataToUse = Object.entries(yearData[selectedYear])
@@ -1520,18 +1827,7 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
     };
   }).sort((a, b) => b[medalType] - a[medalType]);
   
-  // Create pie chart data
-  const pieData = pie().value(d => d[medalType])(continentMedals);
-  
-  // Create arc generator
-  const arcGenerator = arc()
-    .innerRadius(0)  // Always using pie chart style (no donut)
-    .outerRadius((d) => {
-      // Expand the arc when hovered
-      return d.data.continent === highlightedContinent ? outerRadius * 1.08 : outerRadius;
-    });
-  
-  // Enhanced color scale with gradients
+  // Color scale for continents
   const colorScale = scaleOrdinal()
     .domain(Object.keys(continentNames))
     .range([
@@ -1554,51 +1850,46 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
     c.percentage = (c[medalType] / totalMedals * 100).toFixed(1);
   });
 
-  // Handle slice hover
-  const handleSliceHover = (continent) => {
+  // Calculate bar dimensions
+  const margin = { top: 20, right: 120, bottom: 10, left: 180 };
+  const barHeight = 40;
+  const barPadding = 10;
+  const chartHeight = continentMedals.length * (barHeight + barPadding) + margin.top + margin.bottom;
+  const chartWidth = dimensions.width - margin.left - margin.right;
+  
+  // Find max value for scale
+  const maxValue = Math.max(...continentMedals.map(d => d[medalType]));
+  
+  // Handle bar hover
+  const handleContinentHover = (continent) => {
     setHighlightedContinent(continent);
   };
 
-  // Handle slice click
-  const handleSliceClick = (continent) => {
-    if (focusedContinent === continent) {
-      setFocusedContinent(null);
-      setShowDetails(false);
-    } else {
-      setFocusedContinent(continent);
-      setShowDetails(true);
-    }
+  // Handle bar click for details
+  const handleContinentClick = (continent) => {
+    setFocusedContinent(continent === focusedContinent ? null : continent);
   };
 
-  // Get details for focused continent
+  // Get focused continent data
   const focusedContinentData = focusedContinent 
     ? continentMedals.find(c => c.continent === focusedContinent)
     : null;
 
+  // Get all time option handler
+  const handleAllTimeClick = () => {
+    setSelectedYear(null);
+  };
+
   return (
     <section className="bg-gray-800 p-4 md:p-6 rounded-lg shadow-lg mt-6" ref={containerRef}>
-      {/* Header with controls - more responsive layout */}
+      {/* Header and controls */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
         <h2 className="text-lg md:text-xl font-bold text-white">
           Medal Distribution by Continent
           {selectedYear && <span className="text-blue-400 ml-2">({selectedYear})</span>}
         </h2>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <div>
-            <label className="text-white mr-1 text-sm">Year:</label>
-            <select 
-              value={selectedYear || ''}
-              onChange={e => setSelectedYear(parseInt(e.target.value) || null)}
-              className="bg-gray-700 text-white border border-gray-600 rounded px-1 py-1 text-sm"
-            >
-              <option value="">All Time</option>
-              {olympicYears.map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-          </div>
-          
+        <div className="flex flex-wrap items-center gap-4">
           <div>
             <label className="text-white mr-1 text-sm">Medal:</label>
             <select
@@ -1615,231 +1906,264 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
         </div>
       </div>
       
-      {/* Layout that changes depending on whether details are shown */}
-      <div className={`${showDetails ? 'block' : 'flex flex-col md:flex-row'} bg-gray-900 p-2 md:p-3 rounded-lg`}>
-        {/* Chart and Legend Container */}
-        <div className={`${showDetails ? 'w-full mb-4' : 'w-full'} flex flex-col md:flex-row`}>
-          {/* Pie Chart with Gradients - more responsive */}
-          <div className={`${showDetails ? 'w-full md:w-1/2' : 'flex-1'} flex justify-center items-center min-h-[280px]`}>
-            <svg 
-              width={dimensions.width} 
-              height={dimensions.height} 
-              viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
-              preserveAspectRatio="xMidYMid meet"
-            >
-              <defs>
-                {/* Define gradients for each continent */}
-                {continentMedals.map(d => (
-                  <radialGradient
-                    key={`gradient-${d.continent}`}
-                    id={`gradient-${d.continent}`}
-                    cx="50%" cy="50%" r="70%" fx="50%" fy="50%"
-                  >
-                    <stop offset="0%" stopColor={colorScale(d.continent)} stopOpacity="0.9" />
-                    <stop offset="100%" stopColor={colorScale(d.continent)} stopOpacity="0.7" />
-                  </radialGradient>
-                ))}
-                
-                {/* Add subtle glow effect */}
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-                  <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
+      {/* Year Slider */}
+      <div className="mb-6 bg-gray-900 p-4 rounded-lg">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-white text-sm">Olympic Year:</span>
+          <span className="text-blue-400 font-bold">
+            {selectedYear ? selectedYear : "All Time"}
+          </span>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleAllTimeClick}
+            className={`px-2 py-1 text-xs rounded ${!selectedYear ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+          >
+            All Time
+          </button>
+          
+          <div className="flex-1">
+            <input
+              type="range"
+              min="0"
+              max={olympicYears.length - 1}
+              value={sliderValue}
+              onChange={handleSliderChange}
+              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+            />
+            
+            <div className="relative mt-1">
+    {/* Generate more year labels at regular intervals */}
+    {olympicYears.map((year, index) => {
+      // Show approximately 7-8 labels across the slider
+      if (index === 0 || index === olympicYears.length - 1 || index % Math.ceil(olympicYears.length / 7) === 0) {
+        return (
+          <div 
+            key={year}
+            className="absolute text-xs text-gray-400 transform -translate-x-1/2"
+            style={{
+              left: `${(index / (olympicYears.length - 1)) * 100}%`
+            }}
+          >
+            {year}
+          </div>
+        );
+      }
+      return null;
+    })}
+  </div>
+</div>
+        </div>
+        
+        {/* Year ticks for context
+        <div className="mt-4 relative h-6">
+          <div className="absolute left-0 right-0 h-0.5 bg-gray-700"></div>
+          {olympicYears.map((year, index) => {
+            // Show every 4th year or so to avoid overcrowding
+            if (index % 4 === 0 || index === olympicYears.length - 1) {
+              return (
+                <div
+                  key={year}
+                  className="absolute transform -translate-x-1/2"
+                  style={{
+                    left: `${(index / (olympicYears.length - 1)) * 100}%`,
+                    top: '-4px'
+                  }}
+                >
+                  <div className="w-0.5 h-3 bg-gray-500"></div>
+                  <span className="text-xs text-gray-400 block mt-1">{year}</span>
+                </div>
+              );
+            }
+            return null;
+          })}
+          
+          {/* Indicator for currently selected year */}
+          {/* {selectedYear && (
+            <div 
+              className="absolute w-4 h-4 bg-blue-500 rounded-full transform -translate-x-1/2 -translate-y-1/2 shadow-glow"
+              style={{
+                left: `${(sliderValue / (olympicYears.length - 1)) * 100}%`,
+                top: '0px'
+              }}
+            ></div>
+          )}
+        // </div> */} */
+      </div>
+      
+      {/* Horizontal Bar Chart */}
+      <div className="bg-gray-900 p-3 rounded-lg">
+        <svg 
+          width="100%" 
+          height={chartHeight} 
+          viewBox={`0 0 ${dimensions.width} ${chartHeight}`}
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <g transform={`translate(${margin.left}, ${margin.top})`}>
+            {/* Draw bars */}
+            {continentMedals.map((d, i) => {
+              const barWidth = (d[medalType] / maxValue) * chartWidth;
+              const y = i * (barHeight + barPadding);
+              const isHighlighted = d.continent === highlightedContinent;
               
-              <g 
-                transform={`translate(${dimensions.width / 2}, ${dimensions.height / 2})`}
-                className="transition-all duration-500 ease-in-out"
-              >
-                {pieData.map(d => (
-                  <g 
-                    key={d.data.continent}
-                    className="transition-all duration-300"
-                    onMouseEnter={() => handleSliceHover(d.data.continent)}
-                    onMouseLeave={() => handleSliceHover(null)}
-                    onClick={() => handleSliceClick(d.data.continent)}
-                    style={{ cursor: 'pointer' }}
+              return (
+                <g 
+                  key={d.continent}
+                  onMouseEnter={() => handleContinentHover(d.continent)}
+                  onMouseLeave={() => handleContinentHover(null)}
+                  onClick={() => handleContinentClick(d.continent)}
+                  style={{ cursor: 'pointer' }}
+                  className="transition-all duration-200"
+                >
+                  {/* Continent label */}
+                  <text
+                    x={-10}
+                    y={y + barHeight / 2}
+                    textAnchor="end"
+                    alignmentBaseline="middle"
+                    fill={isHighlighted ? "#fff" : "#ccc"}
+                    fontSize={isHighlighted ? 15 : 14}
+                    fontWeight={isHighlighted ? "bold" : "normal"}
+                    className="transition-all duration-200"
                   >
-                    <path
-                      d={arcGenerator(d)}
-                      fill={`url(#gradient-${d.data.continent})`}
-                      stroke="#222"
-                      strokeWidth={1}
-                      filter={d.data.continent === highlightedContinent ? "url(#glow)" : ""}
-                      className="transition-all duration-300"
-                    >
-                      <title>{d.data.name}: {formatNumber(d.data[medalType])} medals ({d.data.percentage}%)</title>
-                    </path>
-                    
-                    {/* Add percentage label if slice is big enough */}
-                    {d.data.percentage > 5 && (
-                      <g className="transition-all duration-300">
-                        <text
-                          transform={`translate(${arcGenerator.centroid(d)})`}
-                          textAnchor="middle"
-                          fill="#fff"
-                          fontWeight="bold"
-                          fontSize={12}
-                          strokeWidth={0.5}
-                          stroke="#00000044"
-                        >
-                          {d.data.percentage}%
-                        </text>
-                      </g>
-                    )}
-                  </g>
-                ))}
-              </g>
-            </svg>
+                    {d.icon} {d.name}
+                  </text>
+                  
+                  {/* Background bar */}
+                  <rect
+                    x={0}
+                    y={y}
+                    width={chartWidth}
+                    height={barHeight}
+                    fill="#222"
+                    rx={4}
+                  />
+                  
+                  {/* Value bar */}
+                  <rect
+                    x={0}
+                    y={y}
+                    width={barWidth}
+                    height={barHeight}
+                    fill={colorScale(d.continent)}
+                    opacity={isHighlighted ? 1 : 0.8}
+                    rx={4}
+                    className="transition-opacity duration-200"
+                  />
+                  
+                  {/* Medal count */}
+                  <text
+                    x={barWidth + 10}
+                    y={y + barHeight / 2}
+                    alignmentBaseline="middle"
+                    fill={isHighlighted ? "#fff" : "#ddd"}
+                    fontSize={isHighlighted ? 15 : 14}
+                    fontWeight="bold"
+                    className="transition-all duration-200"
+                  >
+                    {formatNumber(d[medalType])}
+                  </text>
+                  
+                  {/* Percentage */}
+                  <text
+                    x={barWidth + 80}
+                    y={y + barHeight / 2}
+                    alignmentBaseline="middle"
+                    fill={isHighlighted ? colorScale(d.continent) : "#888"}
+                    fontSize={14}
+                  >
+                    {d.percentage}%
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+        </svg>
+      </div>
+      
+      {/* Detailed view when a continent is selected */}
+      {focusedContinentData && (
+        <div className="mt-4 bg-gray-850 rounded-md border border-gray-700 p-3 animate-fadeIn">
+          <div className="flex items-center mb-3 pb-1 border-b border-gray-700">
+            <span 
+              className="w-8 h-8 rounded-full flex items-center justify-center text-lg"
+              style={{ backgroundColor: colorScale(focusedContinentData.continent) }}
+            >
+              {focusedContinentData.icon}
+            </span>
+            <h3 className="text-lg font-bold text-white ml-3">
+              {focusedContinentData.name}
+            </h3>
+            <button 
+              className="ml-auto text-gray-400 hover:text-white"
+              onClick={() => setFocusedContinent(null)}
+            >
+              &times; Close
+            </button>
           </div>
           
-          {/* Enhanced Legend & Stats - more compact and responsive */}
-          <div className={`${showDetails ? 'w-full md:w-1/2' : 'w-full md:w-60'} mt-4 md:mt-0 md:ml-4`}>
-            <h3 className="text-white font-bold mb-2 text-center text-base border-b border-gray-700 pb-2">
-              {medalType.charAt(0).toUpperCase() + medalType.slice(1)} Medals
-            </h3>
-            <div className="space-y-1 overflow-y-auto" style={{maxHeight: showDetails ? '200px' : '300px'}}>
-              {continentMedals.map(d => (
-                <div 
-                  key={d.continent} 
-                  className={`flex items-center p-1 rounded-md transition-all duration-200 
-                  ${d.continent === highlightedContinent ? 'bg-gray-800' : 'hover:bg-gray-800'}`}
-                  onMouseEnter={() => handleSliceHover(d.continent)}
-                  onMouseLeave={() => handleSliceHover(null)}
-                  onClick={() => handleSliceClick(d.continent)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <span 
-                    className="w-5 h-5 mr-1 rounded-md flex items-center justify-center text-xs"
-                    style={{ backgroundColor: colorScale(d.continent) }}
-                  >
-                    {d.icon}
-                  </span>
-                  <span className="text-white flex-1 font-medium text-xs whitespace-nowrap overflow-hidden text-ellipsis">
-                    {d.name}
-                  </span>
-                  <span className="text-white font-bold text-xs">{formatNumber(d[medalType])}</span>
-                  <span className="text-gray-400 w-8 text-right text-xs">{d.percentage}%</span>
-                </div>
-              ))}
-              
-              <div className="pt-2 border-t border-gray-700 mt-1">
-                <div className="flex justify-between items-center">
-                  <span className="text-white text-sm">Total:</span>
-                  <span className="text-white font-bold text-sm">{formatNumber(totalMedals)}</span>
-                </div>
+          <div className="flex flex-wrap justify-between mb-3 text-center gap-2">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center text-black font-bold text-sm mb-1">
+                {formatNumber(focusedContinentData.gold)}
               </div>
+              <div className="text-yellow-400 text-xs">Gold</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-black font-bold text-sm mb-1">
+                {formatNumber(focusedContinentData.silver)}
+              </div>
+              <div className="text-gray-300 text-xs">Silver</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-amber-700 flex items-center justify-center text-black font-bold text-sm mb-1">
+                {formatNumber(focusedContinentData.bronze)}
+              </div>
+              <div className="text-amber-700 text-xs">Bronze</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm mb-1">
+                {formatNumber(focusedContinentData.total)}
+              </div>
+              <div className="text-blue-400 text-xs">Total</div>
+            </div>
+          </div>
+          
+          {/* Medal distribution bar */}
+          <div className="mt-2">
+            <h4 className="text-white font-medium mb-1 text-xs">Medal Distribution</h4>
+            <div className="w-full h-4 bg-gray-800 rounded-full overflow-hidden flex">
+              <div 
+                className="h-full bg-yellow-500"
+                style={{ 
+                  width: `${(focusedContinentData.gold / focusedContinentData.total * 100).toFixed(1)}%`
+                }}
+              ></div>
+              <div 
+                className="h-full bg-gray-300"
+                style={{ 
+                  width: `${(focusedContinentData.silver / focusedContinentData.total * 100).toFixed(1)}%`
+                }}
+              ></div>
+              <div 
+                className="h-full bg-amber-700"
+                style={{ 
+                  width: `${(focusedContinentData.bronze / focusedContinentData.total * 100).toFixed(1)}%`
+                }}
+              ></div>
+            </div>
+            <div className="flex justify-between text-xs text-gray-400 mt-1">
+              <div>Gold: {(focusedContinentData.gold / focusedContinentData.total * 100).toFixed(1)}%</div>
+              <div>Silver: {(focusedContinentData.silver / focusedContinentData.total * 100).toFixed(1)}%</div>
+              <div>Bronze: {(focusedContinentData.bronze / focusedContinentData.total * 100).toFixed(1)}%</div>
             </div>
           </div>
         </div>
-        
-        {/* Detailed View of Selected Continent - shown below when active */}
-        {showDetails && focusedContinentData && (
-          <div className="w-full bg-gray-850 rounded-md border border-gray-700 p-3 animate-fadeIn mt-2">
-            <div className="flex items-center mb-3 pb-1 border-b border-gray-700">
-              <span 
-                className="w-8 h-8 rounded-full flex items-center justify-center text-lg"
-                style={{ backgroundColor: colorScale(focusedContinentData.continent) }}
-              >
-                {focusedContinentData.icon}
-              </span>
-              <h3 className="text-lg font-bold text-white ml-3">
-                {focusedContinentData.name}
-              </h3>
-              <button 
-                className="ml-auto text-gray-400 hover:text-white"
-                onClick={() => {
-                  setFocusedContinent(null);
-                  setShowDetails(false);
-                }}
-              >
-                &times; Close
-              </button>
-            </div>
-            
-            <div className="flex flex-wrap justify-between mb-3 text-center gap-2">
-              <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center text-black font-bold text-sm mb-1">
-                  {formatNumber(focusedContinentData.gold)}
-                </div>
-                <div className="text-yellow-400 text-xs">Gold</div>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-black font-bold text-sm mb-1">
-                  {formatNumber(focusedContinentData.silver)}
-                </div>
-                <div className="text-gray-300 text-xs">Silver</div>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-amber-700 flex items-center justify-center text-black font-bold text-sm mb-1">
-                  {formatNumber(focusedContinentData.bronze)}
-                </div>
-                <div className="text-amber-700 text-xs">Bronze</div>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm mb-1">
-                  {formatNumber(focusedContinentData.total)}
-                </div>
-                <div className="text-blue-400 text-xs">Total</div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="text-white font-medium mb-1 text-xs">Medal Distribution</h4>
-              <div className="w-full h-4 bg-gray-800 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-yellow-500"
-                  style={{ 
-                    width: `${(focusedContinentData.gold / focusedContinentData.total * 100).toFixed(1)}%`,
-                    float: 'left'
-                  }}
-                ></div>
-                <div 
-                  className="h-full bg-gray-300"
-                  style={{ 
-                    width: `${(focusedContinentData.silver / focusedContinentData.total * 100).toFixed(1)}%`,
-                    float: 'left'
-                  }}
-                ></div>
-                <div 
-                  className="h-full bg-amber-700"
-                  style={{ 
-                    width: `${(focusedContinentData.bronze / focusedContinentData.total * 100).toFixed(1)}%`,
-                    float: 'left'
-                  }}
-                ></div>
-              </div>
-              <div className="flex justify-between text-xs text-gray-400 mt-1">
-                <div>Gold: {(focusedContinentData.gold / focusedContinentData.total * 100).toFixed(1)}%</div>
-                <div>Silver: {(focusedContinentData.silver / focusedContinentData.total * 100).toFixed(1)}%</div>
-                <div>Bronze: {(focusedContinentData.bronze / focusedContinentData.total * 100).toFixed(1)}%</div>
-              </div>
-            </div>
-            
-            <div className="mt-3 bg-gray-800 p-2 rounded text-xs text-gray-300 leading-relaxed">
-              <p className="mb-1">
-                <strong className="text-white">{focusedContinentData.name}</strong> has won a total of 
-                <strong className="text-white"> {formatNumber(focusedContinentData.total)}</strong> medals 
-                {selectedYear ? ` in the ${selectedYear} Olympics` : ' throughout Olympic history'}, 
-                representing <strong>{focusedContinentData.percentage}%</strong> of all medals.
-              </p>
-              <p>
-                The continent's medal collection includes 
-                <strong className="text-yellow-400"> {formatNumber(focusedContinentData.gold)} gold</strong>, 
-                <strong className="text-gray-300"> {formatNumber(focusedContinentData.silver)} silver</strong>, and 
-                <strong className="text-amber-700"> {formatNumber(focusedContinentData.bronze)} bronze</strong> medals.
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
+      )}
       
-      {/* Instructions */}
       <div className="text-gray-400 text-xs mt-2 text-center">
-        Click on a continent in the chart or legend to see detailed statistics
+        Click on a continent to see detailed statistics
       </div>
 
       <style jsx>{`
@@ -1850,130 +2174,981 @@ function ContinentDistributionChart({ countries, selectedYear, yearData, olympic
         .animate-fadeIn {
           animation: fadeIn 0.3s ease-in-out;
         }
+        .shadow-glow {
+          box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+        }
+        /* Custom range slider styling for better appearance */
+        input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #3b82f6;
+          cursor: pointer;
+          border: 2px solid #fff;
+          box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        }
+        input[type="range"]::-moz-range-thumb {
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #3b82f6;
+          cursor: pointer;
+          border: 2px solid #fff;
+          box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        }
+      `}</style>
+    </section>
+  );
+}
+// --- Top Countries Table Visualization ---
+// --- Enhanced Top Countries Table Visualization ---
+function TopCountriesTable({ countries, selectedYear, yearData, olympicYears, setSelectedYear }) {
+  const [topN, setTopN] = useState(10);
+  const [sortBy, setSortBy] = useState('gold');
+  const [sortDir, setSortDir] = useState('desc');
+  const [hoveredRow, setHoveredRow] = useState(null);
+  const [expandedCountry, setExpandedCountry] = useState(null);
+  
+  let dataToUse = countries;
+  if (selectedYear && yearData[selectedYear]) {
+    dataToUse = Object.entries(yearData[selectedYear])
+      .filter(([_, c]) => c && typeof c === 'object')
+      .map(([noc, data]) => ({
+        ...data,
+        noc: noc,
+        id: noc || `unknown-${Math.random().toString(36).substr(2, 9)}`
+      }));
+  }
+  
+  const topCountries = [...dataToUse]
+    .sort((a, b) => {
+      let comparison = 0;
+      
+      if (sortBy === 'total') {
+        comparison = (b.total || 0) - (a.total || 0);
+      } else if (sortBy === 'silver') {
+        comparison = (b.silver || 0) - (a.silver || 0);
+        if (comparison === 0) comparison = (b.gold || 0) - (a.gold || 0);
+        if (comparison === 0) comparison = (b.bronze || 0) - (a.bronze || 0);
+      } else if (sortBy === 'bronze') {
+        comparison = (b.bronze || 0) - (a.bronze || 0);
+        if (comparison === 0) comparison = (b.gold || 0) - (a.gold || 0);
+        if (comparison === 0) comparison = (b.silver || 0) - (a.silver || 0);
+      } else { // default is gold
+        comparison = (b.gold || 0) - (a.gold || 0);
+        if (comparison === 0) comparison = (b.silver || 0) - (a.silver || 0);
+        if (comparison === 0) comparison = (b.bronze || 0) - (a.bronze || 0);
+      }
+      
+      return sortDir === 'desc' ? comparison : -comparison;
+    })
+    .slice(0, topN);
+  
+  // Calculate total medals for percentage
+  const totalMedals = topCountries.reduce((sum, country) => sum + (country[sortBy] || 0), 0);
+  
+  // Handle sort toggle
+  const handleSortToggle = (column) => {
+    if (sortBy === column) {
+      setSortDir(sortDir === 'desc' ? 'asc' : 'desc');
+    } else {
+      setSortBy(column);
+      setSortDir('desc');
+    }
+  };
+  
+  // Calculate the maximum medal count for bar sizing
+  const maxMedals = {
+    gold: Math.max(...topCountries.map(c => c.gold || 0), 1),
+    silver: Math.max(...topCountries.map(c => c.silver || 0), 1),
+    bronze: Math.max(...topCountries.map(c => c.bronze || 0), 1),
+    total: Math.max(...topCountries.map(c => c.total || 0), 1)
+  };
+  
+  return (
+    <section className="bg-gray-800 p-4 md:p-6 rounded-lg shadow-lg mt-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-3">
+        <h2 className="text-xl font-bold text-white flex items-center">
+          <span className="mr-2">🏆</span>
+          Top {topN} Countries by Medal Count
+          {selectedYear && <span className="text-blue-400 ml-2">({selectedYear})</span>}
+        </h2>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center">
+            <label className="text-white text-sm mr-2">Year:</label>
+            <select 
+              value={selectedYear || ''}
+              onChange={e => setSelectedYear(parseInt(e.target.value) || null)}
+              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 text-sm hover:border-blue-400 focus:border-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-40"
+            >
+              <option value="">All Time</option>
+              {olympicYears.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="flex items-center">
+            <label className="text-white text-sm mr-2">Show:</label>
+            <select
+              value={topN}
+              onChange={e => setTopN(Number(e.target.value))}
+              className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 text-sm hover:border-blue-400 focus:border-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-40"
+            >
+              <option value={10}>Top 10</option>
+              <option value={25}>Top 25</option>
+              <option value={50}>Top 50</option>
+              <option value={100}>Top 100</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <div className="bg-gray-900 rounded-lg p-2 md:p-3 overflow-x-auto">
+        <table className="w-full text-white">
+          <thead>
+            <tr>
+              <th className="p-2 text-left text-xs uppercase tracking-wider text-gray-400 font-semibold border-b border-gray-700">Rank</th>
+              <th className="p-2 text-left text-xs uppercase tracking-wider text-gray-400 font-semibold border-b border-gray-700">Country</th>
+              <th className="p-2 text-center cursor-pointer group" onClick={() => handleSortToggle('gold')}>
+                <div className={`flex items-center justify-center space-x-1 ${sortBy === 'gold' ? 'text-yellow-400' : 'text-gray-400'}`}>
+                  <div className="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center">
+                    <span className="text-black font-bold text-xs">G</span>
+                  </div>
+                  <span className="text-xs uppercase tracking-wider font-semibold">Gold</span>
+                  {sortBy === 'gold' && (
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform ${sortDir === 'asc' ? 'transform rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+              </th>
+              <th className="p-2 text-center cursor-pointer group" onClick={() => handleSortToggle('silver')}>
+                <div className={`flex items-center justify-center space-x-1 ${sortBy === 'silver' ? 'text-gray-300' : 'text-gray-400'}`}>
+                  <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center">
+                    <span className="text-black font-bold text-xs">S</span>
+                  </div>
+                  <span className="text-xs uppercase tracking-wider font-semibold">Silver</span>
+                  {sortBy === 'silver' && (
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform ${sortDir === 'asc' ? 'transform rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+              </th>
+              <th className="p-2 text-center cursor-pointer group" onClick={() => handleSortToggle('bronze')}>
+                <div className={`flex items-center justify-center space-x-1 ${sortBy === 'bronze' ? 'text-amber-700' : 'text-gray-400'}`}>
+                  <div className="w-6 h-6 rounded-full bg-amber-700 flex items-center justify-center">
+                    <span className="text-black font-bold text-xs">B</span>
+                  </div>
+                  <span className="text-xs uppercase tracking-wider font-semibold">Bronze</span>
+                  {sortBy === 'bronze' && (
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform ${sortDir === 'asc' ? 'transform rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+              </th>
+              <th className="p-2 text-center cursor-pointer group" onClick={() => handleSortToggle('total')}>
+                <div className={`flex items-center justify-center space-x-1 ${sortBy === 'total' ? 'text-blue-400' : 'text-gray-400'}`}>
+                  <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                    <span className="text-white font-bold text-xs">T</span>
+                  </div>
+                  <span className="text-xs uppercase tracking-wider font-semibold">Total</span>
+                  {sortBy === 'total' && (
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform ${sortDir === 'asc' ? 'transform rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {topCountries.map((country, index) => {
+              const isHovered = hoveredRow === country.id;
+              const isExpanded = expandedCountry === country.id;
+              const countryName = (country.name || country.region || 'Unknown Country');
+              // In TopCountriesTable component, add this right before the return statement:
+
+// Ensure the top country always has a valid name for the summary line
+if (topCountries.length > 0 && (!topCountries[0].name || topCountries[0].name === 'Unknown')) {
+  const matchingCountry = countries.find(c => 
+    c.noc?.toLowerCase() === topCountries[0].noc?.toLowerCase() || 
+    c.id?.toLowerCase() === topCountries[0].noc?.toLowerCase()
+  );
+  
+  topCountries[0] = {
+    ...topCountries[0],
+    name: topCountries[0].name || 
+          topCountries[0].region || 
+          matchingCountry?.name || 
+          `Country ${topCountries[0].noc?.toUpperCase() || ''}` 
+  };
+}
+              return (
+                <React.Fragment key={country.id || index}>
+                  <tr 
+                    className={`
+                      ${index % 2 === 0 ? 'bg-gray-800/40' : 'bg-gray-900'}
+                      ${isHovered ? 'bg-gray-700' : ''}
+                      transition-colors cursor-pointer
+                    `}
+                    onMouseEnter={() => setHoveredRow(country.id)}
+                    onMouseLeave={() => setHoveredRow(null)}
+                    onClick={() => setExpandedCountry(isExpanded ? null : country.id)}
+                  >
+                    <td className="p-3 font-mono text-sm">
+                      {index < 3 ? (
+                        <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full 
+                          ${index === 0 ? 'bg-yellow-500 text-black' : 
+                            index === 1 ? 'bg-gray-300 text-black' : 
+                            'bg-amber-700 text-black'}
+                          font-bold`}
+                        >
+                          {index + 1}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 ml-2">{index + 1}</span>
+                      )}
+                    </td>
+                    
+                    <td className="p-3">
+                      <div className="flex items-center">
+                        <span className={`font-medium ${isHovered ? 'text-white' : ''}`}>
+                          {countryName}
+                        </span>
+                      </div>
+                    </td>
+                    
+                    <td className="p-2">
+                      <div className="flex items-center">
+                        <div className="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
+                          <div 
+                            className={`bg-yellow-500 h-full rounded-full transition-all duration-500 ${isHovered ? 'opacity-90' : 'opacity-70'}`}
+                            style={{ width: `${Math.max((country.gold || 0) / maxMedals.gold * 100, 3)}%` }}
+                          ></div>
+                        </div>
+                        <span className={`ml-3 font-mono font-bold ${sortBy === 'gold' ? 'text-yellow-400' : 'text-gray-300'} ${isHovered ? 'text-lg' : 'text-sm'} transition-all`}>
+                          {country.gold || 0}
+                        </span>
+                      </div>
+                    </td>
+                    
+                    <td className="p-2">
+                      <div className="flex items-center">
+                        <div className="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
+                          <div 
+                            className={`bg-gray-300 h-full rounded-full transition-all duration-500 ${isHovered ? 'opacity-90' : 'opacity-70'}`}
+                            style={{ width: `${Math.max((country.silver || 0) / maxMedals.silver * 100, 3)}%` }}
+                          ></div>
+                        </div>
+                        <span className={`ml-3 font-mono font-bold ${sortBy === 'silver' ? 'text-gray-300' : 'text-gray-300'} ${isHovered ? 'text-lg' : 'text-sm'} transition-all`}>
+                          {country.silver || 0}
+                        </span>
+                      </div>
+                    </td>
+                    
+                    <td className="p-2">
+                      <div className="flex items-center">
+                        <div className="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
+                          <div 
+                            className={`bg-amber-700 h-full rounded-full transition-all duration-500 ${isHovered ? 'opacity-90' : 'opacity-70'}`}
+                            style={{ width: `${Math.max((country.bronze || 0) / maxMedals.bronze * 100, 3)}%` }}
+                          ></div>
+                        </div>
+                        <span className={`ml-3 font-mono font-bold ${sortBy === 'bronze' ? 'text-amber-700' : 'text-gray-300'} ${isHovered ? 'text-lg' : 'text-sm'} transition-all`}>
+                          {country.bronze || 0}
+                        </span>
+                      </div>
+                    </td>
+                    
+                    <td className="p-2">
+                      <div className="flex items-center">
+                        <div className="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
+                          <div 
+                            className={`bg-blue-500 h-full rounded-full transition-all duration-500 ${isHovered ? 'opacity-90' : 'opacity-70'}`}
+                            style={{ width: `${Math.max((country.total || 0) / maxMedals.total * 100, 3)}%` }}
+                          ></div>
+                        </div>
+                        <span className={`ml-3 font-mono font-bold ${sortBy === 'total' ? 'text-blue-400' : 'text-gray-300'} ${isHovered ? 'text-lg' : 'text-sm'} transition-all`}>
+                          {country.total || 0}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                  
+                  {isExpanded && (
+                    <tr className="bg-gray-700/30 animate-fadeIn">
+                      <td colSpan={5} className="p-4">
+                        <div className="flex flex-col gap-3">
+                          <h4 className="font-medium text-white">{countryName} - Medal Details</h4>
+                          
+                          <div className="flex flex-wrap gap-4">
+                            <div className="flex flex-col items-center">
+                              <div className="w-16 h-16 rounded-full bg-yellow-500 flex items-center justify-center text-black font-bold text-xl mb-1">
+                                {country.gold || 0}
+                              </div>
+                              <div className="text-yellow-400 text-sm">Gold</div>
+                            </div>
+                            
+                            <div className="flex flex-col items-center">
+                              <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-black font-bold text-xl mb-1">
+                                {country.silver || 0}
+                              </div>
+                              <div className="text-gray-300 text-sm">Silver</div>
+                            </div>
+                            
+                            <div className="flex flex-col items-center">
+                              <div className="w-16 h-16 rounded-full bg-amber-700 flex items-center justify-center text-black font-bold text-xl mb-1">
+                                {country.bronze || 0}
+                              </div>
+                              <div className="text-amber-700 text-sm">Bronze</div>
+                            </div>
+                            
+                            <div className="flex flex-col items-center">
+                              <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xl mb-1">
+                                {country.total || 0}
+                              </div>
+                              <div className="text-blue-400 text-sm">Total</div>
+                            </div>
+                            
+                            <div className="flex flex-col justify-center ml-4">
+                              <div className="text-sm text-gray-300">
+                                <div className="mb-1">
+                                  <span className="inline-block w-3 h-3 bg-yellow-500 mr-2 rounded-sm"></span>
+                                  Gold: {((country.gold || 0) / (country.total || 1) * 100).toFixed(1)}%
+                                </div>
+                                <div className="mb-1">
+                                  <span className="inline-block w-3 h-3 bg-gray-300 mr-2 rounded-sm"></span>
+                                  Silver: {((country.silver || 0) / (country.total || 1) * 100).toFixed(1)}%
+                                </div>
+                                <div>
+                                  <span className="inline-block w-3 h-3 bg-amber-700 mr-2 rounded-sm"></span>
+                                  Bronze: {((country.bronze || 0) / (country.total || 1) * 100).toFixed(1)}%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Medal distribution bar */}
+                          <div className="mt-2">
+                            <div className="text-sm text-gray-400 mb-1">Medal Distribution</div>
+                            <div className="flex h-6 rounded-md overflow-hidden w-full">
+                              <div 
+                                className="bg-yellow-500 h-full transition-all duration-300"
+                                style={{ width: `${(country.gold || 0) / (country.total || 1) * 100}%` }}
+                              ></div>
+                              <div 
+                                className="bg-gray-300 h-full transition-all duration-300"
+                                style={{ width: `${(country.silver || 0) / (country.total || 1) * 100}%` }}
+                              ></div>
+                              <div 
+                                className="bg-amber-700 h-full transition-all duration-300"
+                                style={{ width: `${(country.bronze || 0) / (country.total || 1) * 100}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })}
+            
+            {topCountries.length === 0 && (
+              <tr>
+                <td colSpan={5} className="py-8 text-center text-gray-400">
+                  <div className="flex flex-col items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-lg font-medium">No medal data available</span>
+                    <p className="text-sm mt-2">Try selecting a different year or dataset</p>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      
+      {/* Summary statistics */}
+      {topCountries.length > 0 && (
+        <div className="mt-4 p-3 bg-gray-900 rounded-lg text-sm text-gray-300">
+          <p>
+            <span className="font-medium text-white">{topCountries[0]?.name || 'Unknown'}</span> leads with 
+            <span className="font-bold text-blue-400"> {topCountries[0]?.[sortBy] || 0}</span> {sortBy} medals
+            {selectedYear ? ` in the ${selectedYear} Olympics` : ''}, representing 
+            <span className="font-bold text-blue-400"> {((topCountries[0]?.[sortBy] || 0) / totalMedals * 100).toFixed(1)}%</span> of the total among top {topN} countries.
+          </p>
+        </div>
+      )}
+      
+      <style jsx>{`
+        @keyframes fadeIn {
+          0% { opacity: 0; max-height: 0; }
+          100% { opacity: 1; max-height: 500px; }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
       `}</style>
     </section>
   );
 }
 
-// --- Top Countries Table Visualization ---
-function TopCountriesTable({ countries, selectedYear, yearData, olympicYears, setSelectedYear }) {
-  const [topN, setTopN] = useState(10);
-  const [sortBy, setSortBy] = useState('gold');
+// --- Country Rank Tracker Visualization ---
+function CountryRankTracker({ countries, yearData, olympicYears }) {
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [medalType, setMedalType] = useState("total");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [hoveredYear, setHoveredYear] = useState(null);
+  const chartRef = useRef(null);
   
-  let dataToUse = countries;
-  if (selectedYear && yearData[selectedYear]) {
-    dataToUse = Object.values(yearData[selectedYear])
-      .filter(c => c && typeof c === 'object');
-  }
+  const [dimensions, setDimensions] = useState({
+    width: 900,
+    height: 500
+  });
   
-  const topCountries = [...dataToUse]
-    .sort((a, b) => {
-      if (sortBy === 'total') {
-        return b.total - a.total;
-      } else if (sortBy === 'silver') {
-        if (b.silver !== a.silver) return b.silver - a.silver;
-        if (b.gold !== a.gold) return b.gold - a.gold;
-        return b.bronze - a.bronze;
-      } else if (sortBy === 'bronze') {
-        if (b.bronze !== a.bronze) return b.bronze - a.bronze;
-        if (b.gold !== a.gold) return b.gold - a.gold;
-        return b.silver - a.silver;
-      } else { // default is gold
-        if (b.gold !== a.gold) return b.gold - a.gold;
-        if (b.silver !== a.silver) return b.silver - a.silver;
-        return b.bronze - a.bronze;
+  // Get container width for responsive design
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (chartRef.current) {
+        const containerWidth = chartRef.current.clientWidth;
+        setDimensions({
+          width: containerWidth - 40,
+          height: 500
+        });
       }
-    })
-    .slice(0, topN);
+    };
     
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+  
+  // Define margins and chart area dimensions
+  const margin = { top: 50, right: 80, bottom: 80, left: 80 };
+  const innerWidth = dimensions.width - margin.left - margin.right;
+  const innerHeight = dimensions.height - margin.top - margin.bottom;
+  
+  // Filter countries by search term
+  const filteredCountries = countries
+    .filter(c => c?.name?.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => (b?.total || 0) - (a?.total || 0));
+  
+  // Calculate ranks for each Olympic year
+  const countryRanks = useMemo(() => {
+    if (!selectedCountry) return [];
+    
+    return olympicYears.map(year => {
+      const yearMedals = yearData[year];
+      if (!yearMedals) return { year, rank: null, medals: 0 };
+      
+      // Convert year data to array and sort by medal count
+      const yearCountries = Object.entries(yearMedals)
+        .filter(([_, data]) => data && typeof data === 'object')
+        .map(([noc, data]) => ({
+          noc,
+          medalCount: data[medalType] || 0
+        }))
+        .sort((a, b) => b.medalCount - a.medalCount);
+      
+      // Find selected country's rank
+      const countryNoc = selectedCountry.noc.toLowerCase();
+      const rank = yearCountries.findIndex(c => 
+        c.noc.toLowerCase() === countryNoc
+      ) + 1;
+      
+      // Get medal data for selected country
+      const countryData = yearMedals[countryNoc] || {};
+      
+      return {
+        year,
+        rank: rank > 0 ? rank : null,
+        gold: countryData.gold || 0,
+        silver: countryData.silver || 0,
+        bronze: countryData.bronze || 0,
+        total: countryData.total || 0,
+        medalCount: countryData[medalType] || 0
+      };
+    });
+  }, [selectedCountry, yearData, olympicYears, medalType]);
+  
+  // Find best and worst rank for Y-axis scaling
+  const validRanks = countryRanks.filter(d => d.rank !== null).map(d => d.rank);
+  const maxRank = Math.max(...validRanks, 10);
+  const minRank = Math.min(...validRanks, 1);
+  const paddedMaxRank = Math.ceil(maxRank * 1.2); // Add 20% padding
+  
+  // Define scales
+  const xScale = scalePoint()
+    .domain(olympicYears)
+    .range([0, innerWidth])
+    .padding(0.5);
+  
+  const yScale = scaleLinear()
+    .domain([paddedMaxRank, 0.5]) // Reversed axis (1 at top)
+    .range([innerHeight, 0])
+    .nice();
+  
+  // Medal colors for various UI elements
+  const medalColors = {
+    total: "#3b82f6",
+    gold: "#fbbf24",
+    silver: "#d1d5db",
+    bronze: "#92400e"
+  };
+  
+  // Handle medal type change
+  const handleMedalTypeChange = (type) => {
+    setMedalType(type);
+  };
+  
+  // Country selection handler
+  const selectCountry = (country) => {
+    setSelectedCountry(country);
+    setSearchTerm("");
+  };
+  
+  // Generate the path for the rank line
+  const generateRankPath = () => {
+    if (!countryRanks.length) return "";
+    
+    const validPoints = countryRanks.filter(d => d.rank !== null);
+    if (validPoints.length < 2) return "";
+    
+    return validPoints.map((d, i) => {
+      const x = xScale(d.year);
+      const y = yScale(d.rank);
+      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+    }).join(" ");
+  };
+  
+  // Format rank with suffix (1st, 2nd, 3rd, etc.)
+  const formatRank = (rank) => {
+    if (!rank) return "N/A";
+    
+    const suffixes = ["th", "st", "nd", "rd"];
+    const suffix = rank % 100 >= 11 && rank % 100 <= 13 ? 
+      suffixes[0] : 
+      suffixes[Math.min(rank % 10, 3)];
+    
+    return `${rank}${suffix}`;
+  };
+
   return (
-    <section className="bg-gray-800 p-4 rounded-lg shadow-md mt-6">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-3">
-        <h2 className="text-xl font-bold text-white">
-          Top {topN} Countries by Medal Count
-          {selectedYear && <span className="text-blue-400 ml-2">({selectedYear})</span>}
+    <section className="bg-gray-800 p-4 md:p-6 rounded-lg shadow-lg mt-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-3">
+        <h2 className="text-xl font-bold text-white flex items-center">
+          <span className="mr-2">📈</span>
+          Country Ranking Tracker
+          {selectedCountry && <span className="text-blue-400 ml-2">({selectedCountry.name})</span>}
         </h2>
-        <div className="flex flex-wrap items-center gap-2 mt-2 md:mt-0">
-          <label className="text-white">Year:</label>
-          <select 
-            value={selectedYear || ''}
-            onChange={e => setSelectedYear(parseInt(e.target.value) || null)}
-            className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1"
-          >
-            <option value="">All Time</option>
-            {olympicYears.map(year => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
-          <label className="text-white ml-2">Sort by:</label>
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value)}
-            className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1"
-          >
-            <option value="gold">Gold Medals</option>
-            <option value="silver">Silver Medals</option>
-            <option value="bronze">Bronze Medals</option>
-            <option value="total">Total Medals</option>
-          </select>
-          <label className="text-white ml-2">Show:</label>
-          <select
-            value={topN}
-            onChange={e => setTopN(Number(e.target.value))}
-            className="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1"
-          >
-            <option value={10}>Top 10</option>
-            <option value={25}>Top 25</option>
-            <option value={50}>Top 50</option>
-            <option value={100}>Top 100</option>
-          </select>
+        
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Country selector with search */}
+          <div className="relative w-64">
+            <input
+              type="text"
+              placeholder="Search for a country..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="bg-gray-700 text-white w-full border border-gray-600 rounded px-3 py-2 text-sm hover:border-blue-400 focus:border-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-40"
+            />
+            
+            {searchTerm && (
+              <div className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-gray-700 rounded shadow-lg border border-gray-600 z-50">
+                {filteredCountries.length === 0 ? (
+                  <div className="p-2 text-gray-400 text-sm">No countries found</div>
+                ) : (
+                  filteredCountries.slice(0, 10).map(country => (
+                    <div
+                      key={country.noc}
+                      className="p-2 hover:bg-gray-600 cursor-pointer text-white text-sm flex items-center"
+                      onClick={() => selectCountry(country)}
+                    >
+                      <span className="font-medium">{country.name}</span>
+                      <span className="text-xs text-gray-300 ml-auto">
+                        {country.total} medals
+                      </span>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+          
+          {/* Medal type selector */}
+          <div className="flex items-center space-x-1">
+            <button 
+              onClick={() => handleMedalTypeChange("total")}
+              className={`px-2 py-1 rounded text-sm ${medalType === "total" ? "bg-blue-500 text-white" : "bg-gray-700 text-gray-300"}`}
+            >
+              Total
+            </button>
+            <button 
+              onClick={() => handleMedalTypeChange("gold")}
+              className={`px-2 py-1 rounded text-sm ${medalType === "gold" ? "bg-yellow-500 text-black" : "bg-gray-700 text-gray-300"}`}
+            >
+              Gold
+            </button>
+            <button 
+              onClick={() => handleMedalTypeChange("silver")}
+              className={`px-2 py-1 rounded text-sm ${medalType === "silver" ? "bg-gray-300 text-black" : "bg-gray-700 text-gray-300"}`}
+            >
+              Silver
+            </button>
+            <button 
+              onClick={() => handleMedalTypeChange("bronze")}
+              className={`px-2 py-1 rounded text-sm ${medalType === "bronze" ? "bg-amber-700 text-white" : "bg-gray-700 text-gray-300"}`}
+            >
+              Bronze
+            </button>
+          </div>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-white">
-          <thead className="bg-gray-700">
-            <tr className="text-left">
-              <th className="py-2 px-3 rounded-tl-lg">Rank</th>
-              <th className="py-2 px-3">Country</th>
-              <th className={`py-2 px-3 text-center ${sortBy === 'gold' ? 'bg-gray-600' : ''}`}>
-                <span className="text-yellow-400">Gold</span>
-              </th>
-              <th className={`py-2 px-3 text-center ${sortBy === 'silver' ? 'bg-gray-600' : ''}`}>
-                <span className="text-gray-300">Silver</span>
-              </th>
-              <th className={`py-2 px-3 text-center ${sortBy === 'bronze' ? 'bg-gray-600' : ''}`}>
-                <span className="text-amber-700">Bronze</span>
-              </th>
-              <th className={`py-2 px-3 rounded-tr-lg text-center ${sortBy === 'total' ? 'bg-gray-600' : ''}`}>
-                <span className="text-blue-400">Total</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {topCountries.map((country, index) => (
-              <tr 
-                key={country.noc || index} 
-                className={index % 2 === 0 ? "bg-gray-900" : "bg-gray-800"}
+      
+      <div className="bg-gray-900 p-4 rounded-lg" ref={chartRef}>
+        {!selectedCountry ? (
+          <div className="flex flex-col items-center justify-center h-[400px] text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+            </svg>
+            <h3 className="text-xl font-medium text-gray-300">Select a country to track its Olympic ranking</h3>
+            <p className="text-gray-400 mt-2">Search for a country using the search box above</p>
+          </div>
+        ) : countryRanks.filter(d => d.rank !== null).length < 2 ? (
+          <div className="flex flex-col items-center justify-center h-[400px] text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <h3 className="text-xl font-medium text-gray-300">Not enough ranking data available</h3>
+            <p className="text-gray-400 mt-2">This country has competed in fewer than 2 Olympic Games or has no medal data</p>
+            <button 
+              onClick={() => setSelectedCountry(null)} 
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            >
+              Select a different country
+            </button>
+          </div>
+        ) : (
+          <svg
+            width="100%"
+            height={dimensions.height}
+            viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <defs>
+              {/* Gradient for the line */}
+              <linearGradient id="rankLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor={medalColors[medalType]} stopOpacity={0.7} />
+                <stop offset="100%" stopColor={medalColors[medalType]} stopOpacity={1} />
+              </linearGradient>
+              
+              {/* Filter for hover glow */}
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            
+            <g transform={`translate(${margin.left}, ${margin.top})`}>
+              {/* Y-axis grid lines */}
+              {yScale.ticks(10).map(tick => (
+                <g key={`grid-${tick}`}>
+                  <line 
+                    x1={0} 
+                    y1={yScale(tick)} 
+                    x2={innerWidth} 
+                    y2={yScale(tick)}
+                    stroke="#333"
+                    strokeWidth={1}
+                    strokeDasharray={tick === 0 ? "" : "5,5"}
+                  />
+                  <text
+                    x={-10}
+                    y={yScale(tick)}
+                    dy=".32em"
+                    textAnchor="end"
+                    fill="#aaa"
+                    fontSize={12}
+                  >
+                    {tick === 0 ? "" : formatRank(tick)}
+                  </text>
+                </g>
+              ))}
+              
+              {/* X-axis (Olympic years) */}
+              {olympicYears.map(year => (
+                <g key={`year-${year}`} transform={`translate(${xScale(year)}, ${innerHeight})`}>
+                  <line 
+                    y1={0} 
+                    y2={5} 
+                    stroke="#666"
+                    strokeWidth={1}
+                  />
+                  <text
+                    y={15}
+                    textAnchor="middle"
+                    fill="#bbb"
+                    fontSize={10}
+                    transform="rotate(-45) translate(-20, 0)"
+                  >
+                    {year}
+                  </text>
+                </g>
+              ))}
+              
+              {/* Rank line */}
+              <path
+                d={generateRankPath()}
+                stroke={`url(#rankLineGradient)`}
+                strokeWidth={3}
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              
+              {/* Data points with medal counts */}
+              {countryRanks.filter(d => d.rank !== null).map(d => (
+                <g 
+                  key={d.year}
+                  transform={`translate(${xScale(d.year)}, ${yScale(d.rank)})`}
+                  onMouseEnter={() => setHoveredYear(d.year)}
+                  onMouseLeave={() => setHoveredYear(null)}
+                >
+                  <circle
+                    r={hoveredYear === d.year ? 8 : 6}
+                    fill={medalColors[medalType]}
+                    stroke="#fff"
+                    strokeWidth={2}
+                    filter={hoveredYear === d.year ? "url(#glow)" : ""}
+                    className="cursor-pointer transition-all duration-200"
+                  />
+                  {hoveredYear === d.year && (
+                    <g>
+                      <rect
+                        x={-75}
+                        y={-80}
+                        width={150}
+                        height={65}
+                        rx={5}
+                        fill="#222"
+                        stroke="#444"
+                      />
+                      <text
+                        y={-65}
+                        textAnchor="middle"
+                        fill="#fff"
+                        fontSize={14}
+                        fontWeight="bold"
+                      >
+                        {d.year} Olympics
+                      </text>
+                      <text
+                        y={-45}
+                        textAnchor="middle"
+                        fill="#fff"
+                        fontSize={12}
+                      >
+                        Rank: {formatRank(d.rank)}
+                      </text>
+                      <text
+                        y={-25}
+                        textAnchor="middle"
+                        fill={medalColors[medalType]}
+                        fontSize={12}
+                        fontWeight="bold"
+                      >
+                        {d.medalCount} {medalType} medal{d.medalCount !== 1 ? 's' : ''}
+                      </text>
+                    </g>
+                  )}
+                </g>
+              ))}
+              
+              {/* Axis labels */}
+              <text
+                transform={`translate(${innerWidth / 2}, ${innerHeight + 60})`}
+                textAnchor="middle"
+                fill="#fff"
+                fontSize={14}
+                fontWeight="bold"
               >
-                <td className="py-2 px-3">{index + 1}</td>
-                <td className="py-2 px-3 font-medium">
-                  {(country.name || country.region) && (country.name || country.region).trim() !== '' 
-                    ? (country.name || country.region)
-                    : 'Unknown Country'}
-                </td>
-                <td className="py-2 px-3 text-center">{country.gold || 0}</td>
-                <td className="py-2 px-3 text-center">{country.silver || 0}</td>
-                <td className="py-2 px-3 text-center">{country.bronze || 0}</td>
-                <td className="py-2 px-3 text-center font-bold">{country.total || 0}</td>
-              </tr>
-            ))}
-            {topCountries.length === 0 && (
-              <tr>
-                <td colSpan={6} className="py-4 text-center text-gray-400">No medal data available</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                Olympic Year
+              </text>
+              
+              <text
+                transform={`translate(-60, ${innerHeight / 2}) rotate(-90)`}
+                textAnchor="middle"
+                fill="#fff"
+                fontSize={14}
+                fontWeight="bold"
+              >
+                Ranking
+              </text>
+              
+              {/* Chart title */}
+              <text
+                transform={`translate(${innerWidth / 2}, -20)`}
+                textAnchor="middle"
+                fill="#fff"
+                fontSize={18}
+                fontWeight="bold"
+              >
+                {selectedCountry.name}'s Olympic Rankings Based on {medalType.charAt(0).toUpperCase() + medalType.slice(1)} Medals
+              </text>
+            </g>
+          </svg>
+        )}
+      </div>
+      
+      {/* Medal summary for selected country */}
+      {selectedCountry && (
+        <div className="mt-4 bg-gray-900 p-4 rounded-lg">
+          <h3 className="text-white font-bold mb-3 border-b border-gray-700 pb-1">
+            {selectedCountry.name} - Olympic Medal History
+          </h3>
+          
+          <div className="flex flex-wrap gap-3 justify-around">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-yellow-500 flex items-center justify-center text-black font-bold text-xl mb-1">
+                {selectedCountry.gold || 0}
+              </div>
+              <div className="text-yellow-400 text-sm">Gold</div>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-black font-bold text-xl mb-1">
+                {selectedCountry.silver || 0}
+              </div>
+              <div className="text-gray-300 text-sm">Silver</div>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-amber-700 flex items-center justify-center text-black font-bold text-xl mb-1">
+                {selectedCountry.bronze || 0}
+              </div>
+              <div className="text-amber-700 text-sm">Bronze</div>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xl mb-1">
+                {selectedCountry.total || 0}
+              </div>
+              <div className="text-blue-400 text-sm">Total</div>
+            </div>
+          </div>
+          
+          {/* Stats table - best/worst performance */}
+          <div className="mt-4 overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-700">
+                  <th className="py-2 text-left text-gray-300">Statistic</th>
+                  <th className="py-2 text-left text-gray-300">Year</th>
+                  <th className="py-2 text-left text-gray-300">Rank</th>
+                  <th className="py-2 text-left text-gray-300">Medals</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* Best Rank */}
+                {countryRanks.filter(d => d.rank !== null).length > 0 && (
+                  <tr className="border-b border-gray-800">
+                    <td className="py-2 text-white">Best Ranking</td>
+                    <td className="py-2 text-blue-400">
+                      {countryRanks
+                        .filter(d => d.rank !== null)
+                        .reduce((best, current) => 
+                          current.rank < best.rank ? current : best
+                        ).year}
+                    </td>
+                    <td className="py-2 text-green-400">
+                      {formatRank(countryRanks
+                        .filter(d => d.rank !== null)
+                        .reduce((best, current) => 
+                          current.rank < best.rank ? current : best
+                        ).rank)}
+                    </td>
+                    <td className="py-2 text-white">
+                      {countryRanks
+                        .filter(d => d.rank !== null)
+                        .reduce((best, current) => 
+                          current.rank < best.rank ? current : best
+                        )[medalType]}
+                    </td>
+                  </tr>
+                )}
+                
+                {/* Most medals */}
+                {countryRanks.filter(d => d.rank !== null).length > 0 && (
+                  <tr className="border-b border-gray-800">
+                    <td className="py-2 text-white">Most {medalType} medals</td>
+                    <td className="py-2 text-blue-400">
+                      {countryRanks
+                        .filter(d => d.rank !== null)
+                        .reduce((best, current) => 
+                          current[medalType] > best[medalType] ? current : best
+                        ).year}
+                    </td>
+                    <td className="py-2 text-white">
+                      {formatRank(countryRanks
+                        .filter(d => d.rank !== null)
+                        .reduce((best, current) => 
+                          current[medalType] > best[medalType] ? current : best
+                        ).rank)}
+                    </td>
+                    <td className="py-2 text-yellow-400 font-bold">
+                      {countryRanks
+                        .filter(d => d.rank !== null)
+                        .reduce((best, current) => 
+                          current[medalType] > best[medalType] ? current : best
+                        )[medalType]}
+                    </td>
+                  </tr>
+                )}
+                
+                {/* Most recent */}
+                {countryRanks.filter(d => d.rank !== null).length > 0 && (
+                  <tr>
+                    <td className="py-2 text-white">Most recent</td>
+                    <td className="py-2 text-blue-400">
+                      {countryRanks
+                        .filter(d => d.rank !== null)
+                        .reduce((latest, current) => 
+                          current.year > latest.year ? current : latest
+                        ).year}
+                    </td>
+                    <td className="py-2 text-white">
+                      {formatRank(countryRanks
+                        .filter(d => d.rank !== null)
+                        .reduce((latest, current) => 
+                          current.year > latest.year ? current : latest
+                        ).rank)}
+                    </td>
+                    <td className="py-2 text-white">
+                      {countryRanks
+                        .filter(d => d.rank !== null)
+                        .reduce((latest, current) => 
+                          current.year > latest.year ? current : latest
+                        )[medalType]}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      
+      <div className="text-xs text-gray-400 mt-2">
+        <p>Select a country to see how its Olympic ranking has changed over time. Hover over data points for details.</p>
       </div>
     </section>
   );
@@ -2184,7 +3359,7 @@ export default function MedalDashboard() {
 
   return (
     <main className="min-h-screen bg-gray-900 p-4">
-      // In MedalDashboard's return
+      {/* // In MedalDashboard's return */}
       <div className="w-full max-w-[1800px] mx-auto space-y-8 py-6">  
         <div className="flex justify-between items-center">
           <Link href="/" className="text-blue-500 hover:text-blue-400">
@@ -2223,11 +3398,17 @@ export default function MedalDashboard() {
             Continent Analysis
           </button>
           <button 
-            className={`px-4 py-2 focus:outline-none ${activeTab === 'data' ? 'bg-blue-500 text-white' : 'text-gray-400 hover:text-white'}`}
-            onClick={() => setActiveTab('data')}
-          >
-            Data Tables
-          </button>
+  className={`px-4 py-2 focus:outline-none ${activeTab === 'data' ? 'bg-blue-500 text-white' : 'text-gray-400 hover:text-white'}`}
+  onClick={() => setActiveTab('data')}
+>
+  Data Tables
+</button>
+<button 
+  className={`px-4 py-2 focus:outline-none ${activeTab === 'ranks' ? 'bg-blue-500 text-white' : 'text-gray-400 hover:text-white'}`}
+  onClick={() => setActiveTab('ranks')}
+>
+  Time vs Rank
+</button>
         </div>
         
         {/* Content based on active tab */}
@@ -2309,6 +3490,13 @@ export default function MedalDashboard() {
             setSelectedYear={setTopCountriesSelectedYear}
           />
         )}
+            {activeTab === 'ranks' && (
+      <CountryRankTracker
+        countries={countries}
+        yearData={yearData}
+        olympicYears={olympicYears}
+      />
+    )}
         
         {/* <section className="bg-gray-100 p-4 rounded-lg shadow-md">
           <h2 className="text-xl font-bold text-gray-900 mb-2">About This Visualization</h2>
