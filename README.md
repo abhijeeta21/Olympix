@@ -42,8 +42,7 @@ The application offers several interactive dashboards:
 1. Clone the repository:
 
 ```bash
-git clone [https://github.com/abhijeeta21/Olympix.git](https://github.com/abhijeeta21/Olympix.git)
-cd my-web-app
+git clone https://github.com/abhijeeta21/Olympix.git
 ```
 
 2. Install dependencies:
